@@ -1,0 +1,2404 @@
+import { useState, useRef, useEffect } from "react";
+
+function useIsMobile() {
+  const [mobile, setMobile] = useState(() => typeof window !== "undefined" ? window.innerWidth < 768 : false);
+  useEffect(() => {
+    const h = () => setMobile(window.innerWidth < 768);
+    window.addEventListener("resize", h);
+    return () => window.removeEventListener("resize", h);
+  }, []);
+  return mobile;
+}
+
+// ── MAGIC ITEMS (from WMR Armies v2.24 p.88) ─────────────────────────────────
+const MAGIC_STANDARDS = [
+  { id:"battle_banner", name:"Battle Banner", cost:30, desc:"+1 Attack in the first Combat engagement.", restriction:"infantry/cavalry/chariot" },
+  { id:"banner_shielding_sup", name:"Banner of Shielding (Superior)", cost:50, desc:"+1 Armour value until stand is lost. 4+ Armour units only.", restriction:"armour4+" },
+  { id:"banner_shielding_maj", name:"Banner of Shielding (Major)", cost:30, desc:"+1 Armour value until stand is lost. 5+ Armour units only.", restriction:"armour5+" },
+  { id:"banner_shielding_min", name:"Banner of Shielding (Minor)", cost:15, desc:"+1 Armour value until stand is lost. 6+ or 0 Armour only.", restriction:"armour6+/0" },
+  { id:"banner_fortitude_maj", name:"Banner of Fortitude (Major)", cost:50, desc:"+1 Hit in first Combat engagement. 4 Hits units only.", restriction:"hits4" },
+  { id:"banner_fortitude_min", name:"Banner of Fortitude (Minor)", cost:30, desc:"+1 Hit in first Combat engagement. 2–3 Hits units only.", restriction:"hits2-3" },
+  { id:"banner_steadfastness_sup", name:"Banner of Steadfastness (Superior)", cost:20, desc:"Ignore 1 shooting hit after saves until stand lost. 4+ Armour only.", restriction:"armour4+" },
+  { id:"banner_steadfastness_maj", name:"Banner of Steadfastness (Major)", cost:15, desc:"Ignore 1 shooting hit after saves until stand lost. 5+ Armour only.", restriction:"armour5+" },
+  { id:"banner_steadfastness_min", name:"Banner of Steadfastness (Minor)", cost:10, desc:"Ignore 1 shooting hit after saves until stand lost. 6+ Armour only.", restriction:"armour6+" },
+  { id:"banner_fortune", name:"Banner of Fortune", cost:15, desc:"Once per game re-roll all Attack dice in Shooting or Combat phase.", restriction:"any" },
+];
+const MAGIC_WEAPONS = [
+  { id:"sword_destruction", name:"Sword of Destruction", cost:10, desc:"Enemy must re-roll one successful Armour save per combat round." },
+  { id:"sword_fate", name:"Sword of Fate", cost:5, desc:"+1 Attack to the unit/character in the first Combat round." },
+  { id:"sword_cleaving", name:"Sword of Cleaving", cost:10, desc:"Re-roll one unsuccessful Attack dice per combat round." },
+  { id:"sword_might", name:"Sword of Might", cost:10, desc:"+1 Attack to the unit/character in the Combat Phase." },
+];
+const DEVICES_OF_POWER = [
+  { id:"crown_command", name:"Crown of Command", cost:70, desc:"First General's command roll each turn at unmodified Command 10. Lost if failed.", restriction:"General only" },
+  { id:"helm_dominion", name:"Helm of Dominion", cost:40, desc:"+1 Command (max 10) for one Command phase.", restriction:"General only" },
+  { id:"orb_majesty", name:"Orb of Majesty", cost:30, desc:"Re-roll one failed Command roll at Command 8.", restriction:"General only" },
+  { id:"ring_magic", name:"Ring of Magic", cost:30, desc:"Cast one spell without a roll.", restriction:"Wizard only" },
+  { id:"staff_spellbinding", name:"Staff of Spellbinding", cost:30, desc:"If enemy Wizard fails to cast, spellbound on 4+. -1 to all future spells.", restriction:"Wizard/Runesmith" },
+  { id:"sceptre_sovereignty", name:"Sceptre of Sovereignty", cost:30, desc:"Ignore one Blunder roll; order counts as successful.", restriction:"General only" },
+  { id:"scroll_dispelling", name:"Scroll of Dispelling", cost:20, desc:"Automatically dispel one enemy spell.", restriction:"Wizard/Runesmith" },
+  { id:"wand_power", name:"Wand of Power", cost:10, desc:"+1 to one spell casting attempt. 1 always fails.", restriction:"Wizard only" },
+  { id:"rod_repetition", name:"Rod of Repetition", cost:10, desc:"After casting a spell, immediately try to cast another. Once per game.", restriction:"Wizard only" },
+];
+
+// ── ARMY DATA (Official WMR Armies v2.24) ────────────────────────────────────
+const ARMIES = {
+
+  empire: {
+    name:"The Empire", color:"#c8940a", bg:"#0f0c02", accent:"#f0c040",
+    lore:"The largest human nation of the Old World, fielding disciplined soldiers, battle wizards and fearsome war machines.",
+    playstyle:"A versatile, well-rounded army. Solid infantry, powerful war machines and support magic make the Empire strong in defence and capable of punishing aggression. Best played with layered brigades.",
+    fluff:"The Empire is the mightiest of all human nations, stretching from the Grey Mountains to the Worlds Edge. Divided into rival Elector States yet united under a single Emperor, its armies blend veteran state soldiery, fanatic warrior-priests, thunderous cannons and Colleges of Magic wizards. Where other realms field purer forces, the Empire fields everything \u2014 a grinding, adaptive war machine that has survived every Chaos incursion for two millennia.",
+    traits:["Diverse combined arms", "Powerful artillery", "Battle wizards", "State troops backbone"],
+    strengths:"War machines, flexible unit mix, Steam Tank",
+    weaknesses:"Infantry mediocre individually \u2014 relies on combined arms",
+    generalCmd:9,
+    units:[
+      { id:"emp_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"emp_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"emp_wizard", name:"Wizard", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"emp_griffon", name:"Griffon", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"General/Hero/Wizard may ride. Flies (move 100cm). Causes terror.", upgrades:[], magic:[] },
+      { id:"emp_warAltar", name:"War Altar", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:15, min:"-", max:1, special:"General/Hero/Wizard may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"emp_halberdiers", name:"Halberdiers", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:45, min:2, max:"-", special:"Standard Empire core infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"emp_crossbowmen", name:"Crossbowmen", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:2, max:"-", special:"Shoot 30cm.", upgrades:[], magic:["standards","weapons"] },
+      { id:"emp_handgunners", name:"Handgunners", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:65, min:"-", max:3, special:"Armour piercing: enemy armour one worse. Up to 1 per 1000pts can replace Crossbowmen and count toward their min/max.", upgrades:[], magic:["standards","weapons"] },
+      { id:"emp_flagellants", name:"Flagellants", type:"Infantry", atk:"5", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:"-", max:1, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Immune to terror. Must pursue/advance.", upgrades:[], magic:["standards","weapons"] },
+      { id:"emp_skirmishers", name:"Skirmishers", type:"Infantry", atk:"4", hits:"3", armour:"0 or 6+", cmd:"-", size:"+1", pts:25, min:"-", max:"-", special:"Attached to any infantry (except Flagellants) as an extra stand. Brings unit to 4 stands.", upgrades:[], magic:[] },
+      { id:"emp_knights", name:"Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:"-", special:"Standard heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"emp_pistoliers", name:"Pistoliers", type:"Cavalry", atk:"3/1", hits:"3", armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:4, special:"Shoot 15cm, 360° vision.", upgrades:[], magic:["standards","weapons"] },
+      { id:"emp_helblaster", name:"Helblaster", type:"Artillery", atk:"1/8-4-2", hits:"2", armour:"0", cmd:"-", size:1, pts:50, min:"-", max:1, special:"Range varies by distance (8/4/2 attacks). Armour piercing. On 3+ ones: misfires. On 4+ ones: explodes.", upgrades:[], magic:[] },
+      { id:"emp_cannon", name:"Cannon", type:"Artillery", atk:"1/2+bounce", hits:"2", armour:"0", cmd:"-", size:2, pts:85, min:"-", max:1, special:"Bouncing cannonball. See rulebook p.74.", upgrades:[], magic:[] },
+      { id:"emp_steamTank", name:"Steam Tank", type:"Machine", atk:"3/3", hits:"4", armour:"3+", cmd:"-", size:1, pts:130, min:"-", max:1, special:"Causes terror. Cannot be driven back by shooting.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  tomb_kings: {
+    name:"Tomb Kings", color:"#c8a44a", bg:"#0a0800", accent:"#f0d060",
+    lore:"Ancient undead rulers of the desert, commanding skeletal armies that never tire, never waver, and never retreat.",
+    playstyle:"An attrition army immune to psychology. Skeleton units are cheap and numerous; Chariots are the offensive backbone. Magic is critical \u2014 Liche Priests keep the host moving. Build brigades around chariot charges.",
+    fluff:"Beneath the searing sands of Nehekhara lie the mummified remains of an ancient civilisation, entombed for millennia in vast pyramid-cities. When desecrators disturb their rest, the Tomb Kings stir \u2014 rising not as mindless shuffling corpses but as proud warrior-kings commanding the same armies that brought the ancient world to its knees, now animated by sacred incantations and bound to serve for eternity.",
+    traits:["Undead \u2014 immune to terror", "Liche Priest magic", "Chariots as core", "Desert monsters"],
+    strengths:"Undead immunity, chariots, cheap skeletons",
+    weaknesses:"Low attack values on most infantry",
+    generalCmd:9,
+    units:[
+      { id:"tk_general", name:"Tomb King", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:130, min:1, max:1, special:"Command range covers entire battlefield. Once per battle: +1 Attack to one unit within 20cm for one Combat phase.", upgrades:[], magic:["devices"] },
+      { id:"tk_lichePriest", name:"Liche Priest", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:2, special:"Command range 60cm. Casts spells. No -1 penalty when ordering Bone Giants.", upgrades:[], magic:["weapons","devices"] },
+      { id:"tk_zombieDragon", name:"Zombie Dragon", type:"Monstrous Mount", atk:"+3", hits:"-", armour:"-", cmd:"-", size:1, pts:100, min:"-", max:1, special:"Tomb King or Liche Priest may ride. Flies (move 100cm). Causes terror. Breath attack: 20cm, 3 attacks.", upgrades:[], magic:[] },
+      { id:"tk_licheChariot", name:"Liche Chariot", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"Tomb King or Liche Priest may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"tk_skeletons", name:"Skeletons", type:"Infantry", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:30, min:2, max:"-", special:"Undead: no initiative moves, immune to terror penalty & confusion, unaffected by enemy within 20cm penalty.", upgrades:[], magic:["standards","weapons"] },
+      { id:"tk_skeletonBowmen", name:"Skeleton Bowmen", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:45, min:2, max:"-", special:"Undead. Shoot 30cm.", upgrades:[], magic:["standards","weapons"] },
+      { id:"tk_skeletonCavalry", name:"Skeleton Cavalry", type:"Cavalry", atk:"2", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:"-", max:"-", special:"Undead.", upgrades:[], magic:["standards","weapons"] },
+      { id:"tk_skelChariots", name:"Skeletal Chariots", type:"Chariot", atk:"3/1", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3, special:"Undead. +1 Attack when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"tk_carrion", name:"Carrion", type:"Monster", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:65, min:"-", max:1, special:"Undead. Flies. Can always home back to a character at start of Command phase.", upgrades:[], magic:[] },
+      { id:"tk_boneGiant", name:"Bone Giant", type:"Monster", atk:"6", hits:"4", armour:"4+", cmd:"-", size:1, pts:110, min:"-", max:1, special:"Undead. Causes terror. -1 Command when Tomb King orders it (not Liche Priest).", upgrades:[], magic:[] },
+      { id:"tk_sphinx", name:"Sphinx", type:"Monster", atk:"4", hits:"6", armour:"3+", cmd:"-", size:1, pts:135, min:"-", max:1, special:"Undead. Causes terror. At 4-5 hits: badly hurt, halved to 3H/2A.", upgrades:[], magic:[] },
+      { id:"tk_skullChukka", name:"Skull Chukka", type:"Artillery", atk:"1/3", hits:"3", armour:"0", cmd:"-", size:1, pts:85, min:"-", max:1, special:"Stone Thrower. Drive-back hits cause Confusion on 4+ (not 6).", upgrades:[], magic:[] },
+      { id:"tk_boneThrower", name:"Bone Thrower", type:"Artillery", atk:"1/2+skewer", hits:"2", armour:"0", cmd:"-", size:2, pts:65, min:"-", max:1, special:"Bolt Thrower. Skewer rule applies.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  chaos: {
+    name:"Chaos", color:"#a01010", bg:"#080202", accent:"#e03030",
+    lore:"Bloodthirsty northern tribes devoted to the Dark Gods, bringing destruction to the civilised world.",
+    playstyle:"A small, elite army. Every unit hits hard \u2014 Chaos Warriors and Knights are among the best in the game. You will be outnumbered. Win by smashing enemy lines in decisive charges before attrition kills you.",
+    fluff:"From the frozen wastes beyond Kislev they come \u2014 the Chaos Warriors, men so consumed by devotion to the Dark Gods that they have become something other than human. Alongside hordes of Marauder tribesmen, terrifying Chaos Knights, spell-hurling Sorcerers and abominations like Dragon Ogres and Chaos Spawn, they represent an existential threat to every civilised nation. When the Chaos tide rises, the world trembles.",
+    traits:["Elite heavy warriors", "Devastating cavalry", "Powerful monsters", "High points cost"],
+    strengths:"Best infantry and cavalry stats in the game",
+    weaknesses:"Expensive \u2014 small numbers, very limited artillery",
+    generalCmd:9,
+    units:[
+      { id:"cha_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"cha_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"cha_sorcerer", name:"Sorcerer", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"cha_dragon", name:"Chaos Dragon", type:"Monstrous Mount", atk:"+3", hits:"-", armour:"-", cmd:"-", size:1, pts:100, min:"-", max:1, special:"General/Hero/Sorcerer may ride. Flies (move 100cm). Causes terror. Breath attack: 20cm, 3 attacks.", upgrades:[], magic:[] },
+      { id:"cha_chariot_mount", name:"Chariot Mount", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Hero/Sorcerer may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"cha_warriors", name:"Chaos Warriors", type:"Infantry", atk:"4", hits:"4", armour:"4+", cmd:"-", size:3, pts:140, min:1, max:"-", special:"Elite heavy infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cha_marauders", name:"Chaos Marauders", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:1, max:"-", special:"Core Chaos infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cha_ogres", name:"Ogres", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:105, min:"-", max:1, special:"Must charge humans on initiative.", upgrades:[], magic:[] },
+      { id:"cha_trolls", name:"Trolls", type:"Infantry", atk:"5", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3, special:"Regenerate 1 hit per combat round. Command penalty for distance doubled.", upgrades:[], magic:[] },
+      { id:"cha_marauderHorsemen", name:"Marauder Horsemen", type:"Cavalry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:4, special:"Fast light cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cha_knights", name:"Chaos Knights", type:"Cavalry", atk:"4", hits:"4", armour:"4+", cmd:"-", size:3, pts:180, min:"-", max:2, special:"Devastating heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cha_hounds", name:"Chaos Hounds", type:"Cavalry", atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:2, special:"Fast war hounds.", upgrades:[], magic:[] },
+      { id:"cha_chariots", name:"Chaos Chariots", type:"Chariot", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:3, special:"+1 Attack when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cha_harpies", name:"Harpies", type:"Monster", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:65, min:"-", max:1, special:"Flies. Based on long edge like infantry. Cannot be joined by characters.", upgrades:[], magic:[] },
+      { id:"cha_dragonOgres", name:"Dragon Ogres", type:"Monster", atk:"6", hits:"4", armour:"5+", cmd:"-", size:3, pts:230, min:"-", max:1, special:"Immune to terror.", upgrades:[], magic:[] },
+      { id:"cha_spawn", name:"Chaos Spawn", type:"Monster", atk:"3/3", hits:"4", armour:"3+", cmd:"-", size:1, pts:110, min:"-", max:2, special:"Causes terror. Cannot be driven back. Must pursue. Shoot 15cm 360°. -1 Cmd if not in brigade with more non-Spawn than Spawn.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  orcs: {
+    name:"Orcs & Goblins", color:"#2a7a10", bg:"#040a02", accent:"#60c020",
+    lore:"A vast greenskin horde driven by the Waaagh! — terrifying in numbers but plagued by animosity and infighting.",
+    playstyle:"Overwhelming mass of bodies backed by hard-hitting monsters and trolls. Animosity can cause chaos in your own lines \u2014 build brigades to mitigate it. Let the greenskin tide roll forward and drown the enemy.",
+    fluff:"The Orc tribes of the Old World need little reason to go to war \u2014 a good scrap is its own reward. When a powerful Warboss emerges to unite the clans under a single Waaagh!, entire regions tremble. Greenskin hordes pour south in an unstoppable tide of violence, noise and barely-contained chaos. Their greatest weakness is themselves.",
+    traits:["Massive numbers", "Animosity mechanic", "Varied unit types", "Giants and trolls"],
+    strengths:"Numbers, monsters, cheap options",
+    weaknesses:"Animosity can cost orders at critical moments",
+    generalCmd:8,
+    units:[
+      { id:"orc_general", name:"Orc General", type:"General", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:95, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"orc_hero", name:"Orc Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"orc_shaman", name:"Orc Shaman", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"orc_goblinHero", name:"Goblin Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"orc_goblinShaman", name:"Goblin Shaman", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:6, size:1, pts:30, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"orc_wyvern", name:"Wyvern", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"General/Hero/Shaman may ride. Flies (move 100cm). Unit causes terror.", upgrades:[], magic:[] },
+      { id:"orc_chariot_mount", name:"Chariot Mount", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Hero/Shaman may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"orc_warriors", name:"Orc Warriors", type:"Infantry", atk:"4", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:2, max:"-", special:"Core orc infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"orc_goblins", name:"Goblins", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:30, min:2, max:"-", special:"Shoot 15cm (bows).", upgrades:[], magic:["standards","weapons"] },
+      { id:"orc_blackOrcs", name:"Black Orcs", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"Elite orcs.", upgrades:[], magic:["standards","weapons"] },
+      { id:"orc_trolls", name:"Trolls", type:"Infantry", atk:"5", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3, special:"Regenerate 1 hit per combat round. Command penalty for distance doubled.", upgrades:[], magic:[] },
+      { id:"orc_ogres", name:"Ogres", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:105, min:"-", max:1, special:"Must charge humans on initiative.", upgrades:[], magic:[] },
+      { id:"orc_boarRiders", name:"Boar Riders", type:"Cavalry", atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:"-", special:"Heavy orc cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"orc_wolfRiders", name:"Wolf Riders", type:"Cavalry", atk:"2/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:"-", max:"-", special:"Shoot 15cm, 360° vision.", upgrades:[], magic:["standards","weapons"] },
+      { id:"orc_wolfChariots", name:"Wolf Chariots", type:"Chariot", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:80, min:"-", max:3, special:"+1 Attack when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"orc_giant", name:"Giant", type:"Monster", atk:"8", hits:"8", armour:"5+", cmd:"-", size:1, pts:135, min:"-", max:1, special:"Causes terror. Must be given separate order. Rolls on Giant Goes Wild if order fails. At 5–7 hits: badly hurt, halved.", upgrades:[], magic:[] },
+      { id:"orc_rockLobber", name:"Rock Lobber", type:"Artillery", atk:"1/3", hits:"3", armour:"0", cmd:"-", size:1, pts:75, min:"-", max:1, special:"Stone Thrower.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  high_elves: {
+    name:"High Elves", color:"#1060c0", bg:"#010510", accent:"#50a0ff",
+    lore:"Ancient guardians of Ulthuan and the world's greatest bulwark against Chaos, fielding disciplined warriors and mighty dragons.",
+    playstyle:"A premium army where every unit is better than its equivalent elsewhere. The Command 10 General gives outstanding reliability. Use superior shooting to soften targets, then deliver decisive cavalry and dragon charges.",
+    fluff:"From their island kingdom of Ulthuan, the High Elves have stood as the world's foremost bulwark against Chaos since time immemorial. Ancient beyond reckoning, their warriors train for centuries before seeing battle. Their Silver Helm cavalry are unmatched, their archers deadly, and their Dragon riders among the most feared creatures in existence. They fight not for conquest but for survival \u2014 and will not countenance failure.",
+    traits:["Command 10 General", "Superior archers", "Dragons", "Balanced elite force"],
+    strengths:"Command 10, reliable orders, all-round excellence",
+    weaknesses:"Expensive \u2014 few units relative to points",
+    generalCmd:10,
+    units:[
+      { id:"he_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:10, size:1, pts:180, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"he_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"he_wizard", name:"Wizard", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"he_giantEagle_mount", name:"Giant Eagle Mount", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:20, min:"-", max:1, special:"General/Hero/Wizard may ride. Flies (move 100cm).", upgrades:[], magic:[] },
+      { id:"he_dragon_mount", name:"Dragon Mount", type:"Monstrous Mount", atk:"+3", hits:"-", armour:"-", cmd:"-", size:1, pts:100, min:"-", max:1, special:"General/Hero/Wizard may ride. Flies (move 100cm). Causes terror. Fire breath: 20cm, 3 attacks at 4+.", upgrades:[], magic:[] },
+      { id:"he_chariot_mount", name:"Chariot Mount", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Hero/Wizard may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"he_spearmen", name:"Spearmen", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:2, max:"-", special:"Core High Elf infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"he_archers", name:"Archers", type:"Infantry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:75, min:1, max:"-", special:"+1 to shooting dice rolls (hit on 3+ in open, 4+ defended, 5+ fortified).", upgrades:[], magic:["standards","weapons"] },
+      { id:"he_silverHelms", name:"Silver Helms", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:"-", special:"Elite heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"he_reavers", name:"Reavers", type:"Cavalry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:90, min:"-", max:3, special:"Fast light cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"he_chariots", name:"Chariots", type:"Chariot", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:3, special:"+1 Attack when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"he_giantEagles", name:"Giant Eagles", type:"Monster", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:70, min:"-", max:1, special:"Flies.", upgrades:[], magic:[] },
+      { id:"he_dragonRider", name:"Dragon Rider", type:"Monster", atk:"6/3", hits:"6", armour:"4+", cmd:"-", size:1, pts:270, min:"-", max:1, special:"Causes terror. Flies. Fire breath: 20cm, 3 attacks at 4+. At 4–5 hits: badly hurt, halved to 3H/3A.", upgrades:[], magic:[] },
+      { id:"he_boltThrower", name:"Elven Bolt Thrower", type:"Artillery", atk:"1/3", hits:"2", armour:"0", cmd:"-", size:2, pts:55, min:"-", max:1, special:"Bolt Thrower with skewer rule.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  dwarfs: {
+    name:"Dwarfs", color:"#8b4513", bg:"#050202", accent:"#cd7f32",
+    lore:"Stubborn mountain folk with the finest artillery in the world and warriors who hold grudges for generations.",
+    playstyle:"The ultimate defensive army. Dwarf Warriors are the hardest infantry to kill. Multiple artillery pieces punish approaching enemies. Runesmiths neutralise enemy magic. Hold ground, shoot everything, then counter-charge.",
+    fluff:"Dwelling in their mountain strongholds since before men walked the earth, the Dwarfs are a proud and stubborn race nursing grudges that span millennia. Their warriors are shorter than men but far tougher, clad in the finest gromril armour. Behind them roar Cannons, Flame Cannons and whirring Gyrocopters. Dwarfs never forget an insult, never break their word, and never, ever retreat.",
+    traits:["Toughest infantry", "Finest artillery", "No cavalry", "Runesmiths dispel magic"],
+    strengths:"Best infantry toughness, best artillery, anti-magic",
+    weaknesses:"No cavalry, slow, vulnerable to flanking",
+    generalCmd:10,
+    units:[
+      { id:"dwf_general", name:"Dwarf Lord", type:"General", atk:"-", hits:"-", armour:"-", cmd:10, size:1, pts:155, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"dwf_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"dwf_runesmith", name:"Runesmith", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Can dispel spells (Staff/Scroll of Spellbinding allowed).", upgrades:[], magic:["devices"] },
+      { id:"dwf_anvil", name:"Anvil of Doom", type:"Special", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:50, min:"-", max:1, special:"Attached to Runesmith. Special Bonus +1. See special rules.", upgrades:[], magic:[] },
+      { id:"dwf_warriors", name:"Warriors", type:"Infantry", atk:"3", hits:"4", armour:"4+", cmd:"-", size:3, pts:110, min:2, max:"-", special:"Tough core infantry. One Handgunner unit per 1000pts may replace a Warrior unit and count for Warrior min/max.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dwf_handgunners", name:"Handgunners", type:"Infantry", atk:"3/1", hits:"4", armour:"6+", cmd:"-", size:3, pts:90, min:"-", max:"-", special:"Armour piercing: enemy armour one worse.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dwf_rangers", name:"Rangers", type:"Infantry", atk:"3/1", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:2, special:"One unit per 1000pts may infiltrate. Can pursue any troop type.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dwf_trollSlayers", name:"Troll Slayers", type:"Infantry", atk:"5", hits:"4", armour:"0", cmd:"-", size:3, pts:80, min:"-", max:2, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Immune to terror. Must pursue. +1 vs Monsters. If any survive: enemy scores full VPs. If destroyed: no VPs either side.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dwf_cannon", name:"Cannon", type:"Artillery", atk:"1/2+bounce", hits:"2", armour:"6+", cmd:"-", size:2, pts:90, min:"-", max:1, special:"Bouncing cannonball. See rulebook p.74.", upgrades:[], magic:[] },
+      { id:"dwf_flameCannon", name:"Flame Cannon", type:"Artillery", atk:"1/2D6", hits:"2", armour:"6+", cmd:"-", size:1, pts:50, min:"-", max:1, special:"Range 30cm. 2D6 attacks (if double: misfire). On double: roll on Flame Cannon Misfire Chart.", upgrades:[], magic:[] },
+      { id:"dwf_gyrocopter", name:"Gyrocopter", type:"Machine", atk:"1/3", hits:"3", armour:"5+", cmd:"-", size:1, pts:75, min:"-", max:1, special:"Flies (move 60cm).", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  skaven: {
+    name:"Skaven", color:"#6b8e23", bg:"#030402", accent:"#9acd32",
+    lore:"Devious ratmen swarming from underground warrens, wielding deadly warp-powered war machines and overwhelming numbers.",
+    playstyle:"A horde army with a crucial limitation \u2014 characters can only issue orders within 20cm. Brigades must stay tight. Overwhelm with numbers, flank with Gutter Runners, and let the Doomwheel run amok.",
+    fluff:"Beneath every city in the Old World runs a network of tunnels teeming with the Skaven \u2014 a vast, paranoid civilisation of ratmen devoted to the Horned Rat. Their armies swarm with Clanrats, elite Stormvermin, plague monks and exotic warp-powered machines. What they lack in discipline they compensate for with sheer numbers and the most volatile technology in the world.",
+    traits:["Swarm tactics", "20cm command range only", "Warp-powered machines", "Strength in numbers"],
+    strengths:"Masses of cheap troops, devastating machines",
+    weaknesses:"Short command range severely limits flexibility",
+    generalCmd:9,
+    units:[
+      { id:"sk_greySeer", name:"Grey Seer", type:"General", atk:"+1", hits:"-", armour:"-", cmd:9, size:1, pts:130, min:1, max:1, special:"Command range 20cm only (Under the Lash). Casts spells as a Wizard. Can be given magic items restricted to either a General or a Wizard.", upgrades:[], magic:["devices","weapons"], greySeer:true },
+      { id:"sk_hero", name:"Hero", type:"Hero", atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:70, min:"-", max:2, special:"Command range 20cm only (Under the Lash).", upgrades:[], magic:["weapons"] },
+      { id:"sk_warlock", name:"Warlock", type:"Wizard", atk:"+0", hits:"-", armour:"-", cmd:6, size:1, pts:30, min:"-", max:1, special:"Command range 20cm only. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"sk_ratOgreBodyguard", name:"Rat Ogre Bodyguard", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:"-", pts:10, min:"-", max:1, special:"Grey Seer, Heroes and Warlocks may take a Rat Ogre Bodyguard (+1 Attack, +10pts). A character with a bodyguard adds +1 to his Attacks.", upgrades:[], magic:[] },
+      { id:"sk_clanrats", name:"Clanrats", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:40, min:2, max:"-", special:"Strength in Numbers: brigades unlimited size.", upgrades:[], magic:["standards","weapons"] },
+      { id:"sk_stormvermin", name:"Stormvermin", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:55, min:"-", max:2, special:"Elite Skaven infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"sk_jezzails", name:"Jezzails", type:"Infantry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:70, min:"-", max:2, special:"Armour piercing: enemy armour one worse.", upgrades:[], magic:["standards","weapons"] },
+      { id:"sk_plaguemonks", name:"Plague Monks", type:"Infantry", atk:"5", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:"-", max:2, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Must pursue. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
+      { id:"sk_ratSwarms", name:"Rat Swarms", type:"Infantry", atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:25, min:2, max:"-", special:"Cannot be driven back. Can only support/be supported by other Rat Swarms. Cannot have magic items.", upgrades:[], magic:[] },
+      { id:"sk_gutterRunners", name:"Gutter Runners", type:"Infantry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:"-", max:2, special:"Shoot 15cm, 360° vision. Can infiltrate.", upgrades:[], magic:["standards","weapons"] },
+      { id:"sk_ratOgres", name:"Rat Ogres", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:2, special:"Powerful monsters.", upgrades:[], magic:[] },
+      { id:"sk_warpLightning", name:"Warp Lightning Cannon", type:"Artillery", atk:"1/3", hits:"2", armour:"0", cmd:"-", size:2, pts:60, min:"-", max:1, special:"Stone Thrower.", upgrades:[], magic:[] },
+      { id:"sk_doomWheel", name:"Doom Wheel", type:"Machine", atk:"5", hits:"4", armour:"4+", cmd:"-", size:1, pts:125, min:"-", max:1, special:"Powerful war machine.", upgrades:[], magic:[] },
+      { id:"sk_screamingBell", name:"Screaming Bell", type:"Machine", atk:"0", hits:"4", armour:"4+", cmd:"-", size:1, pts:125, min:"-", max:1, special:"Special machine. Army special rules apply.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  lizardmen: {
+    name:"Lizardmen", color:"#1a7a3a", bg:"#010502", accent:"#30d060",
+    lore:"Ancient servants of the Old Ones, guided by the mighty Slann Mage-Priests and cold-blooded Saurus warriors.",
+    playstyle:"Unique: the Slann General has Command 0 \u2014 succeeds on almost any roll but must be close. Cold-blooded Saurus are tough fighters; Terradons and Stegadons provide shock and terror. Dense terrain is your friend.",
+    fluff:"Created by the mystical Old Ones as instruments of cosmic order, the Lizardmen of Lustria are ancient beyond comprehension. At their apex float the vast Slann Mage-Priests, borne on golden palanquins, their minds brushing the fabric of reality. Below them march cold-blooded Saurus warriors and nimble Skink skirmishers, while Stegadons crash through jungle and foe alike like living siege engines.",
+    traits:["Command 0 Slann General", "Reptilian 20cm command range", "Massive monsters", "Born in Jungle"],
+    strengths:"Slann Command 0, tough infantry, terrifying monsters",
+    weaknesses:"20cm command range \u2014 brigades must stay very tight",
+    generalCmd:0,
+    units:[
+      { id:"lz_slann", name:"Slann Mage Palanquin", type:"General", atk:"-", hits:"-", armour:"-", cmd:0, size:1, pts:95, min:1, max:1, special:"Command value 0 — issues orders on any roll except 11-12. Command range covers entire battlefield. Casts spells. Born in Jungle: no command penalty for dense terrain.", upgrades:[], magic:["weapons","devices"] },
+      { id:"lz_saurusHero", name:"Saurus Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:6, size:1, pts:45, min:"-", max:1, special:"Command range 20cm (Reptilian — all Reptilian units must be within 20cm to receive orders).", upgrades:[], magic:["weapons","devices"] },
+      { id:"lz_skinkHero", name:"Skink Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:70, min:"-", max:3, special:"Command range 20cm (Reptilian).", upgrades:[], magic:["weapons","devices"] },
+      { id:"lz_skinkShaman", name:"Skink Shaman", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:6, size:1, pts:30, min:"-", max:1, special:"Command range 20cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"lz_stegadon_mount", name:"Stegadon Mount", type:"Monstrous Mount", atk:"+5", hits:"-", armour:"-", cmd:"-", size:1, pts:90, min:"-", max:1, special:"Slann/Saurus Hero may ride. +5 Attacks. Causes terror.", upgrades:[], magic:[] },
+      { id:"lz_carnosaur", name:"Carnosaur", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:65, min:"-", max:1, special:"Saurus Hero may ride. +2 Attacks. Causes terror.", upgrades:[], magic:[] },
+      { id:"lz_skinks", name:"Skinks", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:35, min:2, max:"-", special:"Shoot 15cm, 360° vision. Reptilian. Salamander stands may be added.", upgrades:[], magic:["standards","weapons"] },
+      { id:"lz_saurus", name:"Saurus", type:"Infantry", atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:75, min:2, max:"-", special:"Reptilian.", upgrades:[], magic:["standards","weapons"] },
+      { id:"lz_templeGuard", name:"Temple Guard", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"Reptilian. Elite guard.", upgrades:[], magic:["standards","weapons"] },
+      { id:"lz_salamander", name:"Salamander", type:"Infantry", atk:"2/2", hits:"3", armour:"0", cmd:"-", size:"+1", pts:25, min:"-", max:2, special:"Attached to Skink unit as extra stand. Salamander Venom: -1 armour save for enemy hit by shooting.", upgrades:[], magic:[] },
+      { id:"lz_kroxigor", name:"Kroxigor", type:"Infantry", atk:"5", hits:"3", armour:"4+", cmd:"-", size:3, pts:135, min:"-", max:2, special:"Reptilian. Heavy infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"lz_coldOneRiders", name:"Cold One Riders", type:"Cavalry", atk:"4", hits:"3", armour:"4+", cmd:"-", size:3, pts:140, min:"-", max:2, special:"Reptilian. Elite cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"lz_terradons", name:"Terradons", type:"Monster", atk:"2/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:85, min:"-", max:1, special:"Flies.", upgrades:[], magic:[] },
+      { id:"lz_stegadon", name:"Stegadon", type:"Monster", atk:"10/3", hits:"10", armour:"4+", cmd:"-", size:1, pts:225, min:"-", max:1, special:"Causes terror. Massive creature.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  bretonnia: {
+    name:"Bretonnia", color:"#1a4a8a", bg:"#010308", accent:"#3070d0",
+    lore:"A feudal kingdom of honourable knights blessed by the Lady of the Lake, backed by masses of expendable peasantry.",
+    playstyle:"A cavalry-focused army where Knights always charge on initiative. Use them as your strike force. Peasant units are cheap filler \u2014 keep them brigaded with Knights to avoid their command penalty.",
+    fluff:"A feudal realm of chivalric tradition, Bretonnia is ruled by a warrior nobility who dedicate their lives to feats of arms and the quest for the Grail. Blessed by the Lady of the Lake, Grail Knights are touched by divinity. Below them masses of expendable Peasant levies form a backdrop to the glittering cavalry charge \u2014 unstoppable, honour-bound, glorious.",
+    traits:["Always-charging Knights", "Feudal withdrawal rule", "Peasant limitations", "Grail Knights elite"],
+    strengths:"Powerful knight charges, Trebuchet",
+    weaknesses:"Peasants are a liability; knights must always charge",
+    generalCmd:9,
+    units:[
+      { id:"br_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield. Feudal: withdrawal based only on Knights/Grail Knights/Pegasus Knights lost.", upgrades:[], magic:["devices"] },
+      { id:"br_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"br_enchantress", name:"Enchantress", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"br_unicorn", name:"Unicorn", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:15, min:"-", max:1, special:"Enchantress only. +1 Attack. Once per battle: +1 to spell casting roll.", upgrades:[], magic:[] },
+      { id:"br_pegasus", name:"Pegasus", type:"Monstrous Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:15, min:"-", max:1, special:"General/Hero/Enchantress may ride. Flies (move 100cm).", upgrades:[], magic:[] },
+      { id:"br_hippogriff", name:"Hippogriff", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"General/Hero/Enchantress may ride. Flies (move 100cm). Causes terror.", upgrades:[], magic:[] },
+      { id:"br_grailReliquae", name:"Grail Reliquae", type:"Special", atk:"-", hits:"-", armour:"-", cmd:"-", size:1, pts:60, min:"-", max:1, special:"Special bonus to nearby Peasant units. See special rules.", upgrades:[], magic:[] },
+      { id:"br_menAtArms", name:"Men-at-Arms", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:45, min:1, max:"-", special:"Standard infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"br_bowmen", name:"Bowmen", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:"-", max:"-", special:"Archers.", upgrades:[], magic:["standards","weapons"] },
+      { id:"br_peasants", name:"Peasants", type:"Infantry", atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:30, min:"-", max:4, special:"-1 Command penalty (waived if brigaded with non-Peasants). Cannot charge on initiative. No bonus attack when charging.", upgrades:[], magic:["standards","weapons"] },
+      { id:"br_squires", name:"Squires", type:"Cavalry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:90, min:1, max:4, special:"Light cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"br_knights", name:"Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:1, max:"-", special:"Always charge on initiative. Cannot evade. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
+      { id:"br_grailKnights", name:"Grail Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:120, min:"-", max:1, special:"As Knights. +1 Attack modifier when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"br_pegasusKnights", name:"Pegasus Knights", type:"Monster", atk:"2", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:1, special:"Flies. Counts as Knights for withdrawal.", upgrades:[], magic:["standards","weapons"] },
+      { id:"br_trebuchet", name:"Trebuchet", type:"Artillery", atk:"1/4", hits:"4", armour:"0", cmd:"-", size:1, pts:100, min:"-", max:1, special:"Range 80cm. No armour saves. Fortified counts as defended. Can shoot blind at targets it can't see (6+ to hit).", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  kislev: {
+    name:"Kislev", color:"#1080a0", bg:"#010508", accent:"#30b0d0",
+    lore:"Hardy northern warriors of the steppes, masters of mounted combat and fierce defenders against Chaos.",
+    playstyle:"A fast, mobile army dominating open ground. Horse Archers screen and harry; Winged Lancers deliver the killing blow. The War Wagon is a powerful firebase. Avoid dense terrain \u2014 you want room to manoeuvre.",
+    fluff:"Between the Empire and the Realm of Chaos stands Kislev \u2014 a cold, windswept land hardened by centuries of brutal winters and Chaos raids. Kislevite armies are dominated by cavalry: swift Horse Archers, heavy Cossacks and the feared Winged Lancers whose charge has broken many a Chaos warband. Their shamans call upon the elemental spirits of ice and storm.",
+    traits:["Cavalry-heavy", "Good missile units", "War Wagon anchor", "Winged Lancer shock troops"],
+    strengths:"Fast and mobile, great shooting cavalry",
+    weaknesses:"Weaker in dense terrain; lighter infantry",
+    generalCmd:9,
+    units:[
+      { id:"ki_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"ki_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ki_shaman", name:"Shaman", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ki_bear", name:"Bear Mount", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Hero may ride a Bear. +1 Attack.", upgrades:[], magic:[] },
+      { id:"ki_yozhin", name:"Yozhin of the Bog", type:"Monstrous Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:40, min:"-", max:1, special:"General/Hero may ride Yozhin. +1 Attack. Special monster mount.", upgrades:[], magic:[] },
+      { id:"ki_tzarina", name:"Tzarina", type:"Special", atk:"+0", hits:"-", armour:"-", cmd:"-", size:1, pts:25, min:"-", max:1, special:"Attached to General. Ice Queen: special ice magic ability.", upgrades:[], magic:[] },
+      { id:"ki_wingedLancers", name:"Winged Lancers", type:"Cavalry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3, special:"+1 Attack in first round when fighting to front. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ki_horseArchers", name:"Horse Archers", type:"Cavalry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:75, min:2, max:"-", special:"Shoot 15cm, 360° vision.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ki_cossacks", name:"Cossacks", type:"Cavalry", atk:"3/1", hits:"3", armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:2, special:"Shoot 15cm, 360° vision.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ki_bowmen", name:"Bowmen", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:"-", max:"-", special:"Standard missile troops.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ki_redGuard", name:"Red Guard", type:"Infantry", atk:"3/1", hits:"3", armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:1, special:"Handguns: armour piercing (enemy armour one worse).", upgrades:[], magic:["standards","weapons"] },
+      { id:"ki_axemen", name:"Axemen", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:45, min:2, max:"-", special:"Core infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ki_bears", name:"Bears", type:"Infantry", atk:"5", hits:"4", armour:"0", cmd:"-", size:3, pts:90, min:"-", max:1, special:"+1 Attack charging in open (like monster). Can only give/receive support from other Bears. Must pursue. Never count as defended outside dense terrain.", upgrades:[], magic:[] },
+      { id:"ki_warWagon", name:"War Wagon", type:"Artillery", atk:"4/4", hits:"4", armour:"4+", cmd:"-", size:1, pts:125, min:"-", max:1, special:"4 shooting + 4 combat attacks. Shoot 360°, 30cm. Armour piercing. Two stands: wagon and team.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  dark_elves: {
+    name:"Dark Elves", color:"#6010a0", bg:"#040008", accent:"#9020e0",
+    lore:"Bitter exiles of Naggaroth devoted to Khaine, fielding merciless warriors and monstrous beasts.",
+    playstyle:"An aggressive high-risk army. Repeating crossbows generate huge shooting volume. Cold One Knights cannot brigade \u2014 use them as independent hammers. The execution mechanic means characters may be killed for blunders.",
+    fluff:"Exiled from Ulthuan ten thousand years ago, the Dark Elves of Naggaroth have nursed their hatred into something magnificent and terrible. Witch Elves driven to ecstatic frenzy, Cold One-riding knights, and monstrous War Hydras march alongside soldiers whose repeating crossbows can riddle an enemy unit before it reaches combat. Beauty and death are the same thing in Naggarond.",
+    traits:["Repeating crossbows", "Execution mechanic", "Cold One Knights", "Witch Elves frenzy"],
+    strengths:"Massive shooting volume, elite cavalry",
+    weaknesses:"Execution mechanic punishes bad dice; Cold Ones can't brigade",
+    generalCmd:10,
+    units:[
+      { id:"de_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:10, size:1, pts:155, min:1, max:1, special:"If Hero/Sorceress rolls double-6, General loses 1 Command or executes them (remove, no VPs). Blunder by General also loses 1 Command. Minimum Command 8.", upgrades:[], magic:["devices"] },
+      { id:"de_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"de_sorceress", name:"Sorceress", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"de_manticore", name:"Manticore", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"General/Hero/Sorceress may ride. Flies (move 100cm). Causes terror.", upgrades:[], magic:[] },
+      { id:"de_chariot_mount", name:"Chariot Mount", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Hero/Sorceress may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"de_cauldronBlood", name:"Cauldron of Blood", type:"Chariot Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:15, min:"-", max:1, special:"General/Hero/Sorceress may ride. +2 Attacks. Special rules apply.", upgrades:[], magic:[] },
+      { id:"de_spearmen", name:"Spearmen", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:2, max:"-", special:"Core Dark Elf infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"de_crossbowmen", name:"Crossbowmen", type:"Infantry", atk:"3/2", hits:"3", armour:"6+", cmd:"-", size:3, pts:75, min:1, max:"-", special:"Repeating crossbow: shoot twice at ≤15cm (6 attacks), once at ≤30cm (3 attacks). 1 attack/stand when shooting at chargers.", upgrades:[], magic:["standards","weapons"] },
+      { id:"de_witchElves", name:"Witch Elves", type:"Infantry", atk:"5", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:"-", max:2, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Must pursue. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
+      { id:"de_darkRiders", name:"Dark Riders", type:"Cavalry", atk:"3/2", hits:"3", armour:"6+", cmd:"-", size:3, pts:95, min:"-", max:3, special:"Repeating crossbow: shoot twice at ≤15cm. 1 attack/stand at chargers.", upgrades:[], magic:["standards","weapons"] },
+      { id:"de_coldOneKnights", name:"Cold One Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:130, min:"-", max:3, special:"+1 Attack in first round of each combat when fighting to front. Cannot brigade except with other Cold One Knights.", upgrades:[], magic:["standards","weapons"] },
+      { id:"de_harpies", name:"Harpies", type:"Monster", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:65, min:"-", max:1, special:"Flies. Based on long edge. Cannot be joined by characters.", upgrades:[], magic:[] },
+      { id:"de_warHydra", name:"War Hydra", type:"Monster", atk:"6/2", hits:"4", armour:"4+", cmd:"-", size:1, pts:125, min:"-", max:1, special:"Powerful monster. Causes terror.", upgrades:[], magic:[] },
+      { id:"de_boltThrower", name:"Bolt Thrower", type:"Artillery", atk:"1/3", hits:"2", armour:"0", cmd:"-", size:2, pts:55, min:"-", max:1, special:"Bolt Thrower with skewer rule.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // DAEMONS OF KHORNE — Blood God, Lord of Slaughter
+  // No magic whatsoever. Pure combat aggression. Fastest, hardest-hitting.
+  // ══════════════════════════════════════════════════════════════════════════
+  daemons_khorne: {
+    name:"Daemons of Khorne", color:"#8b0000", bg:"#060000", accent:"#ff2200",
+    lore:"Blood for the Blood God. Skulls for the Skull Throne. The daemons of Khorne know only one purpose: slaughter.",
+    playstyle:"Pure close-combat aggression with zero magic — Khorne despises sorcery. Bloodletters are elite infantry with Hell Blades that shred armour on the charge. Flesh Hounds are fast, magic-resistant cavalry. Bloodcrushers are the most powerful cavalry stand in the game, causing terror and dealing devastating charges. The Bloodthirster is the strongest Greater Daemon of any army. You have NO spells and NO shooting — get into combat as fast as possible and never stop.",
+    fluff:"BLOOD FOR THE BLOOD GOD! SKULLS FOR THE SKULL THRONE! The daemons of Khorne are the purest expression of martial rage given form. Bloodletters march in iron-disciplined cohorts, their Hell Blades shearing through steel as if it were parchment. Flesh Hounds race ahead, immune to the trickery of wizards. Bloodcrushers — Bloodletters mounted upon brazen Juggernauts — are a force of nature unto themselves, the thunder of brass hooves heralding doom. Above all wings the Bloodthirster, eight attacks of annihilation in a single towering form, the mightiest warrior-daemon that walks or flies. Khorne cares not from whence the blood flows — only that it flows.",
+    traits:["NO magic — Khorne abhors sorcery", "Bloodletters: Hell Blades ignore armour on charge", "Bloodcrushers: terror-causing shock cavalry", "Bloodthirster: greatest Greater Daemon"],
+    strengths:"Highest combat power of any daemon army; Bloodthirster is game-ending; Flesh Hounds resist magic",
+    weaknesses:"Zero magic, zero shooting; must reach combat to do anything; Daemonic Instability punishes losses",
+    generalCmd:9,
+    spells: null,
+    units:[
+      // ── CHARACTERS ──────────────────────────────────────────────────────
+      { id:"kh_bloodthirster_general", name:"Bloodthirster (General)", type:"General",
+        atk:"+3", hits:"-", armour:"-", cmd:9, size:1, pts:175, min:1, max:1,
+        special:"The Bloodthirster of Khorne serves as army General. Command range covers entire battlefield. Flies (move 100cm). Causes terror. Daemonic Instability. Khorne's fury: cannot be given Wizard powers — Khorne utterly forbids sorcery. The Bloodthirster adds +3 Attacks to any unit it joins. If reduced to 4–5 hits remaining it is badly hurt: halved to 3 Hits/4 Attacks.",
+        upgrades:[], magic:["devices"] },
+      { id:"kh_herald_khorne", name:"Herald of Khorne", type:"Hero",
+        atk:"+2", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:2,
+        special:"Command range 60cm. Daemonic Instability. Adds +2 Attacks to any unit it joins. May be mounted on a Juggernaut of Khorne (+20pts): +1 Attack bonus, moves as Cavalry (30cm). Bloodlust: when the Herald's unit charges, it may re-roll a single failed attack die in the first round of combat.",
+        upgrades:[], magic:["weapons","devices"] },
+      { id:"kh_juggernaut_mount", name:"Juggernaut Mount", type:"Special Mount",
+        atk:"+1", hits:"-", armour:"-", cmd:"-", size:"-", pts:20, min:"-", max:1,
+        special:"Herald of Khorne only. +1 Attack bonus, move as Cavalry (30cm). Daemonic Instability. The Juggernaut's brass bulk counts as Cavalry for all movement and formation rules.",
+        upgrades:[], magic:[] },
+      // ── CORE INFANTRY ───────────────────────────────────────────────────
+      { id:"kh_bloodletters", name:"Bloodletters", type:"Infantry",
+        atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:3, max:"-",
+        special:"Hell Blades: in the first round of any combat (including counter-charge), Bloodletters add +1 Attack in addition to any normal charge bonus. This represents the supernatural keenness of their daemonic blades. Daemonic Instability: test at start of own Command phase if unit has suffered casualties — roll D6: 1–2 lose a stand, 3–4 unit is confused, 5–6 no effect.",
+        upgrades:[], magic:["standards"] },
+      // ── CAVALRY ─────────────────────────────────────────────────────────
+      { id:"kh_fleshhounds", name:"Flesh Hounds", type:"Cavalry",
+        atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:2,
+        special:"Daemonic Instability. Collar of Khorne: Flesh Hounds are immune to all spell effects — spells cast upon a unit containing Flesh Hounds have no effect on them. Fast hunters: move 30cm. Cannot take magic items.",
+        upgrades:[], magic:[] },
+      { id:"kh_bloodcrushers", name:"Bloodcrushers", type:"Cavalry",
+        atk:"5", hits:"4", armour:"4+", cmd:"-", size:3, pts:180, min:"-", max:2,
+        special:"Bloodletters mounted on Juggernauts of Khorne — combining the ferocity of a Bloodletter with the unstoppable mass of a Juggernaut. Causes terror in enemies. Daemonic Instability. Devastating charge: +1 Attack when charging in open ground, in addition to the normal charge bonus. The hardest-hitting cavalry unit in the game.",
+        upgrades:[], magic:["standards"] },
+      // ── WAR MACHINES ────────────────────────────────────────────────────
+      { id:"kh_skull_cannon", name:"Skull Cannon of Khorne", type:"Artillery",
+        atk:"1", hits:"3", armour:"5+", cmd:"-", size:1, pts:110, min:"-", max:1,
+        special:"Range 40cm, shoots 3 attacks. Skull shot: armour piercing — targets count their armour as one worse than normal. On a natural 6 to hit, that stand is destroyed outright with no saves. The Skull Cannon cannot be driven back by enemy shooting. Daemonic Instability. Counts as an Artillery unit for all rules.",
+        upgrades:[], magic:[] },
+      // ── GREATER DAEMON ──────────────────────────────────────────────────
+      { id:"kh_bloodthirster_unit", name:"Bloodthirster", type:"Monster",
+        atk:"8", hits:"6", armour:"4+", cmd:"-", size:1, pts:280, min:"-", max:1,
+        special:"The supreme daemon of Khorne. Flies (move 100cm). Causes terror. Daemonic Instability. If reduced to 4–5 hits remaining it is badly hurt: halved to 3 Hits/4 Attacks. Only available if the General is NOT the Bloodthirster. The most powerful monster stand in the game — 8 attacks with 4+ armour.",
+        upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // DAEMONS OF NURGLE — Plague Father, Lord of Decay
+  // Slowest but toughest. Regeneration. Diseased touch debuffs enemies.
+  // ══════════════════════════════════════════════════════════════════════════
+  daemons_nurgle: {
+    name:"Daemons of Nurgle", color:"#4a6e1a", bg:"#020400", accent:"#88cc22",
+    lore:"In the Garden of Nurgle, all things fester and bloom. His daemons are the most resilient in existence — death itself cannot stop them.",
+    playstyle:"The toughest daemon army. Plaguebearers are a wall of rot — their diseased touch forces enemies to fight at -1 Attack every round. Nurglings cannot be driven back and annoy enemy command. Plague Drones are flying cavalry that cause terror. Beasts of Nurgle regenerate hits in combat. The Great Unclean One is a vast, terrifying, regenerating monster-general. Your spells slow, weaken and disease the enemy. March forward, absorb punishment, and grind the foe into the mud.",
+    fluff:"Papa Nurgle bestows his gifts with infinite generosity. Plaguebearers count his blessings on stubby, rotting fingers as they shamble through the muck, their diseased blades weakening any foe foolish enough to trade blows. Nurglings swarm in giggling masses, impossible to shift. Beasts of Nurgle slither with horrifying enthusiasm, leaving trails of corrosive slime. Plague Drones drip with filth as they wheel overhead. And the Great Unclean One — vast, joyful and utterly disgusting — roars its paternal love as it regenerates every wound dealt to it and tramples another regiment into ruin.",
+    traits:["Plaguebearers: -1 Attack to all enemies in contact","Nurglings: immune to drive-back, disrupt command","Plague Drones: flying terror cavalry","Great Unclean One: regenerating monster-general"],
+    strengths:"Extraordinary resilience; Plaguebearers grind enemies down; regeneration keeps units fighting",
+    weaknesses:"Slowest daemon army (move 20cm); low attack values; Daemonic Instability",
+    generalCmd:8,
+    spells:[
+      { name:"Stream of Corruption", cast:"4+", range:"30cm",
+        desc:"A gout of plague-ridden bile erupts from the caster. Treat as 3 shooting attacks against a single enemy unit in the open or in combat. No armour saves are allowed. The target unit also suffers -1 to all its Attack rolls until the end of the following Combat phase — the corruption clings." },
+      { name:"Miasma of Pestilence", cast:"4+", range:"30cm",
+        desc:"A choking cloud of disease engulfs an enemy unit in combat with the Wizard. The target unit suffers -1 Attack in each round of combat for the rest of the battle. Multiple castings stack. The Wizard must be able to see the target." },
+      { name:"Plague Wind", cast:"5+", range:"N/A",
+        desc:"Cast only on an enemy unit in base contact with the Wizard's unit. A hurricane of plague-spores tears through the target — 4 attacks with no armour saves allowed. Any hits scored carry over as bonus attacks into the first round of that combat." },
+      { name:"Curse of the Leper", cast:"5+", range:"40cm",
+        desc:"Nurgle's mocking curse writhes into the flesh of the target. One enemy unit within range loses -1 to its Armour save (minimum 0, treated as unarmoured if reduced to 0) and -1 Attack for the remainder of the battle. Cannot affect units with no armour." },
+      { name:"Rot and Ruin", cast:"6+", range:"30cm",
+        desc:"The most terrible of Nurgle's gifts — an unstoppable rot that devours from within. Roll one D6 per stand in the target unit: each roll of 4+ removes one hit from that stand with no saves of any kind allowed. The unit cannot be driven back or pursue this turn." },
+    ],
+    units:[
+      // ── CHARACTERS ──────────────────────────────────────────────────────
+      { id:"nu_guo_general", name:"Great Unclean One (General)", type:"General",
+        atk:"+2", hits:"-", armour:"-", cmd:8, size:1, pts:185, min:1, max:1,
+        special:"Command range covers entire battlefield. Causes terror. Daemonic Instability. Regeneration: at the start of each of your Command phases, roll D6 — on a 4+ recover 1 lost hit. Can be given Wizard powers for +25pts (General AND Wizard — may take General or Wizard magic items). Adds +2 Attacks to any unit it joins. If reduced to 5–6 hits remaining it is badly hurt: halved to 4 Hits/4 Attacks.",
+        upgrades:[], magic:["devices"], greySeer:false },
+      { id:"nu_herald_nurgle", name:"Herald of Nurgle", type:"Hero",
+        atk:"+1", hits:"-", armour:"-", cmd:7, size:1, pts:75, min:"-", max:2,
+        special:"Command range 60cm. Daemonic Instability. Adds +1 Attack to any unit it joins. Disgustingly Resilient: if the Herald suffers a wound in combat, roll D6 on a 5+ ignore it. May be mounted on a Palanquin of Nurgle (+20pts, see mount entry).",
+        upgrades:[], magic:["weapons","devices"] },
+      { id:"nu_plaguesorcerer", name:"Plaguebearer Sorcerer", type:"Wizard",
+        atk:"+1", hits:"-", armour:"-", cmd:7, size:1, pts:80, min:"-", max:1,
+        special:"Command range 60cm. Casts Nurgle spells. Daemonic Instability. Noxious Presence: any enemy unit within 20cm of this character suffers -1 to all Command rolls when ordering units. Adds +1 Attack to any unit it joins.",
+        upgrades:[], magic:["weapons","devices"] },
+      { id:"nu_palanquin", name:"Palanquin of Nurgle", type:"Special Mount",
+        atk:"+1", hits:"-", armour:"-", cmd:"-", size:"-", pts:20, min:"-", max:1,
+        special:"Herald of Nurgle only. +1 additional Attack bonus. The unit the Herald joins causes terror. The Palanquin moves at Infantry pace (20cm).",
+        upgrades:[], magic:[] },
+      // ── CORE INFANTRY ───────────────────────────────────────────────────
+      { id:"nu_plaguebearers", name:"Plaguebearers", type:"Infantry",
+        atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:75, min:3, max:"-",
+        special:"Diseased Touch: every enemy unit in base contact with Plaguebearers fights at -1 Attack in every round of combat, not just the first. This applies even if the Plaguebearers are losing. Immune to terror (Nurgle's blessing removes all fear). Daemonic Instability. Move 20cm.",
+        upgrades:[], magic:["standards"] },
+      { id:"nu_nurglings", name:"Nurglings", type:"Infantry",
+        atk:"2", hits:"4", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:4,
+        special:"Crawling masses of tiny daemons. Cannot be driven back by shooting — they simply reform. Daemonic Instability. Infernal Giggling: enemy characters issuing orders to units within 20cm of a Nurglings stand suffer -1 Command. Cannot be given magic items. Move 20cm.",
+        upgrades:[], magic:[] },
+      // ── CAVALRY / FLYING ────────────────────────────────────────────────
+      { id:"nu_plague_drones", name:"Plague Drones", type:"Cavalry",
+        atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:150, min:"-", max:2,
+        special:"Plaguebearers mounted on Rot Flies — a terrifying fusion of daemon and plague-beast. Flies (move 80cm — slower than most flyers due to bulk). Causes terror. Daemonic Instability. Diseased Touch still applies — enemy in base contact fights at -1 Attack.",
+        upgrades:[], magic:["standards"] },
+      // ── MONSTERS ────────────────────────────────────────────────────────
+      { id:"nu_beasts_nurgle", name:"Beasts of Nurgle", type:"Monster",
+        atk:"5", hits:"5", armour:"5+", cmd:"-", size:3, pts:175, min:"-", max:1,
+        special:"Vast, slug-like creatures that ooze enthusiasm and toxic slime. Causes terror. Daemonic Instability. Regeneration: at the end of each round of combat, roll D6 — on a 4+ the Beasts recover 1 lost hit. Slime Trail: enemy units charging Beasts of Nurgle receive no charge bonus (+1 Attack) — the slime robs them of their momentum. Move 20cm.",
+        upgrades:[], magic:[] },
+      { id:"nu_guo_unit", name:"Great Unclean One", type:"Monster",
+        atk:"7", hits:"7", armour:"4+", cmd:"-", size:1, pts:290, min:"-", max:1,
+        special:"Causes terror. Daemonic Instability. Regeneration: at start of each Command phase, roll D6 — on a 4+ recover 1 hit. If reduced to 5–6 hits remaining it is badly hurt: halved to 4 Hits/4 Attacks. Only available if the General is NOT the Great Unclean One. One of the largest and most resilient monsters in the game.",
+        upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // DAEMONS OF TZEENTCH — Changer of Ways, Lord of Sorcery
+  // Most powerful magic. Horrors split on death. Flamers shoot AND move.
+  // ══════════════════════════════════════════════════════════════════════════
+  daemons_tzeentch: {
+    name:"Daemons of Tzeentch", color:"#1055b0", bg:"#000308", accent:"#40a0ff",
+    lore:"In the Realm of Chaos, Tzeentch laughs at all certainties. His daemons embody mutation, sorcery and the ever-shifting web of fate.",
+    playstyle:"The magic-heavy daemon army with the strongest spell list in the game. Pink Horrors are peculiar infantry — when a stand is destroyed, place a Blue Horror stand in its place for free, making them extremely hard to eliminate. Flamers bounce around the battlefield shooting armour-piercing warpfire in 360° arcs. Screamers fly over enemy units and slash them for free automatic hits. The Lord of Change is both your General and your most powerful Wizard simultaneously. Wear the enemy down with spells and Flamer fire before finishing in combat.",
+    fluff:"In the ever-shifting Realm of Chaos, Tzeentch laughs. His daemons are creatures of pure change — Pink Horrors writhe and cackle, hurling mutating fire with gleeful abandon, and when slain, split into Blue Horrors that continue the fight with bitter resentment. Flamers bounce with grotesque energy, spewing warpfire that melts armour and flesh alike. Screamers slash through the sky like living razors. Above all wheels the Lord of Change — vast, knowing, ancient — its inscrutable eyes already seeing how your opponent will lose before the first stand is placed.",
+    traits:["Strongest spell list — 5 unique spells","Pink Horrors split on death into Blue Horrors","Flamers: armour-piercing mobile shooting","Lord of Change: General + Wizard in one"],
+    strengths:"Unmatched magic power; Flamers provide excellent shooting; Horrors are very hard to truly destroy",
+    weaknesses:"Fragile core infantry; expensive units; Daemonic Instability; Lord of Change must fill both General and Wizard roles",
+    generalCmd:9,
+    spells:[
+      { name:"Bolt of Tzeentch", cast:"4+", range:"30cm",
+        desc:"A crackling bolt of pure warpfire screams from the caster's outstretched claw. 4 attacks against a single target — no armour saves are allowed. This spell can be cast against a unit in combat or in the open. The target unit can be driven back as normal." },
+      { name:"Treason of Tzeentch", cast:"4+", range:"40cm",
+        desc:"Tzeentch whispers treacherous thoughts into an enemy regiment. The target unit must immediately make a full move directly away from the nearest friendly unit, exactly as if driven back by shooting. No command roll is needed — the unit simply moves." },
+      { name:"Pandaemonium", cast:"5+", range:"30cm",
+        desc:"Chaos splits the target character's mind asunder. One enemy character within range cannot issue orders this turn for the remainder of the Command phase. Any orders the character has already issued this turn are immediately cancelled — units that were moving stop." },
+      { name:"Flickering Fire of Tzeentch", cast:"5+", range:"30cm",
+        desc:"Cascading warpflame engulfs the target. 6 attacks against a single unit — targets count their armour as one worse than normal (armour piercing). As a bonus, any friendly Flamer units within 20cm of the target may also make their normal shooting attacks against the same target this turn at no cost." },
+      { name:"Infernal Gateway", cast:"6+", range:"30cm",
+        desc:"Reality itself tears open, sucking the target partially into the howling warp. Roll 2D6 — the result equals the number of attacks made against the unit with absolutely no armour saves allowed. Any stands that survive are left confused and cannot act this turn." },
+    ],
+    units:[
+      // ── CHARACTERS ──────────────────────────────────────────────────────
+      { id:"tz_loc_general", name:"Lord of Change (General)", type:"General",
+        atk:"+2", hits:"-", armour:"-", cmd:9, size:1, pts:200, min:1, max:1,
+        special:"Command range covers entire battlefield. Flies (move 100cm). Causes terror. Daemonic Instability. Master Sorcerer: the Lord of Change acts as both General AND Wizard — it can cast spells and can be given magic items restricted to either a General or a Wizard. Adds +2 Attacks to any unit it joins. If reduced to 4–5 hits remaining it is badly hurt: halved to 3 Hits/4 Attacks.",
+        upgrades:[], magic:["devices","weapons"], greySeer:true },
+      { id:"tz_herald_tz", name:"Herald of Tzeentch", type:"Hero",
+        atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:85, min:"-", max:2,
+        special:"Command range 60cm. Daemonic Instability. Adds +1 Attack to any unit it joins. Capricious Crest: the Herald may attempt to cast one Tzeentch spell per turn as if it were a Wizard — roll D6, on a 4+ the spell is cast. May be mounted on a Disc of Tzeentch (+15pts, see mount entry).",
+        upgrades:[], magic:["weapons","devices"] },
+      { id:"tz_sorcerer_tz", name:"Tzeentch Sorcerer", type:"Wizard",
+        atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1,
+        special:"Command range 60cm. Casts Tzeentch spells. Daemonic Instability. Master of Fate: once per turn, the Sorcerer may re-roll a single spell-casting die before the result is applied. Adds +1 Attack to any unit it joins.",
+        upgrades:[], magic:["weapons","devices"] },
+      { id:"tz_disc_mount", name:"Disc of Tzeentch", type:"Special Mount",
+        atk:"+1", hits:"-", armour:"-", cmd:"-", size:"-", pts:15, min:"-", max:1,
+        special:"Herald of Tzeentch only. +1 Attack bonus. The Herald gains flying movement (100cm). A constantly shifting disc of crystallised change.",
+        upgrades:[], magic:[] },
+      // ── CORE INFANTRY ───────────────────────────────────────────────────
+      { id:"tz_pink_horrors", name:"Pink Horrors", type:"Infantry",
+        atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:3, max:"-",
+        special:"Magic Resistance: spells cast against a unit containing Pink Horrors are at -1 to their casting roll. Split: when a Pink Horror stand is removed as a casualty, immediately and for free place one Blue Horror stand in base contact with the unit — these fight as normal (Atk 2, Hits 3, Armour 0). This makes Pink Horrors extremely difficult to truly eliminate. Daemonic Instability.",
+        upgrades:[], magic:["standards"] },
+      { id:"tz_blue_horrors", name:"Blue Horrors", type:"Infantry",
+        atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:30, min:"-", max:"-",
+        special:"Formed from the bilious spite of slain Pink Horrors. They appear for free when Pink Horror stands are destroyed (see Pink Horrors). Cannot be voluntarily added to your roster as normal units — they only enter play via the Split rule. Daemonic Instability. Cannot be given magic items.",
+        upgrades:[], magic:[] },
+      { id:"tz_flamers", name:"Flamers of Tzeentch", type:"Infantry",
+        atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:90, min:"-", max:2,
+        special:"Warpfire Shooting: Flamers shoot 2 attacks per stand at 20cm range with 360° line of sight — they can shoot targets in any direction. Armour Piercing: targets count their armour save as one worse than normal. Bounding Leap: Flamers move as Cavalry (30cm) despite being classed as Infantry. Daemonic Instability. Cannot be driven back by enemy shooting.",
+        upgrades:[], magic:[] },
+      // ── MONSTERS ────────────────────────────────────────────────────────
+      { id:"tz_screamers", name:"Screamers of Tzeentch", type:"Monster",
+        atk:"2", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:1,
+        special:"Flies (move 100cm). Based on long edge like infantry. Slashing Attack: whenever Screamers move over (fly through) an enemy unit during the Movement phase, that unit immediately suffers D3 automatic hits with no armour saves — the Screamers' razor-sharp bodies slice through anything below them. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"tz_loc_unit", name:"Lord of Change", type:"Monster",
+        atk:"7", hits:"6", armour:"4+", cmd:"-", size:1, pts:285, min:"-", max:1,
+        special:"Flies (move 100cm). Causes terror. Daemonic Instability. If reduced to 4–5 hits remaining it is badly hurt: halved to 3 Hits/4 Attacks. Only available if the General is NOT the Lord of Change. A colossal sorcerer-daemon of immense power.",
+        upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // DAEMONS OF SLAANESH — Dark Prince, Lord of Excess
+  // Fastest army. Seductive spells disrupt command. Fiends cripple orders.
+  // ══════════════════════════════════════════════════════════════════════════
+  daemons_slaanesh: {
+    name:"Daemons of Slaanesh", color:"#8822aa", bg:"#050008", accent:"#dd66ff",
+    lore:"Speed, sensation and excess without limit. The daemons of Slaanesh strike before the enemy can react, and their spells make resistance feel futile.",
+    playstyle:"The fastest daemon army — Daemonettes move 30cm, Seekers move 40cm, and even the Keeper of Secrets moves 40cm. Daemonettes are fragile but their Rending Claws grant +1 Attack on top of the normal charge bonus, making the charge devastating. Seekers are the fastest cavalry in the entire game. Fiends radiate Soporific Musk that imposes -1 Command on all nearby enemy orders. Your spells force enemy units to move involuntarily, reduce their attacks, and paralyse enemy characters. Speed is your weapon — dictate the terms of every engagement.",
+    fluff:"Where Slaanesh's daemons pass, perfection and horror become indistinguishable. Daemonettes glide forward with inhuman grace, their razor-sharp claws leaving wounds that feel disturbingly like pleasure. Seekers mounted on Steeds of Slaanesh can outmanoeuvre any cavalry in the world. Fiends drift through the air on a cloud of soporific musk that leaves enemy commanders dull and hesitant. And the Keeper of Secrets — six-armed, towering, swift beyond all reason — embodies the Dark Prince's eternal promise that ecstasy and agony are merely different words for the same perfect feeling.",
+    traits:["Daemonettes move 30cm — fastest daemon infantry","Seekers move 40cm — fastest cavalry in the game","Fiends: -1 Command to all enemy orders nearby","Slaanesh spells force movement and paralyse characters"],
+    strengths:"Unmatched speed; devastating charges; Fiends persistently cripple enemy command efficiency",
+    weaknesses:"Very low armour on most units; fragile infantry; must engage on your terms or suffer badly",
+    generalCmd:9,
+    spells:[
+      { name:"Pavane of Slaanesh", cast:"4+", range:"40cm",
+        desc:"Slaanesh forces an enemy unit to perform a grotesque, involuntary dance. The target unit immediately moves D6×5cm in a random direction (roll scatter), exactly as if driven back — ignoring terrain and other units. The unit is not confused by this move and does not take damage from the movement, but cannot be controlled this turn." },
+      { name:"Acquiescence", cast:"4+", range:"30cm",
+        desc:"A wave of languid, irresistible pleasure washes over the target unit. The enemy unit suffers -1 Attack for the following Combat phase as its warriors struggle to maintain their will to fight. This does not affect units immune to psychology." },
+      { name:"Cacophonic Choir", cast:"5+", range:"30cm",
+        desc:"The Sorcerer screams a chord of impossible, mind-destroying beauty. The target unit takes 3 attacks with no armour saves. If any hits are scored, the unit is immediately confused and cannot receive orders for the rest of this turn." },
+      { name:"Lash of Slaanesh", cast:"5+", range:"30cm",
+        desc:"A crackling tendril of psychic energy lashes the target. 4 attacks with no armour saves. In addition, any unit struck by this spell cannot be given orders for the remainder of this Command phase — the lash severs the chain of command momentarily." },
+      { name:"Phantasmagoria", cast:"6+", range:"N/A",
+        desc:"Cast on a friendly Slaanesh unit currently in combat. Slaanesh's visions of excess overwhelm the enemy — for the following Combat phase, all enemy units in base contact with the target unit fight at -2 Attacks instead of the normal -1 from the Acquiescence effect. This is a separate, stackable effect." },
+    ],
+    instabilityTable:[
+      { roll:"1",   result:"Abandoned by Excess",       effect:"Lose 1 additional stand — sensation overwhelms them and they dissolve back into the warp." },
+      { roll:"2–3", result:"Confusion Reigns",           effect:"Unit becomes confused — cannot receive orders or act on initiative this turn. Clear confusion at end of turn." },
+      { roll:"4–5", result:"Pleasured into Endurance",  effect:"No effect. The pain is simply another sensation to be savoured." },
+      { roll:"6",   result:"Dark Prince's Favour",      effect:"Recover 1 previously lost stand. Slaanesh calls a daemon back for one more perfect moment of sensation." },
+    ],
+    units:[
+      // ── CHARACTERS ──────────────────────────────────────────────────────
+      { id:"sl_keeper_general", name:"Keeper of Secrets (General)", type:"General",
+        atk:"+3", hits:"-", armour:"-", cmd:9, size:1, pts:185, min:1, max:1,
+        special:"Command range covers entire battlefield. Causes terror. Daemonic Instability. Swift: move 40cm (faster than any other General-type). Can be given Wizard powers for +25pts — it becomes both General AND Wizard and may take General or Wizard magic items. Adds +3 Attacks to any unit it joins. If reduced to 4–5 hits remaining it is badly hurt: halved to 3 Hits/4 Attacks.",
+        upgrades:[], magic:["devices"] },
+      { id:"sl_herald_sl", name:"Herald of Slaanesh", type:"Hero",
+        atk:"+2", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2,
+        special:"Command range 60cm. Daemonic Instability. Adds +2 Attacks to any unit it joins. Sinuous Grace: when the Herald's unit charges, enemy units in base contact do not benefit from any defensive formation bonuses against that charge. May be mounted on a Steed of Slaanesh (+15pts, see mount entry).",
+        upgrades:[], magic:["weapons","devices"] },
+      { id:"sl_sorcerer_sl", name:"Slaanesh Sorcerer", type:"Wizard",
+        atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:85, min:"-", max:1,
+        special:"Command range 60cm. Casts Slaanesh spells. Daemonic Instability. Seductive Presence: the Sorcerer adds +1 to all spell-casting rolls when within 20cm of an enemy unit — their proximity to the enemy heightens Slaanesh's influence. Adds +1 Attack to any unit it joins.",
+        upgrades:[], magic:["weapons","devices"] },
+      { id:"sl_steed_mount", name:"Steed of Slaanesh", type:"Special Mount",
+        atk:"+1", hits:"-", armour:"-", cmd:"-", size:"-", pts:15, min:"-", max:1,
+        special:"Herald of Slaanesh only. +1 Attack bonus. Move 40cm (Cavalry speed). The Steed's supernatural swiftness allows the Herald to keep pace with the fastest units in the army.",
+        upgrades:[], magic:[] },
+      // ── CORE INFANTRY ───────────────────────────────────────────────────
+      { id:"sl_daemonettes", name:"Daemonettes", type:"Infantry",
+        atk:"4", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:3, max:"-",
+        special:"Swift: Daemonettes move 30cm — faster than any normal infantry. Rending Claws: in the first round of any combat (including counter-charges), Daemonettes add +1 Attack in addition to the normal charge bonus — their claws find every gap in armour. Daemonic Instability. No armour save — their speed is their protection.",
+        upgrades:[], magic:["standards"] },
+      // ── CAVALRY ─────────────────────────────────────────────────────────
+      { id:"sl_seekers", name:"Seekers of Slaanesh", type:"Cavalry",
+        atk:"4", hits:"3", armour:"0", cmd:"-", size:3, pts:115, min:"-", max:3,
+        special:"Daemonettes mounted on Steeds of Slaanesh — the fastest cavalry unit in the entire game. Move 40cm. Rending Claws: +1 Attack in the first combat round (same as Daemonettes on foot). Daemonic Instability. No armour — they rely entirely on speed and aggression. Can outmanoeuvre anything in the game.",
+        upgrades:[], magic:["standards"] },
+      // ── MONSTERS ────────────────────────────────────────────────────────
+      { id:"sl_fiends", name:"Fiends of Slaanesh", type:"Monster",
+        atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:120, min:"-", max:1,
+        special:"Soporific Musk: any enemy unit within 20cm of a Fiends stand suffers -1 to all Command rolls when being issued orders — the musk clouds the minds of enemy commanders. This is a persistent, passive ability — it cannot be dispelled. Flies (move 80cm). Based on long edge like infantry. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"sl_ks_unit", name:"Keeper of Secrets", type:"Monster",
+        atk:"8", hits:"6", armour:"4+", cmd:"-", size:1, pts:280, min:"-", max:1,
+        special:"Causes terror. Daemonic Instability. Swift: move 40cm. If reduced to 4–5 hits remaining it is badly hurt: halved to 3 Hits/4 Attacks. Only available if the General is NOT the Keeper of Secrets. Six-armed and breathtakingly fast — 8 attacks on a 4+ armour save with 40cm movement.",
+        upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  vampire_counts: {
+    name:"Vampire Counts", color:"#6a0a6a", bg:"#050005", accent:"#b020b0",
+    lore:"Ancient vampires commanding legions of undead in an eternal crusade to devour the living.",
+    playstyle:"Undead immunity makes this army psychologically unbreakable. The Vampire Lord doubles as a Wizard. Ethereal Hosts ignore armour entirely. Build a solid infantry core and use Dire Wolves and Fell Bats to threaten flanks.",
+    fluff:"In the cursed lands of Sylvania dwell the Vampire Counts \u2014 ancient undead nobles who rule over legions of risen dead. Driven by insatiable hunger and iron will, they marshal skeletal warriors, shambling Zombies, spectral Wraith-hosts and galloping Black Knights in a relentless crusade against the living. At their head stands the Vampire Lord \u2014 warrior, sorcerer and monster in one immortal form.",
+    traits:["Undead immunity", "Vampire Lord also a Wizard", "Black Knights cavalry", "Ethereal Host ignores armour"],
+    strengths:"Undead immunity, Ethereal Hosts, versatile characters",
+    weaknesses:"Many units have low attack values",
+    generalCmd:9,
+    units:[
+      { id:"vc_general", name:"Vampire Lord", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:150, min:1, max:1, special:"Command range covers entire battlefield. Also a Wizard: casts spells. Can take General OR Wizard magic items.", upgrades:[], magic:["weapons","devices"] },
+      { id:"vc_vampire", name:"Vampire", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"vc_necromancer", name:"Necromancer", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"vc_wingedNightmare", name:"Winged Nightmare", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"Any character may ride. Flies (move 100cm). Unit causes terror.", upgrades:[], magic:[] },
+      { id:"vc_blackCoach", name:"Black Coach", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:40, min:"-", max:1, special:"Vampire Lord or Vampire may ride. +1 Attack. Unit causes terror.", upgrades:[], magic:[] },
+      { id:"vc_skeletons", name:"Skeletons", type:"Infantry", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:30, min:2, max:"-", special:"Undead: no initiative, immune to terror penalty/confusion/enemy-within-20cm penalty.", upgrades:[], magic:["standards","weapons"] },
+      { id:"vc_zombies", name:"Zombies", type:"Infantry", atk:"2", hits:"4", armour:"0", cmd:"-", size:3, pts:35, min:2, max:"-", special:"Undead.", upgrades:[], magic:["standards","weapons"] },
+      { id:"vc_ghouls", name:"Ghouls", type:"Infantry", atk:"4", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:"-", max:"-", special:"Mortal troops — not Undead. Normal rules apply.", upgrades:[], magic:["standards","weapons"] },
+      { id:"vc_graveGuard", name:"Grave Guard", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:"-", max:4, special:"Undead. Elite skeletons.", upgrades:[], magic:["standards","weapons"] },
+      { id:"vc_etherealHost", name:"Ethereal Host", type:"Infantry", atk:"3", hits:"4", armour:"0", cmd:"-", size:3, pts:90, min:"-", max:2, special:"Undead. Attacks always hit on 4+ regardless of status. Cannot be driven back. Causes terror. Cannot have magic items.", upgrades:[], magic:[] },
+      { id:"vc_blackKnights", name:"Black Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:4, special:"Undead. Heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"vc_direWolves", name:"Dire Wolves", type:"Cavalry", atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:4, special:"Undead. +1 Attack when charging in open (like monster). Cannot have magic items.", upgrades:[], magic:[] },
+      { id:"vc_fellBats", name:"Fell Bats", type:"Monster", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:65, min:"-", max:1, special:"Undead. Flies. Based on long edge. Can home back to character.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  araby: {
+    name:"Araby", color:"#c07010", bg:"#080500", accent:"#e0a020",
+    lore:"Proud desert warriors of the Southern lands, commanding war elephants, magic carpet riders and powerful djinn.",
+    playstyle:"An exotic, fast-moving army with unique options. Djinn-mounted wizards can shoot and fight. Magic Carpet cavalry fly. Elephants cause terror but can stampede. Blend missile cavalry harassment with elephant charges.",
+    fluff:"South of the Old World lie the golden desert kingdoms of Araby \u2014 a land of ancient learning, extravagant wealth and powerful magic. Their armies march behind banners of silk, mounted on swift desert horses or lumbering War Elephants, their sorcerers carried aloft on Flying Carpets or bound Djinn. To face Araby is to face mystery.",
+    traits:["Flying Carpets", "War Elephants", "Djinn sorcery", "Good cavalry mix"],
+    strengths:"Unique flying options, elephants cause terror",
+    weaknesses:"Elephants can stampede; coordination is complex",
+    generalCmd:9,
+    units:[
+      { id:"ar_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"ar_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ar_wizard", name:"Wizard", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ar_flyingCarpet", name:"Flying Carpet", type:"Chariot Mount", atk:"+0", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Hero/Wizard may ride. Flies (move 100cm).", upgrades:[], magic:[] },
+      { id:"ar_elephant_mount", name:"Elephant Mount", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:65, min:"-", max:1, special:"General/Hero/Wizard may ride. +2 Attacks. Causes terror.", upgrades:[], magic:[] },
+      { id:"ar_djinn", name:"Djinn", type:"Monstrous Mount", atk:"+2/+2", hits:"-", armour:"-", cmd:"-", size:1, pts:90, min:"-", max:1, special:"General/Hero/Wizard may ride. +2 Attacks in combat and +2 shooting attacks. Flies.", upgrades:[], magic:[] },
+      { id:"ar_spearmen", name:"Spearmen", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:45, min:2, max:"-", special:"Core infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ar_bowmen", name:"Bowmen", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:2, max:"-", special:"Archers.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ar_guards", name:"Guards", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:65, min:"-", max:4, special:"Sultan's elite guard. First order from General each turn at Command 10 (no penalties).", upgrades:[], magic:["standards","weapons"] },
+      { id:"ar_knights", name:"Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:"-", special:"Heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ar_desertRiders", name:"Desert Riders", type:"Cavalry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:75, min:"-", max:"-", special:"Shoot 15cm, 360° vision.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ar_camelRiders", name:"Camel Riders", type:"Cavalry", atk:"3/1", hits:"3", armour:"5+", cmd:"-", size:3, pts:100, min:"-", max:2, special:"Ignore distance command modifiers. -1 Command penalty for all orders to them.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ar_magicCarpets", name:"Magic Carpets", type:"Cavalry", atk:"1/2", hits:"3", armour:"6+", cmd:"-", size:3, pts:85, min:"-", max:1, special:"Flying cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ar_elephants", name:"Elephants", type:"Monster", atk:"5", hits:"4", armour:"5+", cmd:"-", size:3, pts:200, min:"-", max:1, special:"Causes terror. Stampede: if fails order, rolls on stampede chart.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  dogs_of_war: {
+    name:"Dogs of War", color:"#808020", bg:"#050500", accent:"#c0c030",
+    lore:"Mercenary companies from across the Old World, hiring out to the highest bidder with diverse troops and tactics.",
+    playstyle:"The most diverse army in the game. You can field Dwarfs, Ogres, Birdmen, Giants and Knights together. The Paymaster's Pay Wagon provides morale bonuses. Build a balanced force exploiting the best of every culture.",
+    fluff:"Coin is the language that all people speak. The Dogs of War are mercenary companies from every corner of the Old World, selling their blades to whoever can afford them. Tilean pike blocks march beside Norse Marauders; Dwarf engineers maintain the Galloper Guns; even Ogres hire out for plunder. Led by their Paymaster, these disparate warriors fight with surprising cohesion when the gold is good.",
+    traits:["Mixed races in one army", "Dwarfs and Ogres available", "Pikemen formation bonus", "Paymaster morale rules"],
+    strengths:"Incredible unit variety, Dwarfs and Ogres in one list",
+    weaknesses:"No single specialisation; coordination complex",
+    generalCmd:9,
+    units:[
+      { id:"dow_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"dow_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"dow_paymaster", name:"Paymaster", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm. Special Paymaster rules.", upgrades:[], magic:["weapons","devices"] },
+      { id:"dow_wizard", name:"Wizard", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"dow_griffon", name:"Griffon", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"General/Hero/Wizard may ride. Flies (move 100cm). Causes terror.", upgrades:[], magic:[] },
+      { id:"dow_payWagon", name:"Pay Wagon", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:20, min:"-", max:1, special:"Paymaster may ride. +1 Attack. Special morale bonus.", upgrades:[], magic:[] },
+      { id:"dow_pikemen", name:"Pikemen", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:50, min:2, max:"-", special:"Never defended/fortified in dense terrain. Defended vs charging cavalry/chariots to front in first round. Based as cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dow_crossbowmen", name:"Crossbowmen", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:2, max:"-", special:"Standard crossbowmen.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dow_handgunners", name:"Handgunners", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:65, min:"-", max:2, special:"Armour piercing.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dow_swordsmen", name:"Swordsmen", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:45, min:"-", max:4, special:"Standard infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dow_ogres", name:"Ogres", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:105, min:"-", max:1, special:"Must charge humans on initiative.", upgrades:[], magic:[] },
+      { id:"dow_dwarfs", name:"Dwarfs", type:"Infantry", atk:"3", hits:"4", armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:2, special:"Tough mercenary dwarfs.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dow_marauders", name:"Marauders", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:"-", max:2, special:"Northern mercenaries.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dow_lightCavalry", name:"Light Cavalry", type:"Cavalry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:75, min:"-", max:4, special:"Shoot 15cm, 360° vision.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dow_knights", name:"Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:2, special:"Heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"dow_galloperguns", name:"Galloper Guns", type:"Artillery", atk:"1/2+bounce", hits:"2", armour:"0", cmd:"-", size:2, pts:85, min:"-", max:1, special:"Light cannon. Move 20cm (10cm half-pace).", upgrades:[], magic:[] },
+      { id:"dow_giant", name:"Giant", type:"Monster", atk:"8", hits:"8", armour:"5+", cmd:"-", size:1, pts:135, min:"-", max:1, special:"Causes terror. Separate order. Giant Goes Wild if order fails.", upgrades:[], magic:[] },
+      { id:"dow_birdmen", name:"Birdmen of Catrazza", type:"Infantry", atk:"2/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:85, min:"-", max:1, special:"Flies. Shoot 15cm.", upgrades:[], magic:["standards","weapons"] },
+    ],
+    upgradeRules:{}
+  },
+
+  ogre_kingdoms: {
+    name:"Ogre Kingdoms", color:"#a05020", bg:"#060300", accent:"#e07030",
+    lore:"Massive, brutal warriors from the mountains who eat everything and fear nothing.",
+    playstyle:"Pure aggression. Bull Ogres must charge humans on initiative \u2014 use this as a feature, not a bug. Ironguts and Rhinox Riders are devastating. Gnoblars screen your approach cheaply. Every engagement should end in one round.",
+    fluff:"High in the mountains east of the Old World dwell the Ogres \u2014 massive, brutish beings driven by an insatiable hunger. They eat everything: livestock, enemies, the occasional ally. Rhinox-riding Maneaters charge like siege weapons; Yhetees howl through snowstorms; Gorgers emerge from underground to attack where least expected.",
+    traits:["All units hit like monsters", "Must charge humans on initiative", "Rhinox Riders cause terror", "Gnoblars as cheap filler"],
+    strengths:"Extremely high damage output, terrifying cavalry",
+    weaknesses:"Forced charges can be exploited; limited shooting",
+    generalCmd:9,
+    units:[
+      { id:"ok_tyrant", name:"Tyrant", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"ok_bruiser", name:"Bruiser", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ok_butcher", name:"Butcher", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ok_bullRhinox", name:"Bull Rhinox", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:65, min:"-", max:1, special:"Tyrant/Bruiser/Butcher may ride. +2 Attacks. Causes terror.", upgrades:[], magic:[] },
+      { id:"ok_bullOgres", name:"Bull Ogres", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:105, min:2, max:"-", special:"Must charge humans on initiative.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ok_leadbelchers", name:"Leadbelchers", type:"Infantry", atk:"3/2", hits:"4", armour:"6+", cmd:"-", size:3, pts:90, min:"-", max:2, special:"Cannon range 15cm, 2 attacks. -1 armour saves against their shots.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ok_ironguts", name:"Ironguts", type:"Infantry", atk:"4", hits:"4", armour:"4+", cmd:"-", size:3, pts:140, min:"-", max:2, special:"Elite Ogre warriors.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ok_yhetees", name:"Yhetees", type:"Infantry", atk:"5", hits:"4", armour:"0", cmd:"-", size:3, pts:90, min:"-", max:2, special:"+1 Attack when charging in open (like monster). Can only support/be supported by other Yhetees. Must pursue.", upgrades:[], magic:[] },
+      { id:"ok_gnoblars", name:"Gnoblars", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:30, min:"-", max:4, special:"Shoot 15cm (bows). Cannot be supported by other types. Cannot have magic items. Characters cannot join.", upgrades:[], magic:[] },
+      { id:"ok_gorgers", name:"Gorgers", type:"Infantry", atk:"5", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"-1 Command penalty. Ignore distance modifiers. Can infiltrate. Can pursue any type.", upgrades:[], magic:[] },
+      { id:"ok_rhinoxRiders", name:"Rhinox Riders", type:"Cavalry", atk:"5", hits:"4", armour:"5+", cmd:"-", size:3, pts:200, min:"-", max:1, special:"Devastating heavy cavalry. Causes terror.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ok_sabretusks", name:"Sabretusks", type:"Cavalry", atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:1, special:"Fast hunting cats.", upgrades:[], magic:[] },
+      { id:"ok_slaveGiant", name:"Slave Giant", type:"Monster", atk:"8", hits:"8", armour:"5+", cmd:"-", size:1, pts:135, min:"-", max:1, special:"Causes terror. Separate order. Giant Goes Wild if order fails.", upgrades:[], magic:[] },
+      { id:"ok_scrapLauncher", name:"Scrap Launcher", type:"Artillery", atk:"1/3", hits:"3", armour:"0", cmd:"-", size:1, pts:75, min:"-", max:1, special:"Stone Thrower.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  albion: {
+    name:"Albion", color:"#507030", bg:"#030502", accent:"#80b040",
+    lore:"Mist-shrouded isle of fierce barbarian chieftains, druids, giants and great wolfhounds.",
+    playstyle:"A classic barbarian army of chariots, cavalry and monster support. Wolfhounds are cheap and fast. Chariots are required minimums and form the offensive core. Giants add shock value. Simple, direct, effective.",
+    fluff:"Lost in the mists of the northern ocean lies Albion \u2014 a wild, rain-soaked isle of standing stones, ancient power and fierce tribal warriors. The natives paint themselves for war and hurl themselves at invaders from chariots and horseback with savage ferocity. Giant wolfhounds the size of ponies run at their sides. Albion may seem barbaric \u2014 but it has never been conquered.",
+    traits:["Chariots as core", "Massive wolfhound packs", "Giants available", "Druid magic"],
+    strengths:"Strong chariots, cheap wolfhounds, giant support",
+    weaknesses:"Limited range and shooting options",
+    generalCmd:9,
+    units:[
+      { id:"al_general", name:"Chieftain General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"al_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"al_druid", name:"Druid", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"al_giantEagle_mount", name:"Giant Eagle Mount", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:20, min:"-", max:1, special:"General/Hero/Druid may ride. Flies (move 100cm).", upgrades:[], magic:[] },
+      { id:"al_chariot_mount", name:"Chariot Mount", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Hero/Druid may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"al_warriors", name:"Warriors", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:2, max:"-", special:"Core Albion warriors.", upgrades:[], magic:["standards","weapons"] },
+      { id:"al_slingers", name:"Slingers", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:1, max:6, special:"Shoot 15cm.", upgrades:[], magic:["standards","weapons"] },
+      { id:"al_ogres", name:"Ogres", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:105, min:"-", max:2, special:"Must charge humans on initiative.", upgrades:[], magic:[] },
+      { id:"al_wolfhounds", name:"Wolfhounds", type:"Cavalry", atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:6, special:"Fast war hounds.", upgrades:[], magic:[] },
+      { id:"al_cavalry", name:"Cavalry", type:"Cavalry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:4, special:"Albion horse cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"al_chariots", name:"Chariots", type:"Chariot", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:95, min:1, max:4, special:"+1 Attack when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"al_giant", name:"Giant", type:"Monster", atk:"8", hits:"8", armour:"5+", cmd:"-", size:1, pts:135, min:"-", max:1, special:"Causes terror. Separate order. Giant Goes Wild if order fails.", upgrades:[], magic:[] },
+      { id:"al_giantEagles", name:"Giant Eagles", type:"Monster", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:70, min:"-", max:1, special:"Flies.", upgrades:[], magic:[] },
+      { id:"al_fenbeast", name:"Fenbeast", type:"Monster", atk:"6", hits:"4", armour:"5+", cmd:"-", size:1, pts:"-", min:"-", max:1, special:"Special individual unit. Cannot be fielded normally — see special rules.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  goblin_army: {
+    name:"Goblin Army", color:"#1a6010", bg:"#010400", accent:"#50b020",
+    lore:"A vast all-goblin horde of wolf riders, night goblins, pump wagons and lumbering giants.",
+    playstyle:"Masses of cheap goblins backed by hard-hitting Trolls and chaotic Pump Wagons. Win by sheer volume and troll-fuelled brawls in the middle. Pump Wagons are hilarious and occasionally devastating.",
+    fluff:"When left entirely to their own devices \u2014 without even Orcs to boss them about \u2014 Goblins organise. Sort of. A Goblin Warboss of sufficient cunning can marshal Wolf Rider hordes, Night Goblin mobs clutching their beloved Squigs, lumbering Trolls and the utterly unpredictable Pump Wagons into a force perfectly capable of burying an enemy in sheer green numbers.",
+    traits:["All-goblin force", "Pump Wagons auto-move", "Trolls regenerate", "Low command values"],
+    strengths:"Very cheap troops, trolls, unpredictable pump wagons",
+    weaknesses:"Low stats, low command values",
+    generalCmd:8,
+    units:[
+      { id:"ga_general", name:"Goblin Warboss", type:"General", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"ga_hero", name:"Goblin Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:4, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ga_shaman", name:"Goblin Shaman", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:6, size:1, pts:30, min:"-", max:2, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ga_chariot_mount", name:"Chariot Mount", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"Warboss/Hero/Shaman may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"ga_wyvern", name:"Wyvern", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"Warboss/Hero/Shaman may ride. Flies (move 100cm). Unit causes terror.", upgrades:[], magic:[] },
+      { id:"ga_goblins", name:"Goblins", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:30, min:4, max:"-", special:"Shoot 15cm. Up to 2 per 1000pts replaced by Squig Herds.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ga_squigHerd", name:"Squig Herd", type:"Infantry", atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:30, min:"-", max:"-", special:"Counts toward Goblin min/max (max 2 per 1000pts).", upgrades:[], magic:["standards","weapons"] },
+      { id:"ga_trolls", name:"Trolls", type:"Infantry", atk:"5", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:4, special:"Regenerate 1 hit per combat round. Command penalty for distance doubled.", upgrades:[], magic:[] },
+      { id:"ga_wolfRiders", name:"Wolf Riders", type:"Cavalry", atk:"2/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:2, max:"-", special:"Shoot 15cm, 360° vision.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ga_wolfChariots", name:"Wolf Chariots", type:"Chariot", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:80, min:"-", max:4, special:"+1 Attack when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ga_pumpWagon", name:"Pump Wagon", type:"Chariot", atk:"D6", hits:"3", armour:"5+", cmd:"-", size:1, pts:50, min:"-", max:2, special:"Auto-moves 1D6×10cm (no order needed). D6 attacks when charging/pursuing. Cannot brigade. Cannot be driven back. No VPs if destroyed.", upgrades:[], magic:[] },
+      { id:"ga_giant", name:"Giant", type:"Monster", atk:"8", hits:"8", armour:"5+", cmd:"-", size:1, pts:135, min:"-", max:1, special:"Causes terror. Separate order. Giant Goes Wild if order fails.", upgrades:[], magic:[] },
+      { id:"ga_doomDiver", name:"Doom Diver", type:"Artillery", atk:"1/3", hits:"2", armour:"0", cmd:"-", size:2, pts:80, min:"-", max:1, special:"Stone Thrower.", upgrades:[], magic:[] },
+      { id:"ga_spearChukka", name:"Spear Chukka", type:"Artillery", atk:"1/2+skewer", hits:"2", armour:"0", cmd:"-", size:2, pts:65, min:"-", max:2, special:"Bolt Thrower.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  witch_hunters: {
+    name:"Witch Hunters", color:"#505050", bg:"#030303", accent:"#909090",
+    lore:"Fanatical warriors of righteousness hunting Chaos and Undead with purging fire and righteous steel.",
+    playstyle:"A specialised Empire variant optimised against Chaos and Undead opponents. Zealots charge those enemies for free and fight with bonus attacks. Stack Handgunners for armour-piercing fire. Best against specific matchups.",
+    fluff:"In a world riven by Chaos corruption and undead horror, the Witch Hunters stand as humanity's last line of sanity. Armed with pistols, torches and unshakeable faith, they lead armies of fanatic Zealots who gain supernatural courage when facing Chaos or the Undead \u2014 fighting beings that would break ordinary soldiers with righteous fury instead of fear.",
+    traits:["Zealots bonus vs Chaos/Undead", "Heavy on Handgunners", "Warrior Priest spells", "Righteous fury theme"],
+    strengths:"Zealot bonuses vs Chaos/Undead, lots of handguns",
+    weaknesses:"Mediocre against non-Chaos/Undead opponents",
+    generalCmd:9,
+    units:[
+      { id:"wh_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"wh_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"wh_warriorPriest", name:"Warrior Priest", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:55, min:"-", max:1, special:"Command range 60cm. Casts spells. Spells affect Chaos and Undead.", upgrades:[], magic:["weapons","devices"] },
+      { id:"wh_zealots", name:"Zealots", type:"Infantry", atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:35, min:3, max:"-", special:"+1 Attack in first round vs Chaos/Undead. Always charge Chaos/Undead on initiative. Must pursue Chaos/Undead.", upgrades:[], magic:["standards","weapons"] },
+      { id:"wh_halberdiers", name:"Halberdiers", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:45, min:"-", max:4, special:"Standard infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"wh_crossbowmen", name:"Crossbowmen", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:"-", max:2, special:"Standard crossbowmen.", upgrades:[], magic:["standards","weapons"] },
+      { id:"wh_handgunners", name:"Handgunners", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:65, min:"-", max:4, special:"Armour piercing: enemy armour one worse.", upgrades:[], magic:["standards","weapons"] },
+      { id:"wh_flagellants", name:"Flagellants", type:"Infantry", atk:"5", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:"-", max:4, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Must pursue. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
+      { id:"wh_warhounds", name:"Warhounds", type:"Infantry", atk:"3", hits:"3", armour:"0 or 6+", cmd:"-", size:"+1", pts:20, min:"-", max:"-", special:"Attached to any infantry as extra stand. Unit can pursue cavalry/chariots.", upgrades:[], magic:[] },
+      { id:"wh_knights", name:"Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"Standard heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"wh_pistoliers", name:"Pistoliers", type:"Cavalry", atk:"3/1", hits:"3", armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:1, special:"Shoot 15cm, 360° vision.", upgrades:[], magic:[] },
+      { id:"wh_cannon", name:"Cannon", type:"Artillery", atk:"1/2+bounce", hits:"2", armour:"0", cmd:"-", size:2, pts:85, min:"-", max:1, special:"Bouncing cannonball.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  chaos_dwarfs: {
+    name:"Chaos Dwarfs", color:"#803010", bg:"#050100", accent:"#c04010",
+    lore:"Cruel subjugators of Zharr-Naggrund, commanding enslaved Orcs and Hobgoblins, riding monstrous flying beasts.",
+    playstyle:"A hybrid of Dwarf toughness and Chaos aggression with slave infantry. The Earthshaker is the best stone thrower available. Great Taurus gives characters terrifying mobility. Mix Chaos Dwarfs and Blunderbusses for a devastating combined arms centre.",
+    fluff:"Deep in the Dark Lands, in the shadow of the Tower of Zharr-Naggrund, dwell the Chaos Dwarfs \u2014 a civilisation twisted by dark sorcery into cruel, hat-wearing slavers. They enslave Orcs and Hobgoblins as expendable infantry, ride monstrous fire-breathing Taurus beasts, and build the most devastating siege weapons in the world. Their Sorcerer-Priests literally turn to stone over centuries of dark power.",
+    traits:["Best stone thrower in game", "Flying Great Taurus mount", "Enslaved orc soldiers", "Lammasu anti-magic"],
+    strengths:"Earthshaker cannon, tough core infantry, flying characters",
+    weaknesses:"Slave troops have limitations; expensive core",
+    generalCmd:9,
+    units:[
+      { id:"cd_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield. May upgrade to Sorcerer Lord (+25pts): can cast spells, +1 to one spell per battle.", upgrades:[], magic:["devices"] },
+      { id:"cd_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"cd_sorcerer", name:"Sorcerer", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"cd_greatTaurus", name:"Great Taurus", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"Any character may ride. Flies (move 100cm). Causes terror.", upgrades:[], magic:[] },
+      { id:"cd_lammasu", name:"Lammasu", type:"Monstrous Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:35, min:"-", max:1, special:"Sorcerer only. Flies (move 100cm). Once per turn: dispel one hostile spell within 30cm on 4+.", upgrades:[], magic:[] },
+      { id:"cd_chaosDwarfs", name:"Chaos Dwarfs", type:"Infantry", atk:"3", hits:"4", armour:"4+", cmd:"-", size:3, pts:110, min:2, max:4, special:"Core Chaos Dwarf infantry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cd_blunderbusses", name:"Blunderbusses", type:"Infantry", atk:"3/2", hits:"4", armour:"6+", cmd:"-", size:3, pts:90, min:"-", max:2, special:"Range 15cm, 2 attacks. -1 to enemy armour saves. Up to 1 per 1000pts replaces Chaos Dwarf unit.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cd_hobgoblins", name:"Hobgoblins", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:45, min:"-", max:"-", special:"Shoot 15cm. Cannot brigade with Black Orcs/Orc Slaves unless Chaos Dwarfs present.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cd_blackOrcs", name:"Black Orcs", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"Elite orc slaves.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cd_orcSlaves", name:"Orc Slaves", type:"Infantry", atk:"4", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:2, special:"-1 Command penalty (waived if brigaded with Black Orcs/Chaos Dwarfs/Blunderbusses).", upgrades:[], magic:["standards","weapons"] },
+      { id:"cd_hobgoblinWolfRiders", name:"Hobgoblin Wolf Riders", type:"Cavalry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:75, min:"-", max:"-", special:"Shoot 15cm. Cannot brigade with Black Orcs/Orc Slaves unless Chaos Dwarfs present.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cd_bullCentaurs", name:"Bull Centaurs", type:"Cavalry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:140, min:"-", max:2, special:"Powerful cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"cd_earthshaker", name:"Earthshaker Cannon", type:"Artillery", atk:"1/3", hits:"3", armour:"6+", cmd:"-", size:1, pts:90, min:"-", max:1, special:"Stone Thrower. Drive-backs cause Confusion on 4+. Adjacent units confused on 6. Max 1 Earthshaker+Death Rocket per 1000pts.", upgrades:[], magic:[] },
+      { id:"cd_deathRocket", name:"Death Rocket", type:"Artillery", atk:"1/1D6", hits:"2", armour:"6+", cmd:"-", size:1, pts:60, min:"-", max:1, special:"D6 attacks per shot. Max 1 Earthshaker+Death Rocket per 1000pts.", upgrades:[], magic:[] },
+      { id:"cd_boltThrower", name:"Bolt Thrower", type:"Artillery", atk:"1/2+skewer", hits:"2", armour:"0", cmd:"-", size:2, pts:65, min:"-", max:1, special:"Bolt Thrower with skewer rule.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  wood_elves: {
+    name:"Wood Elves", color:"#2a6020", bg:"#020501", accent:"#40a030",
+    lore:"Guardians of the enchanted forest of Loren, masters of ambush and the bow, aided by the forest's living denizens.",
+    playstyle:"Masters of terrain. Woodland Folk units suffer no command penalty in dense terrain \u2014 turn forests into fortresses. Waywatchers infiltrate and pick off weak units. Treemen anchor your line.",
+    fluff:"Within the enchanted forest of Athel Loren dwell the Wood Elves \u2014 ancient guardians grown as much a part of the forest as the trees themselves. They do not conquer; they protect. Those who threaten the forest meet ghostly Waywatchers materialising from nowhere, Glade Guard arrows darkening the sky, and eventually the slow inevitable advance of living Treemen who have seen ten thousand years pass.",
+    traits:["Woodland Folk \u2014 dense terrain bonus", "Waywatcher ambush", "Treemen monsters", "Forest Dragon"],
+    strengths:"Dense terrain mastery, infiltrating Waywatchers, solid all-round",
+    weaknesses:"Weaker in open terrain; limited heavy hitting outside Treeman",
+    generalCmd:10,
+    units:[
+      { id:"we_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:10, size:1, pts:155, min:1, max:1, special:"Command range covers entire battlefield. Woodland Folk: no -1 Command penalty in woodland.", upgrades:[], magic:["devices"] },
+      { id:"we_noble", name:"Noble", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"we_treemanAncient", name:"Treeman Ancient", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:130, min:"-", max:1, special:"Command range 60cm. Special tree rules.", upgrades:[], magic:["weapons","devices"] },
+      { id:"we_branchwraith", name:"Branchwraith", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Forest spirit.", upgrades:[], magic:["weapons","devices"] },
+      { id:"we_spellWeaver", name:"Spell Weaver", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"we_giantStag", name:"Giant Stag", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Noble may ride. +1 Attack. Move 30cm (not 60cm).", upgrades:[], magic:[] },
+      { id:"we_unicorn", name:"Unicorn", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:15, min:"-", max:1, special:"General/Noble may ride. +1 Attack. Once per battle: +1 to spell roll.", upgrades:[], magic:[] },
+      { id:"we_warhawk_mount", name:"Warhawk Mount", type:"Monstrous Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:15, min:"-", max:1, special:"General/Noble may ride. Flies (move 100cm).", upgrades:[], magic:[] },
+      { id:"we_forestDragon", name:"Forest Dragon", type:"Monstrous Mount", atk:"+3", hits:"-", armour:"-", cmd:"-", size:1, pts:100, min:"-", max:1, special:"General/Noble may ride. Flies (move 100cm). Causes terror. Breath attack.", upgrades:[], magic:[] },
+      { id:"we_gladeGuard", name:"Glade Guard", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:65, min:2, max:4, special:"+1 to shooting dice rolls. Wardancer stands may be added.", upgrades:[], magic:["standards","weapons"] },
+      { id:"we_eternalGuard", name:"Eternal Guard", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:"-", max:3, special:"Woodland Folk. Wardancer stands may be added.", upgrades:[], magic:["standards","weapons"] },
+      { id:"we_wardancers", name:"Wardancers", type:"Infantry", atk:"4", hits:"3", armour:"0 or 5+", cmd:"-", size:"+1", pts:30, min:"-", max:4, special:"Attached to Glade Guard or Eternal Guard as extra stand.", upgrades:[], magic:[] },
+      { id:"we_waywatchers", name:"Waywatchers", type:"Infantry", atk:"1/2", hits:"3", armour:"0", cmd:"-", size:2, pts:60, min:"-", max:1, special:"+1 to shooting, -1 enemy armour vs shots. Can infiltrate (ambush). 2-stand unit.", upgrades:[], magic:["standards","weapons"] },
+      { id:"we_dryads", name:"Dryads", type:"Infantry", atk:"4", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:1, max:"-", special:"Forest spirits. Woodland Folk.", upgrades:[], magic:["standards","weapons"] },
+      { id:"we_treekin", name:"Treekin", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:2, special:"Forest spirits. Woodland Folk.", upgrades:[], magic:["standards","weapons"] },
+      { id:"we_gladeRiders", name:"Glade Riders", type:"Cavalry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:90, min:"-", max:3, special:"Light cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"we_wildRiders", name:"Wild Riders", type:"Cavalry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:2, special:"Woodland Folk.", upgrades:[], magic:["standards","weapons"] },
+      { id:"we_warhawkRiders", name:"Warhawk Riders", type:"Monster", atk:"2/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:85, min:"-", max:1, special:"Flies.", upgrades:[], magic:[] },
+      { id:"we_treeman", name:"Treeman", type:"Monster", atk:"6", hits:"4", armour:"4+", cmd:"-", size:1, pts:130, min:"-", max:1, special:"Woodland Folk. Causes terror.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  beastmen: {
+    name:"Beastmen", color:"#6b4010", bg:"#040200", accent:"#a06020",
+    lore:"Savage half-beasts of the forest, devoted to Chaos, ambushing from the dark woods.",
+    playstyle:"Ambush is everything. Up to half your core infantry can deploy using ambush rules. Push into dense terrain. Minotaurs always charge and cannot be driven back \u2014 use them as shock hammers.",
+    fluff:"Deep in the forests of the Old World dwell creatures neither man nor beast but something horrible in between. The Beastmen descend from settlements at night, driven by dark devotion to Chaos and primal hatred of civilisation. Led by towering Doombulls and cunning Bray Shamans, they are at their most dangerous in forest depths where ambush is everything and civilised tactics count for nothing.",
+    traits:["Woodland Folk", "Ambush up to half core infantry", "Minotaur frenzy", "Chaos Spawn surprise"],
+    strengths:"Ambush deployment, Woodland Folk, Minotaur hammers",
+    weaknesses:"Weaker in open terrain; minotaurs cannot evade",
+    generalCmd:9,
+    units:[
+      { id:"bm_beastlord", name:"Beastlord", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield. Woodland Folk.", upgrades:[], magic:["devices"] },
+      { id:"bm_doombull", name:"Doombull", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:6, size:1, pts:80, min:"-", max:1, special:"Command range 60cm. Powerful minotaur hero.", upgrades:[], magic:["weapons","devices"] },
+      { id:"bm_wargor", name:"Wargor", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"bm_brayShaman", name:"Bray Shaman", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"bm_tuskgorChariot", name:"Tuskgor Chariot Mount", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"Beastlord/Wargor/Shaman may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"bm_gor", name:"Gor", type:"Infantry", atk:"4", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:2, max:"-", special:"Woodland Folk. Up to half total Gor/Ungor may ambush.", upgrades:[], magic:["standards","weapons"] },
+      { id:"bm_ungor", name:"Ungor", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:45, min:2, max:"-", special:"Woodland Folk. Shoot 15cm. Up to half total Gor/Ungor may ambush.", upgrades:[], magic:["standards","weapons"] },
+      { id:"bm_bestigors", name:"Bestigors", type:"Infantry", atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:75, min:"-", max:2, special:"Woodland Folk. Elite beastmen.", upgrades:[], magic:["standards","weapons"] },
+      { id:"bm_minotaurs", name:"Minotaurs", type:"Infantry", atk:"5", hits:"4", armour:"0", cmd:"-", size:3, pts:80, min:"-", max:2, special:"Bloodlust: always charge on initiative, immune to terror, cannot be driven back, must pursue.", upgrades:[], magic:[] },
+      { id:"bm_centigors", name:"Centigors", type:"Cavalry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:75, min:"-", max:2, special:"Shoot 15cm, 360° vision.", upgrades:[], magic:["standards","weapons"] },
+      { id:"bm_chaosHounds", name:"Chaos Hounds", type:"Cavalry", atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:6, special:"Fast war hounds.", upgrades:[], magic:[] },
+      { id:"bm_tuskgorChariots", name:"Tuskgor Chariots", type:"Chariot", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:4, special:"+1 Attack when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"bm_dragonOgres", name:"Dragon Ogres", type:"Monster", atk:"6", hits:"4", armour:"5+", cmd:"-", size:3, pts:230, min:"-", max:1, special:"Immune to terror.", upgrades:[], magic:[] },
+      { id:"bm_chaosSpawn", name:"Chaos Spawn", type:"Monster", atk:"3/3", hits:"4", armour:"3+", cmd:"-", size:1, pts:110, min:"-", max:2, special:"Causes terror. Cannot be driven back. Must pursue. Shoot 15cm 360°.", upgrades:[], magic:[] },
+      { id:"bm_shaggoth", name:"Dragon Ogre Shaggoth", type:"Monster", atk:"8", hits:"8", armour:"5+", cmd:"-", size:1, pts:160, min:"-", max:1, special:"Causes terror. Massive beast.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  norse: {
+    name:"Norse", color:"#406080", bg:"#010305", accent:"#6090c0",
+    lore:"Fearless raiders from the frozen north, with berserkers, mammoths and the Valkyries of the gods.",
+    playstyle:"An aggressive hard-hitting infantry army with monster support. Huscarls are excellent heavy infantry. Berserkers always charge and cannot evade. The War Mammoth is devastating in open battles and can batter fortress walls.",
+    fluff:"In the frozen seas north of the Empire, Viking warriors launch their longships toward warmer shores. The Norse are fearless raiders who worship gods of war, storm and death. Their Berserkers fight in a trance-like fury; and when they march overland, War Mammoths break walls and trample armies flat. They come for glory, for plunder, and for the joy of battle.",
+    traits:["Huscarls elite infantry", "Berserkers frenzy", "War Mammoth siege capability", "Valkyries fly"],
+    strengths:"Strong infantry, War Mammoth destroys fortifications",
+    weaknesses:"Berserkers are unpredictable; limited shooting",
+    generalCmd:9,
+    units:[
+      { id:"nr_jarl", name:"Jarl", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield.", upgrades:[], magic:["devices"] },
+      { id:"nr_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"nr_shaman", name:"Shaman", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
+      { id:"nr_wereKin", name:"Were Kin", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:40, min:"-", max:1, special:"General/Hero may take Were Kin upgrade. +1 Command. Can join Ulfwerener units.", upgrades:[], magic:[] },
+      { id:"nr_hornOfResounding", name:"Horn of Resounding", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:20, min:"-", max:1, special:"Jarl/Hero may ride. +1 Attack. Special morale horn effect.", upgrades:[], magic:[] },
+      { id:"nr_bondsmen", name:"Bondsmen", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:2, max:"-", special:"Core Norse warriors.", upgrades:[], magic:["standards","weapons"] },
+      { id:"nr_huscarls", name:"Huscarls", type:"Infantry", atk:"4", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:1, max:4, special:"Elite Norse warriors.", upgrades:[], magic:["standards","weapons"] },
+      { id:"nr_huntsmen", name:"Huntsmen", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:"-", max:"-", special:"Missile troops.", upgrades:[], magic:["standards","weapons"] },
+      { id:"nr_berserkers", name:"Berserkers", type:"Infantry", atk:"5", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:"-", max:1, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Must pursue. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
+      { id:"nr_ulfwerener", name:"Ulfwerener", type:"Infantry", atk:"4", hits:"4", armour:"6+", cmd:"-", size:3, pts:115, min:"-", max:1, special:"Based on short edge (like cavalry). +1 Attack charging in open. Can pursue cavalry/chariots. Cannot give/receive support. Only joined by Were Kin characters. No magic items.", upgrades:[], magic:[] },
+      { id:"nr_cavalry", name:"Cavalry", type:"Cavalry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:4, special:"Standard Norse cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"nr_stormGiant", name:"Storm Giant", type:"Monster", atk:"8", hits:"8", armour:"5+", cmd:"-", size:1, pts:135, min:"-", max:1, special:"Causes terror. Separate order. Giant Goes Wild if order fails.", upgrades:[], magic:[] },
+      { id:"nr_warMammoth", name:"War Mammoth", type:"Monster", atk:"8", hits:"10", armour:"5+", cmd:"-", size:1, pts:180, min:"-", max:1, special:"Causes terror. Can batter fortress walls. Infantry may assault walls via Mammoth. At 6–9 hits: badly hurt, halved.", upgrades:[], magic:[] },
+      { id:"nr_valkyries", name:"Valkyries", type:"Monster", atk:"2", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:1, special:"Flies. Always charge on initiative. Cannot evade.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  cathay: {
+    name:"Cathay", color:"#c01010", bg:"#080000", accent:"#e83030",
+    lore:"The disciplined armies of a vast eastern empire, combining advanced weapons with ancient magical traditions.",
+    playstyle:"Unique large brigade rule lets you field 6-unit brigades if Bannermen are included. This gives exceptional order efficiency. Terracotta Warriors are Undead \u2014 only ordered by Sorcerers. Celestial Dragon upgrade is a standout choice.",
+    fluff:"Far to the east lies Cathay \u2014 a vast empire of rivers and mountains, silk and jade, ruled by the Grand Celestial Emperor. Its armies march in serried ranks of Bannermen and crossbowmen, supported by rocket-hurling war engines. Ancient Terracotta Warriors animated by sorcery guard sacred sites. And above all wheels the Celestial Dragon \u2014 a divine beast and the ultimate expression of Cathayan power.",
+    traits:["Large brigade rule (6 units)", "Terracotta Warriors undead", "Rocket Launcher war machine", "Celestial Dragon wizard-mount"],
+    strengths:"Unique large brigade rule, Celestial Dragon, varied war machines",
+    weaknesses:"Terracotta Warriors limited to Sorcerer orders only",
+    generalCmd:9,
+    units:[
+      { id:"ca_general", name:"General", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield. Brigades of up to 6 units allowed if ≥2 Bannermen included (no cavalry/chariots/Terracotta Warriors).", upgrades:[], magic:["devices"] },
+      { id:"ca_hero", name:"Hero", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ca_sorcerer", name:"Sorcerer", type:"Wizard", atk:"-", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells. +1 Command when ordering Terracotta Warriors.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ca_chariot_mount", name:"Chariot Mount", type:"Chariot Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Hero may ride. +1 Attack.", upgrades:[], magic:[] },
+      { id:"ca_celestialDragon", name:"Celestial Dragon", type:"Monstrous Mount", atk:"+3", hits:"-", armour:"-", cmd:"-", size:1, pts:100, min:"-", max:1, special:"One Sorcerer only may upgrade to Celestial Dragon: becomes dragon, flies, casts spells, causes terror. Cannot order Terracotta Warriors.", upgrades:[], magic:[] },
+      { id:"ca_tiger", name:"Tiger Mount", type:"Special Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:20, min:"-", max:1, special:"General/Hero only (not Sorcerers). +2 Attacks. Move 30cm.", upgrades:[], magic:[] },
+      { id:"ca_qilin", name:"Qilin", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:15, min:"-", max:1, special:"Sorcerer only. +1 Attack. Once per battle: +1 to spell casting roll.", upgrades:[], magic:[] },
+      { id:"ca_bannermen", name:"Bannermen", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:50, min:3, max:"-", special:"Core infantry. Required for large brigades.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ca_crossbows", name:"Crossbows", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:1, max:"-", special:"Can be replaced by Handguns (same min/max count).", upgrades:[], magic:["standards","weapons"] },
+      { id:"ca_handguns", name:"Handguns", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:50, min:"-", max:"-", special:"Armour piercing: -1 to enemy armour saves.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ca_terracottaWarriors", name:"Terracotta Warriors", type:"Infantry", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:30, min:"-", max:6, special:"Undead. No initiative. Immune to terror/confusion. Only ordered by Sorcerers (+1 Command). Can only brigade/support with each other.", upgrades:[], magic:[] },
+      { id:"ca_maneaters", name:"Maneaters", type:"Infantry", atk:"4", hits:"4", armour:"4+", cmd:"-", size:3, pts:140, min:"-", max:1, special:"Mercenary Ogres.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ca_chariots", name:"Chariots", type:"Chariot", atk:"3/1", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"+1 Attack when charging in open.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ca_imperialCavalry", name:"Imperial Cavalry", type:"Cavalry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:2, special:"Standard heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ca_huCavalry", name:"Hu Cavalry", type:"Cavalry", atk:"2/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:"-", max:3, special:"Shoot 15cm, 360° vision. Light cavalry.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ca_rocketLauncher", name:"Rocket Launcher", type:"Artillery", atk:"1/1D6", hits:"2", armour:"0", cmd:"-", size:1, pts:55, min:"-", max:1, special:"Stone Thrower. D6 shots per phase. -1 to armour saves. On roll of 1: misfire.", upgrades:[], magic:[] },
+      { id:"ca_tripleBows", name:"Triple Bows", type:"Artillery", atk:"1/2+skewer", hits:"2", armour:"0", cmd:"-", size:2, pts:65, min:"-", max:1, special:"Bolt Thrower.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+  nippon: {
+    name:"Nippon", color:"#c01818", bg:"#080000", accent:"#ff4040",
+    lore:"Stoic samurai warriors from the eastern islands, bolstered by bound spirit creatures from their temple shrines.",
+    playstyle:"A disciplined army that fights with stubborn honour. Samurai and Samurai Cavalry cannot evade \u2014 position them carefully. The Honour and Duty rule means you need one more unit lost before withdrawal. Ninja infiltrators threaten artillery.",
+    fluff:"On islands far to the east lies a land of rigid honour, meticulous ceremony and devastating martial tradition. The samurai warriors of Nippon have perfected the art of war over centuries of civil conflict. They march in disciplined formations behind silk banners, their blades among the finest in the world. Alongside them march bound spirit creatures \u2014 Tengu bird-men, Komainu lion-dogs \u2014 called forth by Shugenja priests.",
+    traits:["Bushido \u2014 Samurai cannot evade", "Honour and Duty \u2014 harder to break", "Shrine summons spirits", "Ninja infiltrators"],
+    strengths:"Stubborn, hard to break, Ninja disruption",
+    weaknesses:"Samurai cannot evade \u2014 positioning is critical",
+    generalCmd:9,
+    units:[
+      { id:"ni_shogun", name:"Shogun", type:"General", atk:"-", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield. Honour and Duty: army needs 1 extra unit lost before withdrawal.", upgrades:[], magic:["devices"] },
+      { id:"ni_daimyo", name:"Daimyo", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ni_shugenja", name:"Shugenja", type:"Hero", atk:"-", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Casts spells (spirit magic).", upgrades:[], magic:["weapons","devices"] },
+      { id:"ni_tatsu", name:"Tatsu (Dragon)", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"Shogun/Daimyo/Shugenja may ride. Flies (move 100cm). Causes terror.", upgrades:[], magic:[] },
+      { id:"ni_shrine", name:"Shrine", type:"Special", atk:"-", hits:"-", armour:"-", cmd:"-", size:1, pts:50, min:1, max:1, special:"Special army bonus. Bound to Shugenja. Required to summon spirit creatures.", upgrades:[], magic:[] },
+      { id:"ni_ashigaru", name:"Ashigaru", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:45, min:1, max:"-", special:"Core spearmen.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ni_ashigaruBowmen", name:"Ashigaru Bowmen", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:"-", max:"-", special:"Standard archers.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ni_ashigaruTeppo", name:"Ashigaru Teppo", type:"Infantry", atk:"3/1", hits:"3", armour:"0", cmd:"-", size:3, pts:65, min:"-", max:2, special:"Armour piercing: -1 to enemy armour saves.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ni_samurai", name:"Samurai", type:"Infantry", atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:2, max:4, special:"Bushido: cannot evade, -1 drive-back dice.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ni_mikata", name:"Mikata (Ronin & Monks)", type:"Infantry", atk:"5", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:"-", max:2, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Must pursue. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ni_ninja", name:"Ninja", type:"Infantry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:"-", max:2, special:"Shoot 15cm, 360° vision. Can infiltrate.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ni_oni", name:"Oni", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"Spirit Ogres.", upgrades:[], magic:[] },
+      { id:"ni_samuraiCavalry", name:"Samurai Cavalry", type:"Cavalry", atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3, special:"Bushido: cannot evade, -1 drive-back dice.", upgrades:[], magic:["standards","weapons"] },
+      { id:"ni_komainu", name:"Komainu", type:"Cavalry", atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:3, special:"Spirit lion-dogs.", upgrades:[], magic:[] },
+      { id:"ni_tengu", name:"Tengu", type:"Monster", atk:"2", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:1, special:"Flies. Spirit creatures.", upgrades:[], magic:[] },
+    ],
+    upgradeRules:{}
+  },
+
+};
+
+// ── HELPER FUNCTIONS ──────────────────────────────────────────────────────────
+function calcUnitCost(unit, selectedUpgrades, selectedMagic) {
+  let cost = typeof unit.pts === "number" ? unit.pts : 0;
+  return cost;
+}
+
+// ── ELIGIBILITY HELPERS ───────────────────────────────────────────────────────
+// Per WMR Armies v2.24 p.88 and core rules:
+//   Magic Standards  → Infantry / Cavalry / Chariot units only (not characters, not monsters/artillery)
+//   Magic Weapons    → Characters only (General, Hero, Wizard)
+//   Devices of Power → Characters, but each item restricted to sub-type:
+//       Crown of Command      → General only
+//       Helm of Dominion      → General only
+//       Orb of Majesty        → General only
+//       Sceptre of Sovereignty→ General only
+//       Ring of Magic         → Wizard only
+//       Wand of Power         → Wizard only
+//       Rod of Repetition     → Wizard only
+//       Staff of Spellbinding → Wizard only (also Runesmith heroes who have dispel ability)
+//       Scroll of Dispelling  → Wizard only (also Runesmith heroes)
+//
+// A "Runesmith" is a Hero whose name contains "Runesmith" — they can take the
+// two wizard-adjacent dispel items.
+//
+// Banner Shielding variants are further gated by the unit's actual armour value.
+// Banner Fortitude variants are gated by the unit's actual hits value.
+// Banner Steadfastness variants are gated by armour value.
+
+const GENERAL_DEVICES = new Set(["crown_command","helm_dominion","orb_majesty","sceptre_sovereignty"]);
+const WIZARD_DEVICES   = new Set(["ring_magic","wand_power","rod_repetition","staff_spellbinding","scroll_dispelling"]);
+const RUNESMITH_DEVICES= new Set(["staff_spellbinding","scroll_dispelling"]);
+
+function armourNumeric(armourStr) {
+  // Returns the armour save number, or 0 if no save (armour "0")
+  if (!armourStr || armourStr === "0" || armourStr === "-") return 0;
+  const m = armourStr.match(/(\d+)\+/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+function getBannerEligibility(unit) {
+  // Returns which banner_shielding / banner_steadfastness tier fits the unit's armour
+  // and which banner_fortitude tier fits the unit's hits
+  const armNum = armourNumeric(unit.armour);
+  const hitsNum = typeof unit.hits === "string" ? parseInt(unit.hits) : (unit.hits || 0);
+
+  const eligible = new Set();
+
+  // Battle Banner — any combatant
+  eligible.add("battle_banner");
+
+  // Banner of Shielding — tiered by armour
+  if (armNum === 4) eligible.add("banner_shielding_sup");
+  else if (armNum === 5) eligible.add("banner_shielding_maj");
+  else if (armNum === 6 || armNum === 0) eligible.add("banner_shielding_min");
+
+  // Banner of Fortitude — tiered by hits
+  if (hitsNum === 4) eligible.add("banner_fortitude_maj");
+  else if (hitsNum === 3 || hitsNum === 2) eligible.add("banner_fortitude_min");
+
+  // Banner of Steadfastness — tiered by armour
+  if (armNum === 4) eligible.add("banner_steadfastness_sup");
+  else if (armNum === 5) eligible.add("banner_steadfastness_maj");
+  else if (armNum === 6) eligible.add("banner_steadfastness_min");
+
+  // Banner of Fortune — any unit with a banner
+  eligible.add("banner_fortune");
+
+  return eligible;
+}
+
+function isWizardType(unit) {
+  return unit.type === "Wizard";
+}
+function isGeneralType(unit) {
+  return unit.type === "General";
+}
+function isHeroType(unit) {
+  return unit.type === "Hero";
+}
+function isRunesmith(unit) {
+  return unit.type === "Hero" && unit.name.toLowerCase().includes("runesmith");
+}
+function isCharacter(unit) {
+  return ["General","Hero","Wizard"].includes(unit.type);
+}
+function isBannerUnit(unit) {
+  return ["Infantry","Cavalry","Chariot"].includes(unit.type);
+}
+
+function getMagicItemsForUnit(unit) {
+  const items = [];
+
+  // ── Magic Standards (Infantry / Cavalry / Chariot only) ───────────────────
+  if (isBannerUnit(unit)) {
+    const eligible = getBannerEligibility(unit);
+    MAGIC_STANDARDS.forEach(item => {
+      if (eligible.has(item.id)) items.push(item);
+    });
+  }
+
+  // ── Magic Weapons (Characters only) ──────────────────────────────────────
+  if (isCharacter(unit)) {
+    MAGIC_WEAPONS.forEach(item => items.push(item));
+  }
+
+  // ── Devices of Power (Characters, sub-filtered by type) ───────────────────
+  // Grey Seer is a General who can also take Wizard items (greySeer:true flag)
+  const isGreySeer = unit.greySeer === true;
+
+  if (isCharacter(unit)) {
+    DEVICES_OF_POWER.forEach(item => {
+      if (GENERAL_DEVICES.has(item.id) && (isGeneralType(unit) || isGreySeer)) {
+        items.push(item);
+      } else if (WIZARD_DEVICES.has(item.id) && (isWizardType(unit) || isGreySeer)) {
+        items.push(item);
+      } else if (RUNESMITH_DEVICES.has(item.id) && isRunesmith(unit)) {
+        if (!isWizardType(unit)) items.push(item);
+      }
+    });
+  }
+
+  return items;
+}
+
+// ── STYLES ────────────────────────────────────────────────────────────────────
+const GS = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Crimson Text', Georgia, serif; background: #0a0806; color: #d4c8a8; -webkit-text-size-adjust:100%; overflow-x:hidden; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #888; }
+    button { cursor: pointer; font-family: inherit; border: none; }
+    * { -webkit-tap-highlight-color: transparent; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; }
+    }
+  `}</style>
+);
+
+// ── TYPE BADGE ─────────────────────────────────────────────────────────────────
+const TYPE_COLORS = {
+  "General":"#c8940a","Hero":"#c8940a","Wizard":"#6060c0",
+  "Infantry":"#4a8a4a","Cavalry":"#6a4aaa","Chariot":"#aa6a20",
+  "Monster":"#aa2020","Artillery":"#606060","Machine":"#506080",
+  "Monstrous Mount":"#c03060","Chariot Mount":"#c03060",
+  "Special Mount":"#c03060","Special":"#808080",
+};
+function TypeBadge({ type }) {
+  const c = TYPE_COLORS[type] || "#666";
+  return (
+    <span style={{ fontSize:"0.93rem", fontFamily:"'Cinzel',serif", padding:"1px 6px", background: c+"30", color: c, border:`1px solid ${c}60`, borderRadius:3, whiteSpace:"nowrap" }}>
+      {type}
+    </span>
+  );
+}
+
+// ── HOW TO PLAY ───────────────────────────────────────────────────────────────
+function HowToPlay({ onBack }) {
+  const S = { // section style
+    bg:"#0d0b08", border:"1px solid #2a2510", borderRadius:6, padding:"16px 18px", marginBottom:12
+  };
+  const H = { // heading style
+    fontFamily:"'Cinzel',serif", fontSize:"0.93rem", color:"#888", letterSpacing:2, marginBottom:10, textTransform:"uppercase"
+  };
+  const tip = (icon, title, body) => (
+    <div style={{ display:"flex", gap:10, marginBottom:10 }}>
+      <div style={{ fontSize:"1.1rem", flexShrink:0, marginTop:1 }}>{icon}</div>
+      <div>
+        <div style={{ fontSize:"0.93rem", color:"#d4b060", fontWeight:600, marginBottom:2 }}>{title}</div>
+        <div style={{ fontSize:"1.1rem", color:"#9a9070", lineHeight:1.55 }}>{body}</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ minHeight:"100vh", background:"#0a0806", padding:"20px 16px" }}>
+      <GS />
+      <div style={{ maxWidth:720, margin:"0 auto" }}>
+
+        <button onClick={onBack}
+          style={{ background:"transparent", color:"#555", border:"1px solid #333", borderRadius:4, padding:"5px 12px", fontSize:"1.1rem", marginBottom:20, cursor:"pointer", fontFamily:"'Cinzel',serif", letterSpacing:1 }}
+          onMouseEnter={e => e.currentTarget.style.color="#999"}
+          onMouseLeave={e => e.currentTarget.style.color="#555"}
+        >← BACK</button>
+
+        <div style={{ textAlign:"center", marginBottom:24 }}>
+          <h1 style={{ fontFamily:"'Cinzel',serif", fontSize:"clamp(1.2rem,3.5vw,1.8rem)", color:"#f0c040", letterSpacing:2 }}>⚔ HOW TO PLAY</h1>
+          <p style={{ color:"#555", fontSize:"0.97rem", marginTop:6, letterSpacing:1 }}>Warmaster Revolution — Community Tips & Basics</p>
+          <div style={{ width:80, height:1, background:"linear-gradient(90deg,transparent,#c8940a,transparent)", margin:"10px auto 0" }} />
+        </div>
+
+        {/* What is WMR */}
+        <div style={S}>
+          <div style={H}>What Is Warmaster Revolution?</div>
+          <p style={{ fontSize:"0.97rem", color:"#9a9070", lineHeight:1.65 }}>
+            Warmaster Revolution is the community-maintained 2nd edition of Rick Priestley's <em>Warmaster</em> — a 10mm fantasy mass-battle game set in the Warhammer world. Armies are typically 2,000pts played on a 6′×4′ table. The game centres not on individual warriors but on <strong style={{color:"#c8a060"}}>command and control</strong> — your general's ability to order regiments around the battlefield is more decisive than any unit's stats.
+          </p>
+        </div>
+
+        {/* Core turn sequence */}
+        <div style={S}>
+          <div style={H}>Turn Sequence</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:8 }}>
+            {[
+              ["1","Command Phase","Issue orders to brigades — the heart of the game. Each failed order ends your commander's ability to order further that turn."],
+              ["2","Shooting Phase","Units with ranged attacks fire. Shooting disrupts formations and pushes units back rather than destroying them outright."],
+              ["3","Combat Phase","Units in base contact fight. Combats resolve quickly — winners pursue, losers fall back or are destroyed."],
+              ["4","End Phase","Check army breakpoint. An army that has lost one-third of its units must begin withdrawing."],
+            ].map(([n,t,b]) => (
+              <div key={n} style={{ background:"#0a0806", border:"1px solid #1e1c10", borderRadius:5, padding:"10px 12px" }}>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.2rem", color:"#c8940a", fontWeight:700, marginBottom:4 }}>{n}</div>
+                <div style={{ fontSize:"0.88rem", color:"#d4b060", fontWeight:600, marginBottom:4 }}>{t}</div>
+                <div style={{ fontSize:"1.2rem", color:"#777", lineHeight:1.5 }}>{b}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Command basics */}
+        <div style={S}>
+          <div style={H}>The Command Phase — Key Concepts</div>
+          {tip("🎲","Roll under Command Value","To issue an order, roll 2D6 and score equal to or less than the character's Command value. Success means the unit moves. Failure ends that character's orders for the turn.")}
+          {tip("📏","Distance Penalties","Each 20cm between the character and the target unit adds −1 to the Command value. Keep your characters close to the units they need to lead.")}
+          {tip("⚠️","Cumulative Penalties","Each order after the first in a turn adds −1. Being within 20cm of the enemy adds −1. Dense terrain adds −1. These stack — choose your order sequence carefully.")}
+          {tip("❌","Blunders","Rolling 11 or 12 always fails and causes a Blunder — the unit moves in the wrong direction. This is why reliable Command values matter so much.")}
+        </div>
+
+        {/* Brigades */}
+        <div style={S}>
+          <div style={H}>Brigades — The Core Tactical Tool</div>
+          {tip("🔗","Group Up to 4 Units","Up to four touching units can be issued a single order as a brigade. One roll moves all of them together — far more efficient than ordering each unit separately.")}
+          {tip("📐","Distance is to the Furthest Unit","When issuing an order to a brigade, measure to the most distant unit in it. If that unit is far away or in terrain, you take all the penalties for all of them.")}
+          {tip("🏹","Mix Missiles and Melee","A classic brigade: 2 missile units at the front with 2 melee units behind them. The melee units provide support in combat while the missiles can shoot from behind in the shooting phase.")}
+          {tip("🛡️","Protect Your Artillery","Artillery charged without support is almost certainly lost. Station one or two infantry units nearby — they can stand and shoot if charged, making the attacker pay dearly.")}
+        </div>
+
+        {/* Army building */}
+        <div style={S}>
+          <div style={H}>Army Building Basics (Community Advice)</div>
+          {tip("⚖️","Aim for ~10 Units per 1,000pts","This gives you a healthy breakpoint and 2–4 task forces. Fewer units means each loss hurts more; too many and you struggle to move them all effectively. Source: brumbaer.de")}
+          {tip("⚔️","One Striking Force per 1,000pts","Include 2–4 hard-hitting units (knights, chariots, monsters) whose job it is to smash enemy units. You need something that can actually destroy opponents, not just hold ground.")}
+          {tip("💨","Include Fast Harassers","Light cavalry, flyers or fast skirmishers serve a vital role: blocking enemy movement, drawing missile fire, and forcing the opponent to react to you rather than executing their own plan.")}
+          {tip("☠️","Have a Sacrificial Unit","One cheap unit whose job is to absorb fire, act as bait, or block an enemy charge aimed at something more valuable. It doesn't need to survive — it just needs to buy time.")}
+          {tip("🧙","Characters Per 4 Units","As a rule of thumb: one character per four units. A Command 10 General counts as three, Command 9 as two, Command 8 as one. Don't over-invest in characters at the expense of units.")}
+          {tip("💍","Magic Items — Less is More","Don't buy magic items if you could take a unit instead. The exception: always give your General an Orb of Majesty. That one re-roll will decide a game.")}
+        </div>
+
+        {/* Shooting */}
+        <div style={S}>
+          <div style={H}>Shooting — Disruption Not Destruction</div>
+          {tip("↩️","Shooting Drives Units Back","Hits from shooting force drive-back rolls — units may be pushed away from the action, costing the opponent orders to bring them back. Use this to disrupt enemy formations.")}
+          {tip("🎯","Armour Piercing is Powerful","Several units have armour-piercing attacks (Handgunners, Jezzails, etc.) — enemy armour saves one worse than normal. Prioritise these against heavily armoured cavalry.")}
+        </div>
+
+        {/* Combat */}
+        <div style={S}>
+          <div style={H}>Combat — Flanks, Support & Pursuit</div>
+          {tip("🔄","Flanks & Rear are Devastating","A unit attacking the flank or rear of an enemy doesn't grant the enemy supporting attacks. Position fast cavalry to threaten flanks before committing your main attack.")}
+          {tip("🤝","Support Attacks","Adjacent friendly units in the same combat add support attacks (+1 per supporting stand, up to the width of the fighting unit). Brigades fighting together are far stronger than isolated units.")}
+          {tip("🏃","Pursuit Matters","Winning units pursue or advance. If they pursue into fresh enemy units they fight again immediately. Chain-routing an enemy brigade in one turn is possible — and often decisive.")}
+        </div>
+
+        {/* Key rules reminders */}
+        <div style={S}>
+          <div style={H}>Easy-to-Forget Rules</div>
+          {tip("🌲","Dense Terrain = −1 Command","Ordering any unit in or through dense terrain adds −1 to Command. Build your line away from forests if possible, or choose armies with Woodland Folk.")}
+          {tip("😱","Terror","Units charged by Terror-causing enemies take −1 Attack in the first round of combat unless they pass a Command test to ignore it. Terror units are disproportionately powerful against low-Command armies.")}
+          {tip("🗺️","Measure Anytime","You can measure any distance at any time. Warmaster is not a hidden-measurement game. Use this constantly to plan charges, brigade ranges and character command radii.")}
+          {tip("🎯","Characters Move Freely","Characters move up to 60cm in the characters sub-phase without any order roll. Use them to reposition between units each turn to be in range for the orders you need.")}
+        </div>
+
+        <div style={{ textAlign:"center", marginTop:16, marginBottom:8 }}>
+          <p style={{ fontSize:"1.25rem", color:"#444", fontStyle:"italic" }}>
+            Tips sourced from the WMR community at brumbaer.de, warmaster.info, and player discussions.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ── FACTION SELECTOR ──────────────────────────────────────────────────────────
+function FactionSelector({ onPreview, onHowToPlay, onSavedLists }) {
+  const factions = Object.entries(ARMIES);
+  return (
+    <div style={{ minHeight:"100vh", background:"#0a0806", padding:"16px" }}>
+      <GS />
+      <div style={{ maxWidth:960, margin:"0 auto" }}>
+        <div style={{ textAlign:"center", marginBottom:28 }}>
+          <h1 style={{ fontFamily:"'Cinzel',serif", fontSize:"clamp(1.7rem,5vw,2.8rem)", color:"#f0c040", letterSpacing:3 }}>⚔ WARMASTER REVOLUTION</h1>
+          <p style={{ color:"#666", fontSize:"1.25rem", marginTop:6, letterSpacing:1 }}>Official Armies v2.24 · Choose your faction</p>
+          <div style={{ display:"flex", gap:8, justifyContent:"center", marginTop:12, flexWrap:"wrap" }}>
+            <button onClick={onHowToPlay}
+              style={{ background:"transparent", color:"#888", border:"1px solid #333", borderRadius:4, padding:"6px 16px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.color="#c8a060"; e.currentTarget.style.borderColor="#666"; }}
+              onMouseLeave={e => { e.currentTarget.style.color="#888"; e.currentTarget.style.borderColor="#333"; }}
+            >📖 HOW TO PLAY</button>
+            <button onClick={onSavedLists}
+              style={{ background:"transparent", color:"#888", border:"1px solid #333", borderRadius:4, padding:"6px 16px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.color="#c8a060"; e.currentTarget.style.borderColor="#666"; }}
+              onMouseLeave={e => { e.currentTarget.style.color="#888"; e.currentTarget.style.borderColor="#333"; }}
+            >📋 SAVED LISTS</button>
+          </div>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:10 }}>
+          {factions.map(([key, army]) => (
+            <button key={key} onClick={() => onPreview(key)}
+              style={{ background:`linear-gradient(150deg, ${army.bg} 0%, ${army.color}18 100%)`, border:`1px solid ${army.color}50`, borderRadius:8, padding:"14px 10px", textAlign:"center", color:"#d4c8a8", transition:"all 0.18s", cursor:"pointer", position:"relative", overflow:"hidden" }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = army.accent; e.currentTarget.style.background = `linear-gradient(150deg, ${army.bg} 0%, ${army.color}35 100%)`; e.currentTarget.style.transform = "translateY(-1px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = army.color+"50"; e.currentTarget.style.background = `linear-gradient(150deg, ${army.bg} 0%, ${army.color}18 100%)`; e.currentTarget.style.transform = "translateY(0)"; }}
+            >
+              <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.2rem", color: army.accent, fontWeight:700, marginBottom:5, lineHeight:1.3, letterSpacing:0.5 }}>{army.name.toUpperCase()}</div>
+              <div style={{ fontSize:"1.1rem", color:"#666", lineHeight:1.35 }}>{army.lore.substring(0,55)}…</div>
+              <div style={{ marginTop:8, fontSize:"1.25rem", color: army.color, opacity:0.8, letterSpacing:1 }}>VIEW DETAILS →</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── ARMY CONFIRMATION SCREEN ──────────────────────────────────────────────────
+function ArmyConfirm({ armyKey, onConfirm, onBack }) {
+  const army = ARMIES[armyKey];
+  const unitCounts = { Infantry:0, Cavalry:0, Chariot:0, Monster:0, Artillery:0, Machine:0, Character:0, Mount:0, Special:0 };
+  army.units.forEach(u => {
+    if (["General","Hero","Wizard"].includes(u.type)) unitCounts.Character++;
+    else if (["Monstrous Mount","Chariot Mount","Special Mount"].includes(u.type)) unitCounts.Mount++;
+    else if (u.type === "Special") unitCounts.Special++;
+    else if (unitCounts[u.type] !== undefined) unitCounts[u.type]++;
+  });
+  const unitSummary = Object.entries(unitCounts).filter(([,v]) => v > 0);
+
+  return (
+    <div style={{ minHeight:"100vh", background:"#0a0806", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-start", padding:"24px 16px" }}>
+      <GS />
+      <div style={{ width:"100%", maxWidth:680 }}>
+
+        {/* Back button */}
+        <button onClick={onBack}
+          style={{ background:"transparent", color:"#555", border:"1px solid #333", borderRadius:4, padding:"5px 12px", fontSize:"1.1rem", marginBottom:20, cursor:"pointer", fontFamily:"'Cinzel',serif", letterSpacing:1 }}
+          onMouseEnter={e => e.currentTarget.style.color="#999"}
+          onMouseLeave={e => e.currentTarget.style.color="#555"}
+        >← BACK</button>
+
+        {/* Header */}
+        <div style={{ textAlign:"center", marginBottom:24 }}>
+          <div style={{ fontSize:"0.93rem", fontFamily:"'Cinzel',serif", color:"#555", letterSpacing:3, marginBottom:8 }}>YOU HAVE CHOSEN</div>
+          <h2 style={{ fontFamily:"'Cinzel',serif", fontSize:"clamp(1.6rem,5vw,2.4rem)", color: army.accent, letterSpacing:2, lineHeight:1.1 }}>{army.name.toUpperCase()}</h2>
+          <div style={{ width:80, height:2, background:`linear-gradient(90deg, transparent, ${army.color}, transparent)`, margin:"12px auto" }} />
+        </div>
+
+        {/* Fluff text */}
+        <div style={{ background:`linear-gradient(135deg, ${army.bg}, ${army.color}15)`, border:`1px solid ${army.color}40`, borderRadius:8, padding:"20px 24px", marginBottom:16, position:"relative", overflow:"hidden" }}>
+          <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, transparent, ${army.color}80, transparent)` }} />
+          <p style={{ fontFamily:"'Crimson Text',Georgia,serif", fontSize:"1.25rem", color:"#c8b880", lineHeight:1.75, fontStyle:"italic", textAlign:"justify" }}>
+            {army.fluff}
+          </p>
+        </div>
+
+        {/* Traits + Playstyle in two columns */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:10 }}>
+          {/* Key traits */}
+          <div style={{ background:"#0d0b08", border:`1px solid ${army.color}30`, borderRadius:6, padding:"14px 16px" }}>
+            <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.88rem", color:"#555", letterSpacing:2, marginBottom:10 }}>ARMY TRAITS</div>
+            {(army.traits || []).map((t,i) => (
+              <div key={i} style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+                <div style={{ width:5, height:5, borderRadius:"50%", background: army.color, flexShrink:0 }} />
+                <span style={{ fontSize:"0.93rem", color:"#b0a070" }}>{t}</span>
+              </div>
+            ))}
+          </div>
+          {/* Strengths / Weaknesses */}
+          <div style={{ background:"#0d0b08", border:`1px solid ${army.color}30`, borderRadius:6, padding:"14px 16px" }}>
+            <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.88rem", color:"#555", letterSpacing:2, marginBottom:10 }}>STRENGTHS & WEAKNESSES</div>
+            <div style={{ marginBottom:10 }}>
+              <div style={{ fontSize:"1.25rem", fontFamily:"'Cinzel',serif", color:"#3a7a3a", letterSpacing:1, marginBottom:4 }}>STRENGTHS</div>
+              <div style={{ fontSize:"1.1rem", color:"#70a070", lineHeight:1.4 }}>{army.strengths}</div>
+            </div>
+            <div>
+              <div style={{ fontSize:"1.25rem", fontFamily:"'Cinzel',serif", color:"#7a3a3a", letterSpacing:1, marginBottom:4 }}>WEAKNESSES</div>
+              <div style={{ fontSize:"1.1rem", color:"#a07070", lineHeight:1.4 }}>{army.weaknesses}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Playstyle */}
+        <div style={{ background:"#0d0b08", border:`1px solid ${army.color}30`, borderRadius:6, padding:"14px 16px", marginBottom:10 }}>
+          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.88rem", color:"#555", letterSpacing:2, marginBottom:8 }}>HOW TO PLAY</div>
+          <p style={{ fontSize:"1.2rem", color:"#9a9070", lineHeight:1.6 }}>{army.playstyle}</p>
+        </div>
+
+        {/* ── BLOOD RITES (Khorne only) ──────────────────────────────────── */}
+        {army.bloodRites && army.bloodRites.length > 0 && (
+          <div style={{ background:"#0a0200", border:`2px solid ${army.color}60`, borderRadius:6, padding:"14px 16px", marginBottom:10 }}>
+            <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.88rem", color: army.accent, letterSpacing:2, marginBottom:2 }}>⚔ BLOOD RITES</div>
+            <div style={{ fontSize:"0.93rem", color:"#7a3020", marginBottom:10, fontStyle:"italic" }}>Khorne grants no spells — only blood-soaked commandments and battle fury.</div>
+            {army.bloodRites.map((rite, i) => (
+              <div key={i} style={{ marginBottom:10, paddingBottom:10, borderBottom: i < army.bloodRites.length-1 ? `1px solid ${army.color}25` : "none" }}>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.97rem", color: army.accent, fontWeight:700, marginBottom:3 }}>{rite.title}</div>
+                <div style={{ fontSize:"0.93rem", color:"#c05030", marginBottom:3 }}>
+                  <span style={{ color:"#664428" }}>When: </span>{rite.trigger}
+                </div>
+                <div style={{ fontSize:"0.88rem", color:"#b89060", lineHeight:1.5, marginBottom:3 }}>
+                  <span style={{ color:"#888", fontSize:"1.1rem" }}>Effect: </span>{rite.effect}
+                </div>
+                <div style={{ fontSize:"0.93rem", color:"#7a4030", fontStyle:"italic" }}>"{rite.flavour}"</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* ── SPELL LIST ────────────────────────────────────────────────── */}
+        {army.spells && army.spells.length > 0 && (
+          <div style={{ background:"#0d0b08", border:`1px solid ${army.color}30`, borderRadius:6, padding:"14px 16px", marginBottom:10 }}>
+            <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.88rem", color:"#555", letterSpacing:2, marginBottom:10 }}>SPELL LIST</div>
+            {army.spells.map((spell, i) => (
+              <div key={i} style={{ marginBottom:8, paddingBottom:8, borderBottom: i < army.spells.length-1 ? "1px solid #1a1a1a" : "none" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", gap:8, flexWrap:"wrap" }}>
+                  <span style={{ fontSize:"0.93rem", color: army.accent, fontWeight:700, fontFamily:"'Cinzel',serif" }}>{spell.name}</span>
+                  <span style={{ fontSize:"0.93rem", color:"#888", flexShrink:0 }}>
+                    <span style={{ color: army.color }}>{spell.cast}</span> to cast · Range {spell.range}
+                  </span>
+                </div>
+                <p style={{ fontSize:"0.88rem", color:"#9a9070", lineHeight:1.5, marginTop:3 }}>{spell.desc}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* ── DAEMONIC INSTABILITY TABLE ────────────────────────────────── */}
+        {army.instabilityTable && army.instabilityTable.length > 0 && (
+          <div style={{ background:"#08080d", border:`1px solid ${army.color}40`, borderRadius:6, padding:"14px 16px", marginBottom:10 }}>
+            <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.88rem", color: army.color, letterSpacing:2, marginBottom:4 }}>☠ DAEMONIC INSTABILITY TABLE</div>
+            <div style={{ fontSize:"0.93rem", color:"#555", marginBottom:10, fontStyle:"italic" }}>Roll at start of Command phase for every daemon unit with ≥1 lost stand. −1 to roll if only 1 stand remains and no friendly Wizard within 20cm.</div>
+            <div style={{ display:"grid", gridTemplateColumns:"auto 1fr", gap:"4px 12px" }}>
+              {army.instabilityTable.map((row, i) => (
+                <React.Fragment key={i}>
+                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.93rem", color: army.accent, fontWeight:700, padding:"4px 0", borderBottom: i < army.instabilityTable.length-1 ? `1px solid ${army.color}15` : "none", minWidth:36 }}>{row.roll}</div>
+                  <div style={{ padding:"4px 0", borderBottom: i < army.instabilityTable.length-1 ? `1px solid ${army.color}15` : "none" }}>
+                    <div style={{ fontSize:"0.88rem", color:"#a08858", fontWeight:600, marginBottom:1 }}>{row.result}</div>
+                    <div style={{ fontSize:"1.2rem", color:"#7a7050", lineHeight:1.4 }}>{row.effect}</div>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        )}
+        {/* Unit roster summary */}
+        <div style={{ background:"#0d0b08", border:`1px solid ${army.color}30`, borderRadius:6, padding:"14px 16px", marginBottom:24 }}>
+          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"0.88rem", color:"#555", letterSpacing:2, marginBottom:10 }}>ROSTER OVERVIEW</div>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+            {unitSummary.map(([type, count]) => (
+              <div key={type} style={{ background: army.color+"18", border:`1px solid ${army.color}30`, borderRadius:4, padding:"4px 10px", fontSize:"1.25rem", color:"#a09060" }}>
+                <span style={{ color: army.accent, fontWeight:700 }}>{count}</span>
+                <span style={{ marginLeft:4, color:"#666" }}>{type} option{count !== 1 ? "s":""}</span>
+              </div>
+            ))}
+            <div style={{ background: army.color+"18", border:`1px solid ${army.color}30`, borderRadius:4, padding:"4px 10px", fontSize:"1.25rem", color:"#a09060" }}>
+              <span style={{ color: army.accent, fontWeight:700 }}>{army.units.length}</span>
+              <span style={{ marginLeft:4, color:"#666" }}>total entries</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Confirm button */}
+        <button onClick={onConfirm}
+          style={{ width:"100%", background:`linear-gradient(135deg, ${army.color}cc, ${army.color}88)`, color:"#000", border:"none", borderRadius:8, padding:"16px 0", fontFamily:"'Cinzel',serif", fontSize:"1.2rem", fontWeight:700, letterSpacing:3, cursor:"pointer", transition:"all 0.2s", boxShadow:`0 4px 20px ${army.color}40` }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 6px 28px ${army.color}70`; e.currentTarget.style.transform="translateY(-1px)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = `0 4px 20px ${army.color}40`; e.currentTarget.style.transform="translateY(0)"; }}
+        >
+          MARCH TO WAR →
+        </button>
+
+      </div>
+    </div>
+  );
+}
+
+// ── UNIT LIST PANEL ────────────────────────────────────────────────────────────
+
+// ── PER-1K BRACKET HELPERS ────────────────────────────────────────────────────
+// WMR: unit min/max are per 1000pts. A 2000pt army gets 2× the normal max/min.
+// Brackets round UP: 1001pts = 2 brackets, 2001pts = 3 brackets.
+function ptsToKBrackets(totalPts) {
+  return Math.max(1, Math.ceil(totalPts / 1000));
+}
+function effectiveMax(unit, totalPts) {
+  if (unit.max === "-" || unit.max === null || unit.max === undefined) return Infinity;
+  const n = Number(unit.max);
+  if (isNaN(n)) return Infinity;
+  return n * ptsToKBrackets(totalPts);
+}
+function effectiveMin(unit, totalPts) {
+  if (unit.min === "-" || unit.min === null || unit.min === undefined) return 0;
+  const n = Number(unit.min);
+  if (isNaN(n)) return 0;
+  return n * ptsToKBrackets(totalPts);
+}
+// Validation: returns array of warning strings for the current roster
+function validateRoster(roster, army, totalPts) {
+  const warnings = [];
+  const brackets = ptsToKBrackets(totalPts);
+  // Count each unit id
+  const counts = {};
+  roster.forEach(e => { counts[e.unit.id] = (counts[e.unit.id] || 0) + 1; });
+  // Check mins
+  army.units.forEach(unit => {
+    const minReq = effectiveMin(unit, totalPts);
+    if (minReq > 0) {
+      const taken = counts[unit.id] || 0;
+      if (taken < minReq) {
+        warnings.push(`${unit.name}: need ${minReq} (min ${unit.min}×${brackets}k), have ${taken}`);
+      }
+    }
+  });
+  // Must have exactly 1 General
+  const generals = roster.filter(e => e.unit.type === "General").length;
+  if (generals === 0) warnings.push("Army must include 1 General");
+  if (generals > 1) warnings.push("Army may only include 1 General");
+  return warnings;
+}
+
+function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit }) {
+  // Mount types are handled via character upgrade dropdowns, not as standalone units
+  // Exception: units explicitly marked as purchasable (isUnit:true) still show
+  const mountTypes = ["Monstrous Mount","Chariot Mount","Special Mount"];
+  const types = ["General","Hero","Wizard","Special","Infantry","Cavalry","Chariot","Monster","Artillery","Machine"];
+  const byType = {};
+  army.units.forEach(u => {
+    const t = u.type;
+    // Skip mount-type entries unless explicitly flagged as a purchasable unit
+    if (mountTypes.includes(t) && !u.isUnit) return;
+    if (!byType[t]) byType[t] = [];
+    byType[t].push(u);
+  });
+  return (
+    <div style={{ height:"100%", overflowY:"auto", padding:"8px 0" }}>
+      {types.filter(t => byType[t]).map(type => (
+        <div key={type}>
+          <div style={{ padding:"4px 12px", fontSize:"0.88rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:2, textTransform:"uppercase", borderBottom:"1px solid #1a1a1a", background:"#0d0b08" }}>
+            {type}
+          </div>
+          {byType[type].map(unit => {
+            const count = roster.filter(r => r.unit.id === unit.id).length;
+            const effMax = effectiveMax(unit, roster.reduce((s,e)=>{ const b=typeof e.unit.pts==="number"?e.unit.pts:0; const mt=e.mount?e.mount.pts||0:0; const mg=e.magicItem?e.magicItem.cost||0:0; return s+b+mt+mg; },0));
+            const effMin = effectiveMin(unit, roster.reduce((s,e)=>{ const b=typeof e.unit.pts==="number"?e.unit.pts:0; const mt=e.mount?e.mount.pts||0:0; const mg=e.magicItem?e.magicItem.cost||0:0; return s+b+mt+mg; },0));
+            const atMax = effMax !== Infinity && count >= effMax;
+            const belowMin = effMin > 0 && count < effMin;
+            const minStr = unit.min === "-" ? "—" : String(unit.min);
+            const maxStr = unit.max === "-" ? "—" : String(unit.max);
+            return (
+              <div key={unit.id}
+                style={{ padding:"8px 12px", background:"transparent", borderLeft:"3px solid transparent", borderBottom:"1px solid #111", display:"flex", justifyContent:"space-between", alignItems:"center", opacity: atMax ? 0.55 : 1 }}
+              >
+                <div style={{ minWidth:0, flex:1 }}>
+                  <div style={{ fontSize:"0.97rem", color:"#d4c8a8", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{unit.name}</div>
+                  <div style={{ fontSize:"1.1rem", color:"#666", display:"flex", gap:6, flexWrap:"wrap", marginTop:1 }}>
+                    <span>{typeof unit.pts === "number" ? `${unit.pts}pts` : unit.pts}</span>
+                    <span style={{ color:"#444" }}>·</span>
+                    <span style={{ color: belowMin ? "#c05050" : "#555" }}>
+                      Min: <span style={{ color: belowMin ? "#c07050" : "#666" }}>{effMin > 0 ? effMin : "—"}</span>
+                    </span>
+                    <span style={{ color: atMax ? "#c07000" : "#555" }}>
+                      Max: <span style={{ color: atMax ? "#c09020" : "#666" }}>{effMax === Infinity ? "—" : effMax}</span>
+                    </span>
+                    {count > 0 && <span style={{ color: army.accent }}>({count} taken)</span>}
+                  </div>
+                </div>
+                <div style={{ display:"flex", gap:4, alignItems:"center", flexShrink:0, marginLeft:6 }}>
+                  <button
+                    onClick={e => { e.stopPropagation(); if (!atMax) onAddUnit(unit); }}
+                    disabled={atMax}
+                    title={atMax ? `Maximum ${effMax} reached` : `Add ${unit.name}`}
+                    style={{ width:22, height:22, borderRadius:"50%", background: atMax ? "#1a1a1a" : army.color+"30", color: atMax ? "#333" : army.accent, fontSize:"1.2rem", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center", cursor: atMax ? "not-allowed" : "pointer" }}>+</button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── UNIT DETAIL PANEL ──────────────────────────────────────────────────────────
+function UnitDetail({ unit, army, onAdd }) {
+  if (!unit) return (
+    <div style={{ height:"100%", display:"flex", alignItems:"center", justifyContent:"center", color:"#444", fontSize:"1.25rem", fontStyle:"italic" }}>
+      Select a unit to view details
+    </div>
+  );
+
+  const allMagic = getMagicItemsForUnit(unit);
+
+  // Group eligible items by category for display
+  const magicStandardItems = allMagic.filter(i => MAGIC_STANDARDS.some(s => s.id === i.id));
+  const magicWeaponItems   = allMagic.filter(i => MAGIC_WEAPONS.some(s => s.id === i.id));
+  const deviceItems        = allMagic.filter(i => DEVICES_OF_POWER.some(s => s.id === i.id));
+
+  // Eligibility label for this unit
+  const eligNote = (() => {
+    if (unit.greySeer)          return "Grey Seer — Magic Weapons + General AND Wizard Devices";
+    if (isGeneralType(unit))    return "General — Magic Weapons + General Devices";
+    if (isWizardType(unit))     return "Wizard — Magic Weapons + Wizard Devices";
+    if (isRunesmith(unit))      return "Runesmith — Magic Weapons + Dispel Devices";
+    if (isHeroType(unit))       return "Hero — Magic Weapons only";
+    if (isBannerUnit(unit))     return "Unit — Magic Standards only";
+    return null;
+  })();
+
+  const statStyle = { flex:1, textAlign:"center", padding:"6px 4px" };
+
+  const ItemGroup = ({ label, items, accent }) => items.length === 0 ? null : (
+    <div style={{ marginBottom:10 }}>
+      <div style={{ fontSize:"1.25rem", fontFamily:"'Cinzel',serif", color: accent || "#555", letterSpacing:1.5, marginBottom:5, textTransform:"uppercase" }}>{label}</div>
+      {items.map(item => (
+        <div key={item.id} style={{ background:"#0a0806", border:"1px solid #1e1c10", borderRadius:4, padding:"6px 10px", marginBottom:3 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", gap:8 }}>
+            <span style={{ fontSize:"1.1rem", color:"#d4b060", fontWeight:600 }}>{item.name}</span>
+            <span style={{ fontSize:"1.25rem", color: accent || "#888", flexShrink:0 }}>{item.cost}pts</span>
+          </div>
+          <div style={{ fontSize:"1.25rem", color:"#888", marginTop:2, lineHeight:1.4 }}>{item.desc}</div>
+          {item.restriction && (
+            <div style={{ fontSize:"1.1rem", color:"#6a5a10", fontStyle:"italic", marginTop:1 }}>⚠ {item.restriction}</div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div style={{ height:"100%", overflowY:"auto", padding:16 }}>
+      {/* Header */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10, flexWrap:"wrap", gap:8 }}>
+        <div>
+          <h2 style={{ fontFamily:"'Cinzel',serif", fontSize:"1.1rem", color: army.accent }}>{unit.name}</h2>
+          <TypeBadge type={unit.type} />
+        </div>
+        <button onClick={() => onAdd(unit)}
+          style={{ background: army.color, color:"#000", padding:"6px 14px", borderRadius:4, fontFamily:"'Cinzel',serif", fontSize:"1.25rem", fontWeight:700, letterSpacing:1 }}>
+          + ADD TO ROSTER
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div style={{ background:"#0d0b08", border:`1px solid ${army.color}40`, borderRadius:6, overflow:"hidden", marginBottom:12 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", borderBottom:`1px solid ${army.color}20` }}>
+          {["Atk","Hits","Armour","Cmd","Size","Pts","Min/Max"].map(h => (
+            <div key={h} style={{ ...statStyle, borderRight:"1px solid #1a1a1a", fontSize:"0.55rem", fontFamily:"'Cinzel',serif", color:"#555", letterSpacing:1, background:"#0a0806" }}>{h}</div>
+          ))}
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)" }}>
+          {[unit.atk, unit.hits, unit.armour, unit.cmd==="-"?"-":unit.cmd, unit.size, unit.pts, `${unit.min}/${unit.max}`].map((v,i) => (
+            <div key={i} style={{ ...statStyle, borderRight:"1px solid #111", fontSize:"1.25rem", fontWeight:600, color: army.accent }}>{String(v)}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* Special rules */}
+      {unit.special && (
+        <div style={{ background:"#0d0b08", border:`1px solid #2a2a1a`, borderRadius:6, padding:10, marginBottom:12 }}>
+          <div style={{ fontSize:"0.88rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:1, marginBottom:4 }}>SPECIAL RULES</div>
+          <p style={{ fontSize:"0.97rem", color:"#b0a080", lineHeight:1.5 }}>{unit.special}</p>
+        </div>
+      )}
+
+      {/* Magic items — grouped with eligibility note */}
+      {allMagic.length > 0 ? (
+        <div>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+            <div style={{ fontSize:"0.88rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:1 }}>ELIGIBLE MAGIC ITEMS</div>
+            {eligNote && <div style={{ fontSize:"1.25rem", color: army.color, fontStyle:"italic" }}>{eligNote}</div>}
+          </div>
+          <ItemGroup label="Magic Standards" items={magicStandardItems} accent="#70a070" />
+          <ItemGroup label="Magic Weapons" items={magicWeaponItems} accent="#a07030" />
+          <ItemGroup label="Devices of Power" items={deviceItems} accent="#6070c0" />
+        </div>
+      ) : (
+        <div style={{ background:"#0d0b08", border:"1px solid #1a1a1a", borderRadius:6, padding:10 }}>
+          <div style={{ fontSize:"1.1rem", color:"#444", fontStyle:"italic" }}>
+            {["Artillery","Machine","Monster"].includes(unit.type)
+              ? "War machines and monsters cannot carry magic items."
+              : "No magic items available for this unit type."}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── ROSTER ENTRY EDITOR ────────────────────────────────────────────────────────
+// Shown when a roster entry is expanded. Lets the user pick a magic item AND
+// (for characters) a mount from the same army's mount units.
+function RosterEntryEditor({ entry, idx, army, onUpdate }) {
+  const unit = entry.unit;
+  const isCharacter = ["General","Hero","Wizard"].includes(unit.type);
+
+  // ── Magic items ──────────────────────────────────────────────────────────────
+  const allMagic = getMagicItemsForUnit(unit);
+  const selectedMagic = entry.magicItem || null;
+
+  function handleMagicChange(e) {
+    const id = e.target.value;
+    const item = allMagic.find(m => m.id === id) || null;
+    onUpdate(idx, { magicItem: item });
+  }
+
+  // ── Mounts ───────────────────────────────────────────────────────────────────
+  // Collect all mount-type units in the army
+  const mountTypes = ["Monstrous Mount","Chariot Mount","Special Mount"];
+  const availableMounts = isCharacter
+    ? army.units.filter(u => mountTypes.includes(u.type))
+    : [];
+  const selectedMount = entry.mount || null;
+
+  function handleMountChange(e) {
+    const id = e.target.value;
+    const mount = availableMounts.find(m => m.id === id) || null;
+    onUpdate(idx, { mount });
+  }
+
+  const hasMagic = allMagic.length > 0;
+  const hasMounts = availableMounts.length > 0;
+  if (!hasMagic && !hasMounts) return (
+    <div style={{ fontSize:"1.25rem", color:"#444", fontStyle:"italic", padding:"4px 0" }}>No upgrades available for this unit.</div>
+  );
+
+  const selStyle = {
+    width:"100%", background:"#0a0806", border:`1px solid ${army.color}40`,
+    color:"#d4b060", borderRadius:3, padding:"4px 6px", fontSize:"0.88rem",
+    marginTop:4, outline:"none",
+  };
+  const labelStyle = {
+    fontSize:"1.25rem", fontFamily:"'Cinzel',serif", color:"#555",
+    letterSpacing:1, textTransform:"uppercase", display:"block", marginTop:8, marginBottom:2,
+  };
+
+  return (
+    <div style={{ paddingTop:4 }}>
+      {hasMounts && (
+        <div>
+          <span style={labelStyle}>Mount</span>
+          <select value={selectedMount?.id || ""} onChange={handleMountChange} style={selStyle}>
+            <option value="">— On foot / no mount —</option>
+            {availableMounts.map(m => (
+              <option key={m.id} value={m.id}>
+                {m.name} (+{m.pts}pts) — {m.atk} atk
+              </option>
+            ))}
+          </select>
+          {selectedMount && (
+            <div style={{ fontSize:"0.93rem", color:"#888", marginTop:3, lineHeight:1.4, paddingLeft:2 }}>
+              {selectedMount.special}
+            </div>
+          )}
+        </div>
+      )}
+      {hasMagic && (
+        <div>
+          <span style={labelStyle}>Magic Item</span>
+          <select value={selectedMagic?.id || ""} onChange={handleMagicChange} style={selStyle}>
+            <option value="">— None —</option>
+            {/* Standards */}
+            {allMagic.filter(m => MAGIC_STANDARDS.some(s => s.id === m.id)).length > 0 && (
+              <optgroup label="── Magic Standards ──">
+                {allMagic.filter(m => MAGIC_STANDARDS.some(s => s.id === m.id)).map(m => (
+                  <option key={m.id} value={m.id}>{m.name} (+{m.cost}pts)</option>
+                ))}
+              </optgroup>
+            )}
+            {/* Weapons */}
+            {allMagic.filter(m => MAGIC_WEAPONS.some(s => s.id === m.id)).length > 0 && (
+              <optgroup label="── Magic Weapons ──">
+                {allMagic.filter(m => MAGIC_WEAPONS.some(s => s.id === m.id)).map(m => (
+                  <option key={m.id} value={m.id}>{m.name} (+{m.cost}pts)</option>
+                ))}
+              </optgroup>
+            )}
+            {/* Devices */}
+            {allMagic.filter(m => DEVICES_OF_POWER.some(s => s.id === m.id)).length > 0 && (
+              <optgroup label="── Devices of Power ──">
+                {allMagic.filter(m => DEVICES_OF_POWER.some(s => s.id === m.id)).map(m => (
+                  <option key={m.id} value={m.id}>{m.name} (+{m.cost}pts)</option>
+                ))}
+              </optgroup>
+            )}
+          </select>
+          {selectedMagic && (
+            <div style={{ fontSize:"0.93rem", lineHeight:1.4, marginTop:3, paddingLeft:2 }}>
+              <span style={{ color:"#d4b060" }}>{selectedMagic.name}</span>
+              {selectedMagic.restriction && <span style={{ color:"#665500" }}> [{selectedMagic.restriction}]</span>}
+              <span style={{ color:"#888" }}> — {selectedMagic.desc}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── ROSTER PANEL ───────────────────────────────────────────────────────────────
+function RosterPanel({ army, roster, onRemove, onUpdate, onPrint, onClear, onReorder, totalPts }) {
+  const [expandedIdx, setExpandedIdx] = useState(null);
+  const [dragIdx, setDragIdx] = useState(null);
+  const [dragOverIdx, setDragOverIdx] = useState(null);
+
+  const entryTotal = (entry) => {
+    let t = typeof entry.unit.pts === "number" ? entry.unit.pts : 0;
+    if (entry.mount) t += typeof entry.mount.pts === "number" ? entry.mount.pts : 0;
+    if (entry.magicItem) t += entry.magicItem.cost || 0;
+    return t;
+  };
+  const total = roster.reduce((s, e) => s + entryTotal(e), 0);
+  const brackets = ptsToKBrackets(total);
+  const warnings = validateRoster(roster, army, total);
+
+  // Touch drag state
+  const touchStartY = useRef(null);
+  const touchDragIdx = useRef(null);
+
+  function handleDragStart(idx) { setDragIdx(idx); }
+  function handleDragOver(e, idx) { e.preventDefault(); setDragOverIdx(idx); }
+  function handleDrop(idx) {
+    if (dragIdx === null || dragIdx === idx) { setDragIdx(null); setDragOverIdx(null); return; }
+    onReorder(dragIdx, idx);
+    setDragIdx(null); setDragOverIdx(null);
+    setExpandedIdx(null);
+  }
+
+  // Move up/down buttons for mobile
+  function moveUp(idx) { if (idx > 0) { onReorder(idx, idx-1); setExpandedIdx(null); } }
+  function moveDown(idx) { if (idx < roster.length-1) { onReorder(idx, idx+1); setExpandedIdx(null); } }
+
+  return (
+    <div style={{ height:"100%", display:"flex", flexDirection:"column" }}>
+      {/* Header */}
+      <div style={{ padding:"10px 12px", borderBottom:`1px solid ${army.color}30`, background:"#0a0806", flexShrink:0 }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+          <span style={{ fontFamily:"'Cinzel',serif", fontSize:"1.1rem", color:"#666", letterSpacing:1 }}>ROSTER</span>
+          <div style={{ textAlign:"right" }}>
+            <span style={{ fontFamily:"'Cinzel',serif", fontSize:"1.2rem", color: army.accent, fontWeight:700 }}>{total}pts</span>
+            <span style={{ fontSize:"0.78rem", color:"#555", marginLeft:6 }}>{brackets}k bracket</span>
+          </div>
+        </div>
+        {/* Validation warnings */}
+        {warnings.length > 0 && (
+          <div style={{ marginBottom:6, padding:"4px 8px", background:"#1a0a00", border:"1px solid #6a3000", borderRadius:4 }}>
+            {warnings.map((w,i) => (
+              <div key={i} style={{ fontSize:"0.78rem", color:"#c07030" }}>⚠ {w}</div>
+            ))}
+          </div>
+        )}
+        <div style={{ display:"flex", gap:6 }}>
+          <button onClick={onPrint}
+            style={{ flex:1, background: army.color+"30", color: army.accent, border:`1px solid ${army.color}60`, borderRadius:3, padding:"6px 0", fontSize:"0.93rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer" }}>
+            🖨 PRINT CARDS
+          </button>
+          <button onClick={onClear}
+            style={{ background:"#1a0a0a", color:"#883030", border:"1px solid #330a0a", borderRadius:3, padding:"6px 10px", fontSize:"0.93rem", cursor:"pointer" }}>
+            ✕ CLEAR
+          </button>
+        </div>
+      </div>
+
+      {/* Entries */}
+      <div style={{ flex:1, overflowY:"auto" }}>
+        {roster.length === 0 && (
+          <div style={{ padding:20, color:"#444", fontSize:"0.97rem", fontStyle:"italic", textAlign:"center" }}>
+            No units added yet.<br/>
+            <span style={{ fontSize:"1.1rem" }}>Tap + next to any unit to add it.</span>
+          </div>
+        )}
+        {roster.map((entry, idx) => {
+          const isOpen = expandedIdx === idx;
+          const pts = entryTotal(entry);
+          const isCharacter = ["General","Hero","Wizard"].includes(entry.unit.type);
+          const isDragging = dragIdx === idx;
+          const isDragOver = dragOverIdx === idx;
+          return (
+            <div key={idx}
+              draggable
+              onDragStart={() => handleDragStart(idx)}
+              onDragOver={e => handleDragOver(e, idx)}
+              onDrop={() => handleDrop(idx)}
+              onDragEnd={() => { setDragIdx(null); setDragOverIdx(null); }}
+              style={{ borderBottom:"1px solid #111", opacity: isDragging ? 0.4 : 1, background: isDragOver ? army.color+"15" : "transparent", borderLeft: isDragOver ? `3px solid ${army.color}` : "3px solid transparent", transition:"all 0.1s" }}>
+              {/* Row */}
+              <div
+                onClick={() => setExpandedIdx(isOpen ? null : idx)}
+                style={{ padding:"8px 10px", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", background: isOpen ? "#0f0d0a" : "transparent" }}
+              >
+                {/* Drag handle + move buttons */}
+                <div style={{ display:"flex", flexDirection:"column", gap:1, marginRight:6, flexShrink:0, opacity:0.4 }}>
+                  <button onClick={e => { e.stopPropagation(); moveUp(idx); }}
+                    style={{ background:"none", color:"#888", fontSize:"0.7rem", padding:"0 2px", lineHeight:1, cursor: idx===0?"not-allowed":"pointer", opacity: idx===0?0.3:1 }}>▲</button>
+                  <div style={{ fontSize:"0.6rem", color:"#555", textAlign:"center", cursor:"grab", lineHeight:1 }}>⠿</div>
+                  <button onClick={e => { e.stopPropagation(); moveDown(idx); }}
+                    style={{ background:"none", color:"#888", fontSize:"0.7rem", padding:"0 2px", lineHeight:1, cursor: idx===roster.length-1?"not-allowed":"pointer", opacity: idx===roster.length-1?0.3:1 }}>▼</button>
+                </div>
+                <div style={{ minWidth:0, flex:1 }}>
+                  <div style={{ fontSize:"0.93rem", color:"#d4c8a8", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                    {entry.unit.name}
+                    {entry.mount && <span style={{ color: army.color, fontSize:"0.85rem" }}> + {entry.mount.name}</span>}
+                  </div>
+                  <div style={{ fontSize:"0.85rem", color:"#555", display:"flex", gap:4, flexWrap:"wrap", marginTop:1 }}>
+                    <span style={{ color: army.accent+"cc" }}>{pts}pts</span>
+                    <span>·</span>
+                    <span>{entry.unit.type}</span>
+                    {entry.magicItem && <span style={{ color:"#a08030" }}>✦ {entry.magicItem.name}</span>}
+                  </div>
+                </div>
+                <div style={{ display:"flex", gap:4, flexShrink:0, alignItems:"center" }}>
+                  <span style={{ fontSize:"0.65rem", color:"#444" }}>{isOpen ? "▲" : "▼"}</span>
+                  <button
+                    onClick={e => { e.stopPropagation(); onRemove(idx); if (expandedIdx === idx) setExpandedIdx(null); }}
+                    style={{ background:"transparent", color:"#553030", fontSize:"1.1rem", width:22, height:22, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%", flexShrink:0, cursor:"pointer" }}>✕</button>
+                </div>
+              </div>
+              {isOpen && (
+                <div style={{ padding:"0 12px 10px", background:"#0a0806", borderTop:"1px solid #1a1a1a" }}>
+                  <RosterEntryEditor entry={entry} idx={idx} army={army} onUpdate={onUpdate} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── PRINT VIEW ─────────────────────────────────────────────────────────────────
+function PrintView({ army, roster, onClose }) {
+  const entryTotal = (entry) => {
+    let t = typeof entry.unit.pts === "number" ? entry.unit.pts : 0;
+    if (entry.mount) t += typeof entry.mount.pts === "number" ? entry.mount.pts : 0;
+    if (entry.magicItem) t += entry.magicItem.cost || 0;
+    return t;
+  };
+  const total = roster.reduce((s,e) => s + entryTotal(e), 0);
+
+  return (
+    <div style={{ background:"#fff", minHeight:"100vh", fontFamily:"Georgia,serif", color:"#111" }}>
+      {/* Screen-only toolbar */}
+      <div className="no-print" style={{ position:"sticky", top:0, zIndex:200, background:"#1a1a1a", padding:"10px 16px", display:"flex", alignItems:"center", gap:12 }}>
+        <button onClick={onClose}
+          style={{ background:"none", border:"1px solid #555", color:"#ccc", borderRadius:5, padding:"7px 16px", fontSize:"1rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
+          ← BACK
+        </button>
+        <div style={{ flex:1, fontFamily:"'Cinzel',serif", color:"#f0c040", textAlign:"center", letterSpacing:2, fontSize:"0.95rem" }}>
+          {army.name.toUpperCase()} — {total}pts — {roster.length} units
+        </div>
+        <button
+          onClick={() => window.print()}
+          style={{ background:"#f0c040", border:"none", color:"#111", borderRadius:5, padding:"8px 18px", fontSize:"1rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700, letterSpacing:1 }}>
+          🖨 PRINT / PDF
+        </button>
+      </div>
+
+      {/* Print-ready card grid — white background, black text */}
+      <div style={{ padding:"8px", display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))", gap:"8px" }}>
+        {roster.map((entry, idx) => {
+          const u = entry.unit;
+          const pts = entryTotal(entry);
+          const stats = [["ATK",u.atk],["HITS",u.hits],["ARM",u.armour],["CMD",u.cmd==="-"?"-":u.cmd],["SZ",u.size],["MIN",u.min],["MAX",u.max]];
+          return (
+            <div key={idx} style={{ border:"2px solid #333", borderRadius:6, padding:"10px 12px", pageBreakInside:"avoid", breakInside:"avoid", background:"#fff" }}>
+              {/* Header */}
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", borderBottom:"1px solid #999", paddingBottom:6, marginBottom:6 }}>
+                <div>
+                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.05rem", fontWeight:700, color:"#111", lineHeight:1.2 }}>{u.name}</div>
+                  {entry.mount && <div style={{ fontSize:"0.78rem", color:"#555", marginTop:2 }}>+ {entry.mount.name}</div>}
+                  <span style={{ display:"inline-block", fontSize:"0.68rem", fontFamily:"'Cinzel',serif", border:"1px solid #999", borderRadius:3, padding:"1px 5px", marginTop:3, color:"#333" }}>{u.type}</span>
+                </div>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.1rem", fontWeight:700, color:"#111", whiteSpace:"nowrap" }}>{pts}pts</div>
+              </div>
+              {/* Stats */}
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:3, marginBottom:7 }}>
+                {stats.map(([l,v]) => (
+                  <div key={l} style={{ textAlign:"center", border:"1px solid #ddd", borderRadius:3, padding:"3px 1px" }}>
+                    <div style={{ fontSize:"0.52rem", fontFamily:"'Cinzel',serif", color:"#888" }}>{l}</div>
+                    <div style={{ fontSize:"0.9rem", fontWeight:700, color:"#111" }}>{String(v ?? "-")}</div>
+                  </div>
+                ))}
+              </div>
+              {/* Special */}
+              {u.special && <div style={{ fontSize:"0.75rem", color:"#333", lineHeight:1.5, borderTop:"1px solid #ddd", paddingTop:5, marginTop:4 }}>{u.special}</div>}
+              {/* Magic item */}
+              {entry.magicItem && (
+                <div style={{ fontSize:"0.75rem", color:"#444", borderTop:"1px solid #eee", paddingTop:4, marginTop:4 }}>
+                  <strong>✦ {entry.magicItem.name}</strong> — {entry.magicItem.desc}
+                </div>
+              )}
+              {/* Mount special */}
+              {entry.mount && entry.mount.special && (
+                <div style={{ fontSize:"0.75rem", color:"#444", borderTop:"1px solid #eee", paddingTop:4, marginTop:4 }}>
+                  <strong>{entry.mount.name}:</strong> {entry.mount.special}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+const STORAGE_PREFIX = "wmr_list_";
+
+async function getAllSavedLists() {
+  try {
+    const lists = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(STORAGE_PREFIX)) {
+        try {
+          const val = localStorage.getItem(key);
+          if (val) lists.push(JSON.parse(val));
+        } catch {}
+      }
+    }
+    return lists.sort((a, b) => b.savedAt - a.savedAt);
+  } catch { return []; }
+}
+
+async function saveList(listData) {
+  const key = STORAGE_PREFIX + listData.id;
+  localStorage.setItem(key, JSON.stringify(listData));
+}
+
+async function deleteList(id) {
+  localStorage.removeItem(STORAGE_PREFIX + id);
+}
+
+// ── SAVE MODAL ────────────────────────────────────────────────────────────────
+function SaveModal({ army, roster, existingName, onSave, onClose }) {
+  const [name, setName] = useState(existingName || "");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const entryTotal = (entry) => {
+    let t = typeof entry.unit.pts === "number" ? entry.unit.pts : 0;
+    if (entry.mount) t += typeof entry.mount.pts === "number" ? entry.mount.pts : 0;
+    if (entry.magicItem) t += entry.magicItem.cost || 0;
+    return t;
+  };
+  const total = roster.reduce((s,e) => s + entryTotal(e), 0);
+
+  async function handleSave() {
+    const trimmed = name.trim();
+    if (!trimmed) { setError("Please enter a name for this list."); return; }
+    setSaving(true);
+    try {
+      const listData = {
+        id: Date.now().toString(),
+        name: trimmed,
+        armyKey: army ? Object.keys(ARMIES).find(k => ARMIES[k] === army) : null,
+        armyName: army?.name || "",
+        roster,
+        totalPts: total,
+        savedAt: Date.now(),
+      };
+      await saveList(listData);
+      onSave(listData);
+    } catch(e) {
+      setError("Save failed. Please try again.");
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }}>
+      <div style={{ background:"#0d0b08", border:`1px solid ${army?.color || "#444"}60`, borderRadius:8, padding:"24px", width:"100%", maxWidth:360, position:"relative" }}>
+        <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,transparent,${army?.color||"#888"},transparent)`, borderRadius:"8px 8px 0 0" }} />
+        <h3 style={{ fontFamily:"'Cinzel',serif", color: army?.accent || "#f0c040", fontSize:"1.15rem", letterSpacing:1, marginBottom:4 }}>SAVE ARMY LIST</h3>
+        <p style={{ fontSize:"0.88rem", color:"#666", marginBottom:16 }}>
+          {army?.name} · {roster.length} units · {total}pts
+        </p>
+        <label style={{ fontSize:"0.93rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:1, display:"block", marginBottom:6 }}>LIST NAME</label>
+        <input
+          value={name}
+          onChange={e => { setName(e.target.value); setError(""); }}
+          onKeyDown={e => e.key === "Enter" && handleSave()}
+          autoFocus
+          placeholder={`${army?.name || "Army"} — ${total}pts`}
+          style={{ width:"100%", background:"#0a0806", border:`1px solid ${army?.color||"#444"}50`, borderRadius:4, padding:"8px 10px", color:"#d4c8a8", fontSize:"1.25rem", outline:"none", marginBottom: error ? 6 : 16 }}
+        />
+        {error && <p style={{ fontSize:"1.25rem", color:"#c05050", marginBottom:12 }}>{error}</p>}
+        <div style={{ display:"flex", gap:8 }}>
+          <button onClick={onClose}
+            style={{ flex:1, background:"transparent", color:"#666", border:"1px solid #333", borderRadius:4, padding:"8px 0", fontSize:"0.88rem", fontFamily:"'Cinzel',serif" }}>
+            CANCEL
+          </button>
+          <button onClick={handleSave} disabled={saving}
+            style={{ flex:2, background: army?.color || "#888", color:"#000", border:"none", borderRadius:4, padding:"8px 0", fontSize:"0.88rem", fontFamily:"'Cinzel',serif", fontWeight:700, letterSpacing:1, opacity: saving ? 0.6 : 1 }}>
+            {saving ? "SAVING…" : "💾 SAVE LIST"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── SAVED LISTS SCREEN ────────────────────────────────────────────────────────
+function SavedLists({ onBack, onLoad }) {
+  const [lists, setLists] = useState(null); // null = loading
+  const [deleting, setDeleting] = useState(null);
+
+  useEffect(() => {
+    getAllSavedLists().then(setLists);
+  }, []);
+
+  async function handleDelete(id) {
+    setDeleting(id);
+    try {
+      await deleteList(id);
+      setLists(prev => prev.filter(l => l.id !== id));
+    } catch {}
+    setDeleting(null);
+  }
+
+  function formatDate(ts) {
+    return new Date(ts).toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
+  }
+
+  const accentFor = (armyKey) => ARMIES[armyKey]?.accent || "#f0c040";
+  const colorFor  = (armyKey) => ARMIES[armyKey]?.color  || "#888";
+
+  return (
+    <div style={{ minHeight:"100vh", background:"#0a0806", padding:"20px 16px" }}>
+      <GS />
+      <div style={{ maxWidth:680, margin:"0 auto" }}>
+        <button onClick={onBack}
+          style={{ background:"transparent", color:"#555", border:"1px solid #333", borderRadius:4, padding:"5px 12px", fontSize:"1.1rem", marginBottom:20, cursor:"pointer", fontFamily:"'Cinzel',serif", letterSpacing:1 }}
+          onMouseEnter={e => e.currentTarget.style.color="#999"}
+          onMouseLeave={e => e.currentTarget.style.color="#555"}
+        >← BACK</button>
+
+        <div style={{ textAlign:"center", marginBottom:24 }}>
+          <h1 style={{ fontFamily:"'Cinzel',serif", fontSize:"clamp(1.2rem,3.5vw,1.8rem)", color:"#f0c040", letterSpacing:2 }}>📋 SAVED LISTS</h1>
+          <p style={{ color:"#555", fontSize:"0.97rem", marginTop:6, letterSpacing:1 }}>Your saved army rosters</p>
+          <div style={{ width:80, height:1, background:"linear-gradient(90deg,transparent,#c8940a,transparent)", margin:"10px auto 0" }} />
+        </div>
+
+        {/* Loading */}
+        {lists === null && (
+          <div style={{ textAlign:"center", padding:40, color:"#444", fontStyle:"italic" }}>Loading saved lists…</div>
+        )}
+
+        {/* Empty */}
+        {lists !== null && lists.length === 0 && (
+          <div style={{ background:"#0d0b08", border:"1px solid #1e1a10", borderRadius:8, padding:32, textAlign:"center" }}>
+            <div style={{ fontSize:"2rem", marginBottom:12 }}>📜</div>
+            <div style={{ fontFamily:"'Cinzel',serif", color:"#555", fontSize:"0.97rem", letterSpacing:1, marginBottom:8 }}>NO SAVED LISTS YET</div>
+            <p style={{ fontSize:"1.1rem", color:"#444" }}>Build a roster and hit 💾 Save List to store it here.</p>
+          </div>
+        )}
+
+        {/* List items */}
+        {lists !== null && lists.map(list => {
+          const acol = accentFor(list.armyKey);
+          const ccol = colorFor(list.armyKey);
+          return (
+            <div key={list.id}
+              style={{ background:`linear-gradient(135deg, #0d0b08, ${ccol}12)`, border:`1px solid ${ccol}40`, borderRadius:8, padding:"14px 16px", marginBottom:10, display:"flex", alignItems:"center", gap:12 }}>
+              {/* Info */}
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.25rem", color: acol, fontWeight:700, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                  {list.name}
+                </div>
+                <div style={{ display:"flex", gap:8, marginTop:4, flexWrap:"wrap", alignItems:"center" }}>
+                  <span style={{ fontSize:"1.2rem", color: ccol }}>{list.armyName}</span>
+                  <span style={{ fontSize:"1.2rem", color:"#444" }}>·</span>
+                  <span style={{ fontSize:"1.2rem", color:"#888" }}>{list.roster?.length || 0} units</span>
+                  <span style={{ fontSize:"1.2rem", color:"#444" }}>·</span>
+                  <span style={{ fontSize:"1.2rem", color: acol }}>{list.totalPts}pts</span>
+                  <span style={{ fontSize:"1.2rem", color:"#444" }}>·</span>
+                  <span style={{ fontSize:"0.93rem", color:"#444" }}>{formatDate(list.savedAt)}</span>
+                </div>
+                {/* Unit preview */}
+                {list.roster && list.roster.length > 0 && (
+                  <div style={{ marginTop:6, fontSize:"1.1rem", color:"#555", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                    {list.roster.slice(0,6).map(e => e.unit.name).join(", ")}{list.roster.length > 6 ? ` +${list.roster.length-6} more` : ""}
+                  </div>
+                )}
+              </div>
+              {/* Actions */}
+              <div style={{ display:"flex", gap:6, flexShrink:0 }}>
+                <button
+                  onClick={() => onLoad(list)}
+                  style={{ background: ccol+"30", color: acol, border:`1px solid ${ccol}50`, borderRadius:4, padding:"6px 10px", fontSize:"0.93rem", fontFamily:"'Cinzel',serif", letterSpacing:0.5, cursor:"pointer" }}
+                  onMouseEnter={e => e.currentTarget.style.background = ccol+"50"}
+                  onMouseLeave={e => e.currentTarget.style.background = ccol+"30"}
+                >LOAD</button>
+                <button
+                  onClick={() => handleDelete(list.id)}
+                  disabled={deleting === list.id}
+                  style={{ background:"#1a0808", color:"#884040", border:"1px solid #330a0a", borderRadius:4, padding:"6px 8px", fontSize:"1.25rem", opacity: deleting === list.id ? 0.5 : 1, cursor:"pointer" }}
+                >✕</button>
+              </div>
+            </div>
+          );
+        })}
+
+        {lists !== null && lists.length > 0 && (
+          <p style={{ fontSize:"0.93rem", color:"#333", textAlign:"center", marginTop:16 }}>
+            Lists are saved to this device/browser. Clearing browser data will remove them.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+function App() {
+  const [screen, setScreen] = useState("factions"); // "factions" | "builder" | "print"
+  const [selectedArmy, setSelectedArmy] = useState(null);
+  const [previewArmy, setPreviewArmy] = useState(null);
+  const [roster, setRoster] = useState([]);
+  const [howToPlay, setHowToPlay] = useState(false);
+  const [savedListsOpen, setSavedListsOpen] = useState(false);
+  const [saveModal, setSaveModal] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const army = selectedArmy ? ARMIES[selectedArmy] : null;
+
+  function handlePreview(key) {
+    setPreviewArmy(key);
+  }
+
+  function handleConfirm() {
+    setSelectedArmy(previewArmy);
+    setRoster([]);
+    setPreviewArmy(null);
+    setScreen("builder");
+  }
+
+  function handleBack() {
+    setPreviewArmy(null);
+    setScreen("factions");
+  }
+
+  function handleAddUnit(unit) {
+    setRoster(r => [...r, { unit, count: unit.size !== "-" ? unit.size : 1, magicItem: null, mount: null }]);
+  }
+
+  function handleUpdateEntry(idx, changes) {
+    setRoster(r => r.map((e, i) => i === idx ? { ...e, ...changes } : e));
+  }
+
+  function handleRemoveEntry(idx) {
+    setRoster(r => r.filter((_, i) => i !== idx));
+  }
+
+  function handleReorderEntry(fromIdx, toIdx) {
+    setRoster(r => {
+      const next = [...r];
+      const [moved] = next.splice(fromIdx, 1);
+      next.splice(toIdx, 0, moved);
+      return next;
+    });
+  }
+
+  function handleLoadList(list) {
+    const a = ARMIES[list.armyKey];
+    if (!a) return;
+    setSelectedArmy(list.armyKey);
+    setRoster(list.roster || []);
+    setSavedListsOpen(false);
+    setScreen("builder");
+  }
+
+  function handleSaved(listData) {
+    setSaveModal(false);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2500);
+  }
+
+  const GStyle = () => (
+    <GS />
+  );
+
+  if (howToPlay) return <><GS /><HowToPlay onBack={() => setHowToPlay(false)} /></>;
+  if (savedListsOpen) return <><GS /><SavedLists onBack={() => setSavedListsOpen(false)} onLoad={handleLoadList} /></>;
+
+  if (previewArmy && ARMIES[previewArmy]) {
+    return (
+      <>
+        <GS />
+        <ArmyConfirm
+          armyKey={previewArmy}
+          onConfirm={handleConfirm}
+          onBack={handleBack}
+        />
+      </>
+    );
+  }
+
+  if (screen === "factions" || !army) {
+    return (
+      <>
+        <GS />
+        <FactionSelector
+          onPreview={handlePreview}
+          onHowToPlay={() => setHowToPlay(true)}
+          onSavedLists={() => setSavedListsOpen(true)}
+        />
+      </>
+    );
+  }
+
+  // Print screen
+  if (screen === "print" && army) {
+    return (
+      <>
+        <GS />
+        <PrintView
+          army={army}
+          armyKey={selectedArmy}
+          roster={roster}
+          onClose={() => setScreen("builder")}
+        />
+      </>
+    );
+  }
+
+  const totalPts = roster.reduce((sum, e) => {
+    const base = typeof e.unit.pts === "number" ? e.unit.pts : 0;
+    const magic = e.magicItem ? (e.magicItem.cost || 0) : 0;
+    const mount = e.mount ? (e.mount.pts || 0) : 0;
+    return sum + base + magic + mount;
+  }, 0);
+
+  return (
+    <>
+      <GS />
+      {saveModal && (
+        <SaveModal
+          army={army}
+          roster={roster}
+          totalPts={totalPts}
+          onSave={handleSaved}
+          onClose={() => setSaveModal(false)}
+        />
+      )}
+      <div style={{ minHeight:"100vh", background: army.bg || "#050505", paddingBottom:40 }}>
+        {/* Header */}
+        <div style={{ position:"sticky", top:0, zIndex:100, background: army.bg || "#050505", borderBottom:`1px solid ${army.color}40`, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
+          <button onClick={() => { setScreen("factions"); setSelectedArmy(null); setRoster([]); }}
+            style={{ background:"none", border:`1px solid ${army.color}40`, color: army.color, borderRadius:4, padding:"4px 10px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+            ← ARMIES
+          </button>
+          <div style={{ flex:1, fontFamily:"'Cinzel',serif", fontSize:"1.25rem", color: army.accent, letterSpacing:2, textAlign:"center" }}>
+            {army.name.toUpperCase()}
+          </div>
+          <div style={{ display:"flex", gap:6, alignItems:"center" }}>
+            {roster.length > 0 && (
+              <button onClick={() => setSaveModal(true)}
+                style={{ background:"none", border:`1px solid ${army.color}50`, color: saveSuccess ? "#50c050" : army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.93rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+                {saveSuccess ? "✓ SAVED" : "💾 SAVE"}
+              </button>
+            )}
+            {roster.length > 0 && (
+              <button onClick={() => setScreen("print")}
+                style={{ background:"none", border:`1px solid ${army.color}50`, color: army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.93rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+                🖨 PRINT
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="no-print" style={{ display:"flex", gap:0, minHeight:"calc(100vh - 50px)" }}>
+          {/* Unit list sidebar */}
+          <div style={{ width:"40%", maxWidth:200, borderRight:`1px solid ${army.color}20`, overflowY:"auto" }}>
+            <UnitList army={army} armyKey={selectedArmy} roster={roster} onAddUnit={handleAddUnit} />
+          </div>
+          {/* Roster panel */}
+          <div style={{ flex:1, overflowY:"auto" }}>
+            <RosterPanel army={army} roster={roster} onUpdate={handleUpdateEntry} onRemove={handleRemoveEntry} totalPts={totalPts}
+              onPrint={() => setScreen("print")}
+              onClear={() => setRoster([])}
+              onReorder={handleReorderEntry}
+            />
+          </div>
+        </div>
+
+        {/* Print view */}
+        <PrintView army={army} armyKey={selectedArmy} roster={roster} totalPts={totalPts} />
+      </div>
+    </>
+  );
+}
+
+export default App;
