@@ -1939,6 +1939,13 @@ function RosterPanel({ army, roster, onRemove, onUpdate, onPrint, onClear, onReo
 
 // ── PRINT VIEW ─────────────────────────────────────────────────────────────────
 function PrintView({ army, roster, onClose }) {
+  const [showOptions, setShowOptions] = useState(false);
+  const [printOpts, setPrintOpts] = useState({
+    layout: "portrait",      // "portrait" | "landscape" | "square"
+    colorMode: "faction",    // "faction" | "white"
+    showImage: true,
+  });
+
   const entryTotal = (entry) => {
     let t = typeof entry.unit.pts === "number" ? entry.unit.pts : 0;
     if (entry.mount) t += typeof entry.mount.pts === "number" ? entry.mount.pts : 0;
@@ -1947,68 +1954,346 @@ function PrintView({ army, roster, onClose }) {
   };
   const total = roster.reduce((s,e) => s + entryTotal(e), 0);
 
-  return (
-    <div style={{ background:"#fff", minHeight:"100vh", fontFamily:"Georgia,serif", color:"#111" }}>
-      {/* Screen-only toolbar */}
-      <div className="no-print" style={{ position:"sticky", top:0, zIndex:200, background:"#1a1a1a", padding:"10px 16px", display:"flex", alignItems:"center", gap:12 }}>
-        <button onClick={onClose}
-          style={{ background:"none", border:"1px solid #555", color:"#ccc", borderRadius:5, padding:"7px 16px", fontSize:"1rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
-          ← BACK
-        </button>
-        <div style={{ flex:1, fontFamily:"'Cinzel',serif", color:"#f0c040", textAlign:"center", letterSpacing:2, fontSize:"0.95rem" }}>
-          {army.name.toUpperCase()} — {total}pts — {roster.length} units
-        </div>
-        <button
-          onClick={() => window.print()}
-          style={{ background:"#f0c040", border:"none", color:"#111", borderRadius:5, padding:"8px 18px", fontSize:"1rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700, letterSpacing:1 }}>
-          🖨 PRINT / PDF
-        </button>
-      </div>
+  // Dimensions per layout (in inches, CSS uses mm for print)
+  const layouts = {
+    portrait:  { w:"63mm", h:"88mm",  label:"Portrait 2.5×3.5\"", imgH:"28mm" },
+    landscape: { w:"88mm", h:"63mm",  label:"Landscape 3.5×2.5\"", imgH:"0"   },
+    square:    { w:"63mm", h:"63mm",  label:"Square 2.5×2.5\"",    imgH:"20mm" },
+  };
+  const lay = layouts[printOpts.layout];
 
-      {/* Print-ready card grid — white background, black text */}
-      <div style={{ padding:"8px", display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))", gap:"8px" }}>
-        {roster.map((entry, idx) => {
-          const u = entry.unit;
-          const pts = entryTotal(entry);
-          const stats = [["ATK",u.atk],["HITS",u.hits],["ARM",u.armour],["CMD",u.cmd==="-"?"-":u.cmd],["SZ",u.size],["MIN",u.min],["MAX",u.max]];
-          return (
-            <div key={idx} style={{ border:"2px solid #333", borderRadius:6, padding:"10px 12px", pageBreakInside:"avoid", breakInside:"avoid", background:"#fff" }}>
-              {/* Header */}
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", borderBottom:"1px solid #999", paddingBottom:6, marginBottom:6 }}>
-                <div>
-                  <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.05rem", fontWeight:700, color:"#111", lineHeight:1.2 }}>{u.name}</div>
-                  {entry.mount && <div style={{ fontSize:"0.78rem", color:"#555", marginTop:2 }}>+ {entry.mount.name}</div>}
-                  <span style={{ display:"inline-block", fontSize:"0.68rem", fontFamily:"'Cinzel',serif", border:"1px solid #999", borderRadius:3, padding:"1px 5px", marginTop:3, color:"#333" }}>{u.type}</span>
+  // Faction or white color scheme
+  const isFaction = printOpts.colorMode === "faction";
+  const cardBg      = isFaction ? army.bg      : "#ffffff";
+  const cardBorder  = isFaction ? army.color   : "#333333";
+  const cardText    = isFaction ? army.accent   : "#111111";
+  const cardMuted   = isFaction ? "#aaa"        : "#555555";
+  const statBg      = isFaction ? "#00000030"  : "#f5f5f5";
+  const statBorder  = isFaction ? army.color+"60" : "#cccccc";
+  const divider     = isFaction ? army.color+"50" : "#cccccc";
+
+  // Stat icons matching reference card style
+  const STAT_ICONS = { ATK:"⚔", HITS:"◈", ARM:"◇", CMD:"★", SZ:"⊞", MIN:"↓", MAX:"↑" };
+
+  function PrintCard({ entry }) {
+    const u = entry.unit;
+    const pts = entryTotal(entry);
+    const stats = [
+      { k:"ATK", v:u.atk },
+      { k:"HITS", v:u.hits },
+      { k:"ARM", v:u.armour },
+      { k:"CMD", v:u.cmd === "-" ? "-" : u.cmd },
+    ];
+    const isLandscape = printOpts.layout === "landscape";
+
+    return (
+      <div style={{
+        width: lay.w, height: lay.h,
+        background: cardBg,
+        border: `2px solid ${cardBorder}`,
+        borderRadius: "6px",
+        display: "flex",
+        flexDirection: isLandscape ? "row" : "column",
+        overflow: "hidden",
+        pageBreakInside: "avoid",
+        breakInside: "avoid",
+        position: "relative",
+        boxSizing: "border-box",
+        fontFamily: "'Cinzel', Georgia, serif",
+      }}>
+
+        {/* ── PORTRAIT / SQUARE layout ── */}
+        {!isLandscape && (<>
+          {/* Image area */}
+          {printOpts.showImage && lay.imgH !== "0" && (
+            <div style={{
+              width:"100%", height: lay.imgH,
+              background: `linear-gradient(160deg, ${army.color}40, ${army.bg || "#111"})`,
+              borderBottom: `1px solid ${cardBorder}`,
+              display:"flex", alignItems:"center", justifyContent:"center",
+              flexShrink:0,
+            }}>
+              <div style={{ textAlign:"center", opacity:0.35 }}>
+                <div style={{ fontSize:"1.8rem" }}>⚔</div>
+                <div style={{ fontSize:"0.45rem", letterSpacing:2, color: cardText, marginTop:2 }}>IMAGE</div>
+              </div>
+            </div>
+          )}
+
+          {/* Name bar */}
+          <div style={{
+            padding: "3px 5px 2px",
+            borderBottom: `1px solid ${divider}`,
+            display:"flex", justifyContent:"space-between", alignItems:"baseline",
+            flexShrink:0,
+          }}>
+            <div style={{ fontSize:"0.6rem", fontWeight:700, color: cardText, lineHeight:1.2, maxWidth:"75%" }}>
+              {u.name}
+              {entry.mount && <span style={{ fontSize:"0.45rem", color: cardMuted, display:"block" }}>+ {entry.mount.name}</span>}
+            </div>
+            <div style={{ fontSize:"0.6rem", fontWeight:700, color: cardText, whiteSpace:"nowrap" }}>{pts}pts</div>
+          </div>
+
+          {/* Type + stats row */}
+          <div style={{
+            display:"flex", alignItems:"stretch",
+            borderBottom: `1px solid ${divider}`,
+            flexShrink:0,
+          }}>
+            {/* Type badge rotated on left */}
+            <div style={{
+              writingMode:"vertical-rl", transform:"rotate(180deg)",
+              fontSize:"0.4rem", letterSpacing:1, color: cardMuted,
+              padding:"3px 2px", borderRight:`1px solid ${divider}`,
+              background: cardBorder+"20",
+              display:"flex", alignItems:"center", justifyContent:"center",
+              flexShrink:0,
+            }}>{u.type.toUpperCase()}</div>
+
+            {/* Stats grid */}
+            <div style={{ flex:1, display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"1px", padding:"2px" }}>
+              {stats.map(({k,v}) => (
+                <div key={k} style={{
+                  textAlign:"center", background: statBg,
+                  border:`1px solid ${statBorder}`, borderRadius:2,
+                  padding:"1px 0",
+                }}>
+                  <div style={{ fontSize:"0.38rem", color: cardMuted, letterSpacing:0.5 }}>{k}</div>
+                  <div style={{ fontSize:"0.65rem", fontWeight:700, color: cardText }}>{String(v ?? "-")}</div>
                 </div>
-                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.1rem", fontWeight:700, color:"#111", whiteSpace:"nowrap" }}>{pts}pts</div>
+              ))}
+            </div>
+
+            {/* SZ/MIN/MAX column */}
+            <div style={{ display:"flex", flexDirection:"column", gap:"1px", padding:"2px", borderLeft:`1px solid ${divider}` }}>
+              {[{k:"SZ",v:u.size},{k:"MIN",v:u.min},{k:"MAX",v:u.max}].map(({k,v}) => (
+                <div key={k} style={{
+                  textAlign:"center", background: statBg,
+                  border:`1px solid ${statBorder}`, borderRadius:2,
+                  padding:"1px 3px", flex:1, display:"flex", flexDirection:"column", justifyContent:"center",
+                }}>
+                  <div style={{ fontSize:"0.35rem", color: cardMuted }}>{k}</div>
+                  <div style={{ fontSize:"0.55rem", fontWeight:700, color: cardText }}>{String(v ?? "-")}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Rules text area */}
+          <div style={{ flex:1, padding:"3px 5px", overflowY:"hidden", fontSize:"0.42rem", color: cardMuted, lineHeight:1.4 }}>
+            {u.special && <div>{u.special}</div>}
+            {entry.magicItem && (
+              <div style={{ marginTop:2, color: isFaction ? "#d4b060" : "#664400" }}>
+                <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
               </div>
-              {/* Stats */}
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:3, marginBottom:7 }}>
-                {stats.map(([l,v]) => (
-                  <div key={l} style={{ textAlign:"center", border:"1px solid #ddd", borderRadius:3, padding:"3px 1px" }}>
-                    <div style={{ fontSize:"0.52rem", fontFamily:"'Cinzel',serif", color:"#888" }}>{l}</div>
-                    <div style={{ fontSize:"0.9rem", fontWeight:700, color:"#111" }}>{String(v ?? "-")}</div>
-                  </div>
-                ))}
+            )}
+            {entry.mount && entry.mount.special && (
+              <div style={{ marginTop:2 }}>
+                <strong>{entry.mount.name}:</strong> {entry.mount.special}
               </div>
-              {/* Special */}
-              {u.special && <div style={{ fontSize:"0.75rem", color:"#333", lineHeight:1.5, borderTop:"1px solid #ddd", paddingTop:5, marginTop:4 }}>{u.special}</div>}
-              {/* Magic item */}
+            )}
+          </div>
+
+          {/* Footer bar */}
+          <div style={{
+            borderTop:`1px solid ${divider}`, padding:"2px 5px",
+            display:"flex", justifyContent:"space-between",
+            background: cardBorder+"15", flexShrink:0,
+          }}>
+            <div style={{ fontSize:"0.38rem", color: cardMuted, letterSpacing:1 }}>WARMASTER REVOLUTION</div>
+            <div style={{ fontSize:"0.38rem", color: cardMuted }}>{army.name}</div>
+          </div>
+        </>)}
+
+        {/* ── LANDSCAPE layout ── */}
+        {isLandscape && (<>
+          {/* Left stat column */}
+          <div style={{
+            width:"18mm", background: cardBorder+"25",
+            borderRight:`1px solid ${divider}`,
+            display:"flex", flexDirection:"column",
+            alignItems:"center", padding:"3px 2px", gap:"2px",
+            flexShrink:0,
+          }}>
+            {[{k:"ATK",v:u.atk},{k:"HITS",v:u.hits},{k:"ARM",v:u.armour},{k:"CMD",v:u.cmd==="-"?"-":u.cmd},{k:"SZ",v:u.size}].map(({k,v}) => (
+              <div key={k} style={{
+                width:"100%", textAlign:"center",
+                background: statBg, border:`1px solid ${statBorder}`, borderRadius:2, padding:"1px 0",
+              }}>
+                <div style={{ fontSize:"0.35rem", color: cardMuted }}>{k}</div>
+                <div style={{ fontSize:"0.65rem", fontWeight:700, color: cardText }}>{String(v ?? "-")}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Right content */}
+          <div style={{ flex:1, display:"flex", flexDirection:"column", padding:"3px 4px", overflow:"hidden" }}>
+            {/* Name + pts */}
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", borderBottom:`1px solid ${divider}`, paddingBottom:2, marginBottom:2 }}>
+              <div style={{ fontSize:"0.6rem", fontWeight:700, color: cardText, lineHeight:1.2 }}>
+                {u.name}
+                {entry.mount && <span style={{ fontSize:"0.45rem", color: cardMuted, display:"block" }}>+ {entry.mount.name}</span>}
+              </div>
+              <div style={{ fontSize:"0.55rem", fontWeight:700, color: cardText, whiteSpace:"nowrap" }}>{pts}pts</div>
+            </div>
+            {/* Type */}
+            <div style={{ fontSize:"0.38rem", color: cardMuted, letterSpacing:1, marginBottom:2 }}>{u.type.toUpperCase()}</div>
+            {/* Rules */}
+            <div style={{ flex:1, fontSize:"0.42rem", color: cardMuted, lineHeight:1.4, overflowY:"hidden" }}>
+              {u.special && <div>{u.special}</div>}
               {entry.magicItem && (
-                <div style={{ fontSize:"0.75rem", color:"#444", borderTop:"1px solid #eee", paddingTop:4, marginTop:4 }}>
-                  <strong>✦ {entry.magicItem.name}</strong> — {entry.magicItem.desc}
-                </div>
-              )}
-              {/* Mount special */}
-              {entry.mount && entry.mount.special && (
-                <div style={{ fontSize:"0.75rem", color:"#444", borderTop:"1px solid #eee", paddingTop:4, marginTop:4 }}>
-                  <strong>{entry.mount.name}:</strong> {entry.mount.special}
+                <div style={{ marginTop:2, color: isFaction ? "#d4b060" : "#664400" }}>
+                  <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
                 </div>
               )}
             </div>
-          );
-        })}
+            {/* Footer */}
+            <div style={{ borderTop:`1px solid ${divider}`, paddingTop:2, fontSize:"0.35rem", color: cardMuted, display:"flex", justifyContent:"space-between" }}>
+              <span>WARMASTER REVOLUTION</span><span>{army.name}</span>
+            </div>
+          </div>
+        </>)}
       </div>
+    );
+  }
+
+  // Options modal
+  function OptionsModal() {
+    const [local, setLocal] = useState({...printOpts});
+    return (
+      <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+        <div style={{ background:"#0d0b08", border:`2px solid ${army.color}60`, borderRadius:10, padding:24, width:"100%", maxWidth:380, color:"#d4c8a8" }}>
+          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.1rem", color: army.accent, marginBottom:18, letterSpacing:2 }}>⚙ PRINT OPTIONS</div>
+
+          {/* Card size / layout */}
+          <div style={{ marginBottom:16 }}>
+            <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:8 }}>CARD SIZE</div>
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+              {[
+                { val:"portrait",  label:"Portrait",  sub:"2.5 × 3.5\"" },
+                { val:"landscape", label:"Landscape", sub:"3.5 × 2.5\"" },
+                { val:"square",    label:"Square",    sub:"2.5 × 2.5\"" },
+              ].map(opt => (
+                <button key={opt.val} onClick={() => setLocal(l => ({...l, layout: opt.val}))}
+                  style={{
+                    flex:1, padding:"10px 6px", borderRadius:6, cursor:"pointer",
+                    border: local.layout === opt.val ? `2px solid ${army.color}` : "2px solid #333",
+                    background: local.layout === opt.val ? army.color+"25" : "#111",
+                    color: local.layout === opt.val ? army.accent : "#888",
+                    fontFamily:"'Cinzel',serif",
+                  }}>
+                  <div style={{ fontSize:"0.8rem", fontWeight:700 }}>{opt.label}</div>
+                  <div style={{ fontSize:"0.65rem", marginTop:2, opacity:0.7 }}>{opt.sub}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Color mode */}
+          <div style={{ marginBottom:16 }}>
+            <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:8 }}>COLOR</div>
+            <div style={{ display:"flex", gap:8 }}>
+              {[
+                { val:"faction", label:"Faction Colors", sub:"Saves ink for screen" },
+                { val:"white",   label:"White / Print",  sub:"Best for printing" },
+              ].map(opt => (
+                <button key={opt.val} onClick={() => setLocal(l => ({...l, colorMode: opt.val}))}
+                  style={{
+                    flex:1, padding:"10px 8px", borderRadius:6, cursor:"pointer",
+                    border: local.colorMode === opt.val ? `2px solid ${army.color}` : "2px solid #333",
+                    background: local.colorMode === opt.val ? army.color+"25" : "#111",
+                    color: local.colorMode === opt.val ? army.accent : "#888",
+                    fontFamily:"'Cinzel',serif",
+                  }}>
+                  <div style={{ fontSize:"0.8rem", fontWeight:700 }}>{opt.label}</div>
+                  <div style={{ fontSize:"0.65rem", marginTop:2, opacity:0.7 }}>{opt.sub}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Image placeholder toggle */}
+          <div style={{ marginBottom:20 }}>
+            <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:8 }}>IMAGE AREA</div>
+            <div style={{ display:"flex", gap:8 }}>
+              {[
+                { val:true,  label:"Show Image Area", sub:"Empty box for art" },
+                { val:false, label:"No Image Area",   sub:"More text space" },
+              ].map(opt => (
+                <button key={String(opt.val)} onClick={() => setLocal(l => ({...l, showImage: opt.val}))}
+                  style={{
+                    flex:1, padding:"10px 8px", borderRadius:6, cursor:"pointer",
+                    border: local.showImage === opt.val ? `2px solid ${army.color}` : "2px solid #333",
+                    background: local.showImage === opt.val ? army.color+"25" : "#111",
+                    color: local.showImage === opt.val ? army.accent : "#888",
+                    fontFamily:"'Cinzel',serif",
+                  }}>
+                  <div style={{ fontSize:"0.8rem", fontWeight:700 }}>{opt.label}</div>
+                  <div style={{ fontSize:"0.65rem", marginTop:2, opacity:0.7 }}>{opt.sub}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div style={{ display:"flex", gap:10 }}>
+            <button onClick={() => setShowOptions(false)}
+              style={{ flex:1, padding:"10px", background:"none", border:"1px solid #444", color:"#888", borderRadius:6, cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
+              CANCEL
+            </button>
+            <button onClick={() => { setPrintOpts(local); setShowOptions(false); }}
+              style={{ flex:2, padding:"10px", background:`linear-gradient(135deg,${army.color},${army.color}99)`, border:"none", color:"#111", borderRadius:6, cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:"0.9rem" }}>
+              APPLY & PREVIEW
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ background: isFaction ? army.bg : "#f0f0f0", minHeight:"100vh" }}>
+      <GS />
+      {showOptions && <OptionsModal />}
+
+      {/* Screen toolbar — hidden when printing */}
+      <div className="no-print" style={{
+        position:"sticky", top:0, zIndex:200,
+        background:"#0d0b08", borderBottom:`2px solid ${army.color}60`,
+        padding:"10px 14px", display:"flex", alignItems:"center", gap:10,
+      }}>
+        <button onClick={onClose}
+          style={{ background:"none", border:`1px solid ${army.color}60`, color: army.color, borderRadius:5, padding:"7px 14px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
+          ← BACK
+        </button>
+        <div style={{ flex:1, fontFamily:"'Cinzel',serif", color: army.accent, textAlign:"center", letterSpacing:2, fontSize:"0.9rem" }}>
+          {army.name.toUpperCase()} — {total}pts — {roster.length} cards
+        </div>
+        <button onClick={() => setShowOptions(true)}
+          style={{ background:"none", border:`1px solid ${army.color}60`, color: army.color, borderRadius:5, padding:"7px 12px", fontSize:"0.9rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
+          ⚙ OPTIONS
+        </button>
+        <button onClick={() => window.print()}
+          style={{ background:`linear-gradient(135deg,${army.color},${army.color}99)`, border:"none", color:"#fff", borderRadius:5, padding:"7px 16px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700 }}>
+          🖨 PRINT
+        </button>
+      </div>
+
+      {/* Cards — shown on screen + printed */}
+      <div style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+        {roster.map((entry, idx) => (
+          <PrintCard key={idx} entry={entry} />
+        ))}
+      </div>
+
+      {/* Print CSS — injected into page */}
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          body { margin: 0; padding: 0; background: ${isFaction ? army.bg : "#fff"} !important; }
+          @page { size: auto; margin: 8mm; }
+        }
+      `}</style>
     </div>
   );
 }
