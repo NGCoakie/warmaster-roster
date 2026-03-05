@@ -456,7 +456,26 @@ const ARMIES = {
     strengths:"Highest combat power of any daemon army; Bloodthirster is game-ending; Flesh Hounds resist magic",
     weaknesses:"Zero magic, zero shooting; must reach combat to do anything; Daemonic Instability punishes losses",
     generalCmd:9,
-    spells: null,
+    spells: [
+      { name:"Blood for the Blood God", cast:"Passive", range:"Army",
+        desc:"At the start of each Combat phase, every Khorne unit in base contact with an enemy gains +1 Attack. This bonus applies to all stands in the unit and stacks with other modifiers." },
+      { name:"Berserker Charge", cast:"Passive", range:"Unit",
+        desc:"Any Khorne unit that charges in the same turn it receives an order adds +1 Attack in the first round of combat. Units that pursue after breaking an enemy also gain this bonus." },
+      { name:"Rage Beyond Reason", cast:"Passive", range:"Unit",
+        desc:"Khorne units are Unbreakable — they never take break tests from combat losses. Instead, at the start of each Command phase, roll on the Daemonic Instability table for any unit that suffered casualties last turn." },
+      { name:"Skull Throne's Tithe", cast:"Passive", range:"Army",
+        desc:"Whenever a Khorne unit destroys an enemy unit in combat, roll a D6. On a 4+, one stand in the victorious unit recovers 1 hit previously lost in that combat — the Blood God rewards his champions." },
+      { name:"Unstoppable Slaughter", cast:"Passive", range:"Unit",
+        desc:"Khorne units may never be given orders to Halt, Fall Back, or Retreat. They must always advance toward the nearest enemy or pursue broken units. This is a compulsion, not a choice." },
+      { name:"Daemonic Instability (1)", cast:"Roll", range:"Unit",
+        desc:"Roll of 1: Abandoned by Rage — The Blood God turns away. Lose D3 additional stands as daemons dissolve back into the warp screaming." },
+      { name:"Daemonic Instability (2–3)", cast:"Roll", range:"Unit",
+        desc:"Roll of 2–3: Blind Fury — The unit goes berserk. It must make an initiative charge at the nearest enemy unit (friend or foe). If no target in range, the unit is confused this turn." },
+      { name:"Daemonic Instability (4–5)", cast:"Roll", range:"Unit",
+        desc:"Roll of 4–5: Held by Rage — The unit grits through its losses. No additional effect this turn. The blood spilled sustains them." },
+      { name:"Daemonic Instability (6)", cast:"Roll", range:"Unit",
+        desc:"Roll of 6: Khorne's Favour — A mighty daemon answers the call. Recover 1 previously lost stand as a new champion manifests to replace the fallen." },
+    ],
     units:[
       // ── CHARACTERS ──────────────────────────────────────────────────────
       { id:"kh_bloodthirster_general", name:"Bloodthirster (General)", type:"General",
@@ -2044,8 +2063,11 @@ function PrintView({ army, roster, onClose }) {
   const [showOptions, setShowOptions] = useState(false);
   const [printOpts, setPrintOpts] = useState({
     layout: "portrait",      // "portrait" | "landscape" | "square"
-    colorMode: "faction",    // "faction" | "white"
+    colorMode: "faction",    // "faction" | "cardcolor" | "white"
     showImage: true,
+    includeArmyRules: true,
+    includeSpells: true,
+    fontScale: 1.0,          // 0.7 – 1.4 multiplier on all card text
   });
 
   const entryTotal = (entry) => {
@@ -2057,12 +2079,14 @@ function PrintView({ army, roster, onClose }) {
   const total = roster.reduce((s,e) => s + entryTotal(e), 0);
 
   // Dimensions per layout — real mm for accurate print sizing
-  const layouts = {
-    portrait:  { w:"63mm",  h:"88mm",  label:"Portrait 2.5×3.5\"",  imgH:"28mm", fontSize:"8.5px" },
-    landscape: { w:"88mm",  h:"63mm",  label:"Landscape 3.5×2.5\"", imgH:"0",    fontSize:"8px"   },
-    square:    { w:"63mm",  h:"63mm",  label:"Square 2.5×2.5\"",    imgH:"20mm", fontSize:"7.5px" },
+  const baseLayouts = {
+    portrait:  { w:"63mm",  h:"88mm",  label:"Portrait 2.5×3.5\"",  imgH:"28mm", baseFontPx:8.5 },
+    landscape: { w:"88mm",  h:"63mm",  label:"Landscape 3.5×2.5\"", imgH:"0",    baseFontPx:8   },
+    square:    { w:"63mm",  h:"63mm",  label:"Square 2.5×2.5\"",    imgH:"20mm", baseFontPx:7.5 },
   };
-  const lay = layouts[printOpts.layout];
+  const baseLay = baseLayouts[printOpts.layout];
+  const scaledFontPx = Math.round(baseLay.baseFontPx * printOpts.fontScale * 10) / 10;
+  const lay = { ...baseLay, fontSize: `${scaledFontPx}px` };
 
   // ── Colour scheme ─────────────────────────────────────────────────────────
   // "faction"   = full dark theme using army.bg + army.accent (screen-optimised)
@@ -2097,7 +2121,152 @@ function PrintView({ army, roster, onClose }) {
     : `linear-gradient(160deg, ${army.color}70, ${army.bg||"#0a0806"})`;
   const imgTextColor = mode==="white" ? "#aaaaaa" : army.accent;
 
-  function PrintCard({ entry }) {
+  // ── ARMY RULES CARD ──────────────────────────────────────────────────────
+  function ArmyRulesCard() {
+    const isLandscape = printOpts.layout === "landscape";
+    const fs = lay.fontSize;
+    return (
+      <div style={{
+        width: lay.w, height: lay.h,
+        background: cardBg, border: `2px solid ${cardBorder}`, borderRadius:"5px",
+        display:"flex", flexDirection:"column", overflow:"hidden",
+        pageBreakInside:"avoid", breakInside:"avoid", boxSizing:"border-box",
+        fontFamily:"'Cinzel',Georgia,serif", fontSize: fs,
+        WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
+      }}>
+        {/* Header */}
+        <div style={{ background: cardBorder+"30", borderBottom:`1px solid ${divider}`, padding:"2mm 3mm", flexShrink:0 }}>
+          <div style={{ fontSize:`calc(${fs} * 1.1)`, fontWeight:700, color: cardText, lineHeight:1.2 }}>{army.name}</div>
+          <div style={{ fontSize:`calc(${fs} * 0.7)`, color: cardMuted, letterSpacing:"1px", marginTop:"0.5mm" }}>ARMY RULES REFERENCE</div>
+        </div>
+
+        {/* Content */}
+        <div style={{ flex:1, padding:"2mm 3mm", overflowY:"hidden", display:"flex", flexDirection:"column", gap:"1.5mm" }}>
+          {/* Traits */}
+          {army.traits && army.traits.length > 0 && (
+            <div>
+              <div style={{ fontSize:`calc(${fs} * 0.7)`, color: cardBorder, letterSpacing:"0.8px", marginBottom:"0.8mm", fontWeight:700 }}>KEY TRAITS</div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:"1mm" }}>
+                {army.traits.map((t,i) => (
+                  <span key={i} style={{ fontSize:`calc(${fs} * 0.72)`, color: cardText, background: cardBorder+"25", border:`1px solid ${cardBorder}50`, borderRadius:"2px", padding:"0.5mm 2mm", lineHeight:1.4 }}>{t}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Strengths / Weaknesses */}
+          {(army.strengths || army.weaknesses) && (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.5mm" }}>
+              {army.strengths && (
+                <div style={{ background: cardBorder+"15", border:`1px solid ${cardBorder}40`, borderRadius:"2px", padding:"1.5mm 2mm" }}>
+                  <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardBorder, letterSpacing:"0.5px", marginBottom:"0.5mm" }}>STRENGTHS</div>
+                  <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.4 }}>{army.strengths}</div>
+                </div>
+              )}
+              {army.weaknesses && (
+                <div style={{ background:"#00000020", border:`1px solid ${divider}`, borderRadius:"2px", padding:"1.5mm 2mm" }}>
+                  <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted, letterSpacing:"0.5px", marginBottom:"0.5mm" }}>WEAKNESSES</div>
+                  <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.4 }}>{army.weaknesses}</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Playstyle */}
+          {army.playstyle && (
+            <div style={{ flex:1, borderTop:`1px solid ${divider}`, paddingTop:"1.5mm" }}>
+              <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardBorder, letterSpacing:"0.5px", marginBottom:"0.8mm" }}>PLAYSTYLE</div>
+              <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.5 }}>{army.playstyle}</div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 3mm", display:"flex", justifyContent:"space-between", background: cardBorder+"12", flexShrink:0 }}>
+          <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted, letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</div>
+          <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted }}>ARMY REFERENCE</div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── SPELL CARD (one card per spell) ──────────────────────────────────────
+  function SpellCard({ spell, index, total }) {
+    const fs = lay.fontSize;
+    const isBloodRite = !!spell.bloodRite;
+    const isInstability = !!spell.instability;
+    return (
+      <div style={{
+        width: lay.w, height: lay.h,
+        background: cardBg, border: `2px solid ${cardBorder}`, borderRadius:"5px",
+        display:"flex", flexDirection:"column", overflow:"hidden",
+        pageBreakInside:"avoid", breakInside:"avoid", boxSizing:"border-box",
+        fontFamily:"'Cinzel',Georgia,serif",
+        WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
+      }}>
+        {/* Header */}
+        <div style={{ background: cardBorder+"30", borderBottom:`1px solid ${divider}`, padding:"2mm 3mm", flexShrink:0 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline" }}>
+            <div style={{ fontSize:`calc(${fs} * 0.75)`, fontWeight:700, color: cardText }}>
+              {isBloodRite ? "⚔ BLOOD RITE" : isInstability ? "☠ INSTABILITY" : "✦ SPELL"}
+            </div>
+            <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted }}>{index}/{total}</div>
+          </div>
+          <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted, letterSpacing:"1px" }}>{army.name.toUpperCase()}</div>
+        </div>
+
+        {/* Spell name */}
+        <div style={{ padding:"2mm 3mm 1mm", borderBottom:`1px solid ${divider}`, flexShrink:0 }}>
+          <div style={{ fontSize:`calc(${fs} * 1.05)`, fontWeight:700, color: cardText, lineHeight:1.2 }}>
+            {spell.name || spell.result}
+          </div>
+          {/* Cast value + range for real spells */}
+          {spell.cast && (
+            <div style={{ display:"flex", gap:"3mm", marginTop:"1.5mm" }}>
+              <div style={{ textAlign:"center", background: statBg, border:`1px solid ${statBorder}`, borderRadius:"2px", padding:"1mm 3mm" }}>
+                <div style={{ fontSize:`calc(${fs} * 0.55)`, color: cardMuted }}>CAST</div>
+                <div style={{ fontSize:`calc(${fs} * 0.9)`, fontWeight:700, color: cardText }}>{spell.cast}</div>
+              </div>
+              {spell.range && (
+                <div style={{ textAlign:"center", background: statBg, border:`1px solid ${statBorder}`, borderRadius:"2px", padding:"1mm 3mm" }}>
+                  <div style={{ fontSize:`calc(${fs} * 0.55)`, color: cardMuted }}>RANGE</div>
+                  <div style={{ fontSize:`calc(${fs} * 0.9)`, fontWeight:700, color: cardText }}>{spell.range}</div>
+                </div>
+              )}
+              {/* Roll for instability tables */}
+              {spell.roll && (
+                <div style={{ textAlign:"center", background: statBg, border:`1px solid ${statBorder}`, borderRadius:"2px", padding:"1mm 3mm" }}>
+                  <div style={{ fontSize:`calc(${fs} * 0.55)`, color: cardMuted }}>ROLL</div>
+                  <div style={{ fontSize:`calc(${fs} * 0.9)`, fontWeight:700, color: cardText }}>{spell.roll}</div>
+                </div>
+              )}
+            </div>
+          )}
+          {spell.roll && !spell.cast && (
+            <div style={{ display:"flex", gap:"3mm", marginTop:"1.5mm" }}>
+              <div style={{ textAlign:"center", background: statBg, border:`1px solid ${statBorder}`, borderRadius:"2px", padding:"1mm 3mm" }}>
+                <div style={{ fontSize:`calc(${fs} * 0.55)`, color: cardMuted }}>ROLL</div>
+                <div style={{ fontSize:`calc(${fs} * 0.9)`, fontWeight:700, color: cardText }}>{spell.roll}</div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Description */}
+        <div style={{ flex:1, padding:"2mm 3mm", fontSize:`calc(${fs} * 0.82)`, color: cardMuted, lineHeight:1.55, overflowY:"hidden" }}>
+          {spell.desc || spell.effect}
+        </div>
+
+        {/* Footer */}
+        <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 3mm", display:"flex", justifyContent:"space-between", background: cardBorder+"12", flexShrink:0 }}>
+          <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted }}>WARMASTER REVOLUTION</div>
+          <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted }}>{army.name.toUpperCase()}</div>
+        </div>
+      </div>
+    );
+  }
+
+    function PrintCard({ entry }) {
     const u = entry.unit;
     const pts = entryTotal(entry);
     const isLandscape = printOpts.layout === "landscape";
@@ -2370,6 +2539,52 @@ function PrintView({ army, roster, onClose }) {
             </div>
           </div>
 
+          {/* Extra cards */}
+          <div style={{ marginBottom:20 }}>
+            <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:10 }}>EXTRA REFERENCE CARDS</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+              {[
+                { key:"includeArmyRules", label:"Army Rules Card",  sub:"Traits, playstyle & special rules for this army" },
+                { key:"includeSpells",    label:"Spell List Card",   sub:"Spell cards (only shown if army has spells)"     },
+              ].map(({ key, label, sub }) => (
+                <label key={key}
+                  style={{ display:"flex", alignItems:"center", gap:12, cursor:"pointer", padding:"10px 12px", borderRadius:6, background:"#0a0806", border:`1px solid ${local[key] ? army.color+"60" : "#222"}`, transition:"border 0.15s" }}>
+                  <div
+                    onClick={() => setLocal(l => ({...l, [key]: !l[key]}))}
+                    style={{
+                      width:20, height:20, borderRadius:4, flexShrink:0, cursor:"pointer",
+                      background: local[key] ? army.color : "#111",
+                      border: `2px solid ${local[key] ? army.color : "#444"}`,
+                      display:"flex", alignItems:"center", justifyContent:"center",
+                      transition:"all 0.15s",
+                    }}>
+                    {local[key] && <span style={{ color:"#fff", fontSize:"0.75rem", fontWeight:700, lineHeight:1 }}>✓</span>}
+                  </div>
+                  <div>
+                    <div style={{ fontSize:"0.85rem", color: local[key] ? army.accent : "#666", fontFamily:"'Cinzel',serif", fontWeight:700 }}>{label}</div>
+                    <div style={{ fontSize:"0.65rem", color:"#444", marginTop:2 }}>{sub}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Font size slider */}
+          <div style={{ marginBottom:20 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:8 }}>
+              <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1 }}>FONT SIZE</div>
+              <div style={{ fontSize:"0.78rem", color: army.accent, fontFamily:"'Cinzel',serif" }}>{Math.round(local.fontScale * 100)}%</div>
+            </div>
+            <input type="range" min="70" max="140" step="5"
+              value={Math.round(local.fontScale * 100)}
+              onChange={e => setLocal(l => ({...l, fontScale: Number(e.target.value) / 100}))}
+              style={{ width:"100%", accentColor: army.color, cursor:"pointer" }}
+            />
+            <div style={{ display:"flex", justifyContent:"space-between", fontSize:"0.62rem", color:"#444", marginTop:3 }}>
+              <span>70% — Tiny</span><span>100% — Normal</span><span>140% — Large</span>
+            </div>
+          </div>
+
           {/* Buttons */}
           <div style={{ display:"flex", gap:10 }}>
             <button onClick={() => setShowOptions(false)}
@@ -2387,7 +2602,7 @@ function PrintView({ army, roster, onClose }) {
   }
 
   return (
-    <div style={{ background: mode==="white" ? "#e8e8e8" : mode==="cardcolor" ? blendHex(army.bg||"#0a0806","#111",0.5) : (army.bg||"#050505"), minHeight:"100vh" }}>
+    <div style={{ background: mode==="white" ? "#d8d8d8" : "#1a1a1a", minHeight:"100vh" }}>
       <GS />
       {showOptions && <OptionsModal />}
 
@@ -2416,6 +2631,26 @@ function PrintView({ army, roster, onClose }) {
 
       {/* Cards — shown on screen + printed */}
       <div style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+        {/* Army Rules card */}
+        {printOpts.includeArmyRules && <ArmyRulesCard />}
+
+        {/* Spell / Blood Rite / Instability cards */}
+        {printOpts.includeSpells && (() => {
+          const spellItems = [];
+          // Real spell list
+          if (army.spells && Array.isArray(army.spells) && army.spells.length > 0) {
+            army.spells.forEach(s => spellItems.push(s));
+          }
+          // Instability table rows
+          if (army.instabilityTable && Array.isArray(army.instabilityTable)) {
+            army.instabilityTable.forEach(s => spellItems.push({...s, instability: true}));
+          }
+          return spellItems.map((spell, i) => (
+            <SpellCard key={`spell-${i}`} spell={spell} index={i+1} total={spellItems.length} />
+          ));
+        })()}
+
+        {/* Unit cards */}
         {roster.map((entry, idx) => (
           <PrintCard key={idx} entry={entry} />
         ))}
@@ -2553,6 +2788,94 @@ function AuthScreen({ onAuth, onGuest }) {
     </div>
   );
 }
+
+// ── SHARE MODAL ───────────────────────────────────────────────────────────────
+function ShareModal({ army, roster, totalPts, armyKey, onClose }) {
+  const [copied, setCopied] = useState(false);
+
+  // Encode roster as compact JSON → base64 → URL param
+  function buildShareUrl() {
+    const data = {
+      a: armyKey,
+      r: roster.map(e => ({
+        id: e.unit.id,
+        mi: e.magicItem ? e.magicItem.id : null,
+        mt: e.mount ? e.mount.id : null,
+      })),
+    };
+    const json = JSON.stringify(data);
+    const b64 = btoa(encodeURIComponent(json));
+    const base = window.location.origin + window.location.pathname;
+    return `${base}?share=${b64}`;
+  }
+
+  const shareUrl = buildShareUrl();
+
+  function handleCopy() {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }).catch(() => {
+      // Fallback: select the text input
+      document.getElementById("share-url-input")?.select();
+    });
+  }
+
+  const entryTotal = (e) => {
+    let t = typeof e.unit.pts === "number" ? e.unit.pts : 0;
+    if (e.mount) t += e.mount.pts || 0;
+    if (e.magicItem) t += e.magicItem.cost || 0;
+    return t;
+  };
+  const total = roster.reduce((s,e) => s + entryTotal(e), 0);
+
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }}>
+      <div style={{ background:"#0d0b08", border:`1px solid ${army?.color||"#444"}60`, borderRadius:10, padding:24, width:"100%", maxWidth:420 }}>
+        {/* Header */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+          <div>
+            <h3 style={{ fontFamily:"'Cinzel',serif", color: army?.accent||"#f0c040", fontSize:"1rem", letterSpacing:1, margin:0 }}>🔗 SHARE ARMY LIST</h3>
+            <p style={{ fontSize:"0.75rem", color:"#555", marginTop:4 }}>{army?.name} · {roster.length} units · {total}pts</p>
+          </div>
+          <button onClick={onClose} style={{ background:"none", border:"none", color:"#555", fontSize:"1.2rem", cursor:"pointer", padding:4 }}>✕</button>
+        </div>
+
+        {/* Roster summary */}
+        <div style={{ background:"#0a0806", border:`1px solid ${army?.color||"#333"}30`, borderRadius:6, padding:"10px 12px", marginBottom:16, maxHeight:140, overflowY:"auto" }}>
+          {roster.map((e,i) => (
+            <div key={i} style={{ display:"flex", justifyContent:"space-between", fontSize:"0.78rem", color:"#888", padding:"2px 0", borderBottom: i < roster.length-1 ? "1px solid #111" : "none" }}>
+              <span style={{ color:"#bbb" }}>{e.unit.name}{e.mount ? ` + ${e.mount.name}` : ""}</span>
+              <span style={{ color: army?.accent||"#f0c040" }}>{entryTotal(e)}pts</span>
+            </div>
+          ))}
+        </div>
+
+        {/* URL box */}
+        <div style={{ marginBottom:14 }}>
+          <div style={{ fontSize:"0.72rem", color:"#555", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:6 }}>SHAREABLE LINK</div>
+          <div style={{ display:"flex", gap:8 }}>
+            <input id="share-url-input" readOnly value={shareUrl}
+              onClick={e => e.target.select()}
+              style={{ flex:1, background:"#070504", border:`1px solid ${army?.color||"#333"}40`, color:"#777", borderRadius:5, padding:"8px 10px", fontSize:"0.72rem", outline:"none", fontFamily:"monospace", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}
+            />
+            <button onClick={handleCopy}
+              style={{ background: copied ? "#1a4a1a" : army?.color+"30", border:`1px solid ${copied ? "#2a6a2a" : army?.color+"60"}`, color: copied ? "#60c060" : army?.accent||"#f0c040", borderRadius:5, padding:"8px 14px", fontSize:"0.82rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700, whiteSpace:"nowrap", transition:"all 0.2s" }}>
+              {copied ? "✓ COPIED!" : "COPY"}
+            </button>
+          </div>
+        </div>
+
+        {/* Info note */}
+        <p style={{ fontSize:"0.72rem", color:"#444", lineHeight:1.5, margin:0 }}>
+          Anyone with this link can view your army list. The list is encoded in the URL — no account needed to view.
+          Magic items and mounts are included. Send it via message, post it in a forum, or share it with your opponent before a game.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 
 // ── SAVE MODAL ────────────────────────────────────────────────────────────────
 function SaveModal({ army, roster, totalPts, onSave, onClose, session }) {
@@ -2703,7 +3026,43 @@ function App() {
   const [savedListsOpen, setSavedListsOpen] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [shareModal, setShareModal] = useState(false);
   const [session, setSession] = useState(() => loadSession());
+  const [sharedView, setSharedView] = useState(false);
+
+  // Decode shared roster from URL on first load
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const shareParam = params.get("share");
+      if (shareParam) {
+        const json = decodeURIComponent(atob(shareParam));
+        const data = JSON.parse(json);
+        const army = ARMIES[data.a];
+        if (army && Array.isArray(data.r)) {
+          const decoded = data.r.map(entry => {
+            const unit = army.units.find(u => u.id === entry.id);
+            if (!unit) return null;
+            const magicItem = entry.mi
+              ? (MAGIC_ITEMS || []).find(m => m.id === entry.mi) || null
+              : null;
+            const mount = entry.mt
+              ? (army.units.find(u => u.id === entry.mt) || null)
+              : null;
+            return { unit, magicItem, mount };
+          }).filter(Boolean);
+          setSelectedArmy(data.a);
+          setRoster(decoded);
+          setScreen("builder");
+          setSharedView(true);
+          // Clean URL without reloading
+          window.history.replaceState({}, "", window.location.pathname);
+        }
+      }
+    } catch(e) {
+      console.warn("Share URL decode failed:", e);
+    }
+  }, []);
 
   const army = selectedArmy ? ARMIES[selectedArmy] : null;
 
@@ -2789,13 +3148,19 @@ function App() {
   return (
     <>
       <GS />
+      {shareModal && <ShareModal army={army} roster={roster} totalPts={totalPts} armyKey={selectedArmy} onClose={() => setShareModal(false)} />}
       {saveModal && <SaveModal army={army} roster={roster} totalPts={totalPts} onSave={handleSaved} onClose={() => setSaveModal(false)} session={session} />}
       <div style={{ minHeight:"100vh", background: army.bg || "#050505", paddingBottom:40 }}>
         <div style={{ position:"sticky", top:0, zIndex:100, background: army.bg || "#050505", borderBottom:`1px solid ${army.color}40`, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
-          <button onClick={() => { setScreen("factions"); setSelectedArmy(null); setRoster([]); }}
+          <button onClick={() => { setScreen("factions"); setSelectedArmy(null); setRoster([]); setSharedView(false); }}
             style={{ background:"none", border:`1px solid ${army.color}40`, color: army.color, borderRadius:4, padding:"4px 10px", fontSize:"1rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
             ← ARMIES
           </button>
+          {sharedView && (
+            <div style={{ background: army.color+"25", border:`1px solid ${army.color}50`, borderRadius:4, padding:"3px 8px", fontSize:"0.72rem", color: army.accent, fontFamily:"'Cinzel',serif", letterSpacing:1 }}>
+              👁 SHARED LIST
+            </div>
+          )}
           <div style={{ flex:1, fontFamily:"'Cinzel',serif", fontSize:"1rem", color: army.accent, letterSpacing:2, textAlign:"center" }}>
             {army.name.toUpperCase()}
           </div>
@@ -2804,6 +3169,12 @@ function App() {
               <button onClick={() => setSaveModal(true)}
                 style={{ background:"none", border:`1px solid ${army.color}50`, color: saveSuccess ? "#50c050" : army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
                 {saveSuccess ? "✓ SAVED" : "💾 SAVE"}
+              </button>
+            )}
+            {roster.length > 0 && (
+              <button onClick={() => setShareModal(true)}
+                style={{ background:"none", border:`1px solid ${army.color}50`, color: army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+                🔗 SHARE
               </button>
             )}
             {roster.length > 0 && (
