@@ -2067,20 +2067,38 @@ function PrintView({ army, roster, onClose }) {
   };
   const lay = layouts[printOpts.layout];
 
-  // Color scheme
-  const isFaction = printOpts.colorMode === "faction";
-  const useCardColor = printOpts.colorMode === "cardcolor";
-  const cardBg      = isFaction ? army.bg : useCardColor ? army.color+"22" : "#ffffff";
-  const cardBorder  = (isFaction || useCardColor) ? army.color : "#333333";
-  const cardText    = (isFaction || useCardColor) ? army.accent : "#111111";
-  const cardMuted   = (isFaction || useCardColor) ? "#aaaaaa"  : "#555555";
-  const statBg      = (isFaction || useCardColor) ? "#00000030" : "#f4f4f4";
-  const statBorder  = (isFaction || useCardColor) ? army.color+"70" : "#cccccc";
-  const divider     = (isFaction || useCardColor) ? army.color+"50" : "#cccccc";
-  const imgBg       = (isFaction || useCardColor)
-    ? `linear-gradient(160deg, ${army.color}55, ${army.bg || "#0a0806"})`
-    : "linear-gradient(160deg, #e0e0e0, #c8c8c8)";
-  const imgTextColor = (isFaction || useCardColor) ? army.accent : "#999";
+  // ── Colour scheme ─────────────────────────────────────────────────────────
+  // "faction"   = full dark theme using army.bg + army.accent (screen-optimised)
+  // "cardcolor" = mid-tone: faction-tinted dark card, white stat values (high contrast)
+  // "white"     = pure white card, black text (best for printing)
+  const mode = printOpts.colorMode;
+
+  // Helper: blend two hex colours at given ratio (0=col1, 1=col2)
+  function blendHex(hex1, hex2, t) {
+    const p = s => parseInt(s, 16);
+    const h = s => s.replace("#","");
+    const [r1,g1,b1] = [p(h(hex1).slice(0,2)), p(h(hex1).slice(2,4)), p(h(hex1).slice(4,6))];
+    const [r2,g2,b2] = [p(h(hex2).slice(0,2)), p(h(hex2).slice(2,4)), p(h(hex2).slice(4,6))];
+    const r = Math.round(r1+(r2-r1)*t).toString(16).padStart(2,"0");
+    const g = Math.round(g1+(g2-g1)*t).toString(16).padStart(2,"0");
+    const b = Math.round(b1+(b2-b1)*t).toString(16).padStart(2,"0");
+    return `#${r}${g}${b}`;
+  }
+
+  // Mid-tone bg: blend army.bg toward a slightly lighter shade for readability
+  const midBg     = blendHex(army.bg || "#0a0806", "#1a1410", 0.7);
+  const cardBg    = mode==="faction" ? (army.bg||"#0a0806") : mode==="cardcolor" ? midBg      : "#ffffff";
+  const cardBorder= mode==="white"   ? "#444444"             : army.color;
+  const cardText  = mode==="white"   ? "#111111"             : army.accent;
+  // Muted text: faction=dim gold, cardcolor=bright white for contrast, white=dark grey
+  const cardMuted = mode==="faction" ? "#999999" : mode==="cardcolor" ? "#dddddd" : "#555555";
+  const statBg    = mode==="faction" ? "#00000040" : mode==="cardcolor" ? "#00000050" : "#f2f2f2";
+  const statBorder= mode==="white"   ? "#cccccc" : army.color+"80";
+  const divider   = mode==="white"   ? "#cccccc" : army.color+"60";
+  const imgBg     = mode==="white"
+    ? "linear-gradient(160deg,#e8e8e8,#d0d0d0)"
+    : `linear-gradient(160deg, ${army.color}70, ${army.bg||"#0a0806"})`;
+  const imgTextColor = mode==="white" ? "#aaaaaa" : army.accent;
 
   function PrintCard({ entry }) {
     const u = entry.unit;
@@ -2207,7 +2225,7 @@ function PrintView({ army, roster, onClose }) {
           }}>
             {u.special && <div>{u.special}</div>}
             {entry.magicItem && (
-              <div style={{ marginTop:"1mm", color:(isFaction||useCardColor) ? "#d4b060" : "#553300" }}>
+              <div style={{ marginTop:"1mm", color: mode==="white" ? "#553300" : "#d4b060" }}>
                 <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
               </div>
             )}
@@ -2260,7 +2278,7 @@ function PrintView({ army, roster, onClose }) {
             <div style={{ flex:1, fontSize:`calc(${fs} * 0.88)`, color: cardMuted, lineHeight:1.5, overflowY:"hidden" }}>
               {u.special && <div>{u.special}</div>}
               {entry.magicItem && (
-                <div style={{ marginTop:"1mm", color:(isFaction||useCardColor) ? "#d4b060" : "#553300" }}>
+                <div style={{ marginTop:"1mm", color: mode==="white" ? "#553300" : "#d4b060" }}>
                   <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
                 </div>
               )}
@@ -2311,9 +2329,9 @@ function PrintView({ army, roster, onClose }) {
             <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:8 }}>COLOR</div>
             <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
               {[
-                { val:"faction",   label:"Dark Faction",   sub:"Full dark theme" },
-                { val:"cardcolor", label:"Tinted",          sub:"Colored on white" },
-                { val:"white",     label:"White / Print",   sub:"Best for printing" },
+                { val:"faction",   label:"Dark Faction",  sub:"Full dark theme"       },
+                { val:"cardcolor", label:"Faction Tinted", sub:"Dark + high contrast" },
+                { val:"white",     label:"White / Print",  sub:"Best for printing"    },
               ].map(opt => (
                 <button key={opt.val} onClick={() => setLocal(l => ({...l, colorMode: opt.val}))}
                   style={{
@@ -2370,7 +2388,7 @@ function PrintView({ army, roster, onClose }) {
   }
 
   return (
-    <div style={{ background: isFaction ? army.bg : "#f0f0f0", minHeight:"100vh" }}>
+    <div style={{ background: mode==="white" ? "#e8e8e8" : mode==="cardcolor" ? blendHex(army.bg||"#0a0806","#111",0.5) : (army.bg||"#050505"), minHeight:"100vh" }}>
       <GS />
       {showOptions && <OptionsModal />}
 
@@ -2408,7 +2426,7 @@ function PrintView({ army, roster, onClose }) {
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          body { margin: 0; padding: 0; background: ${isFaction ? army.bg : "#fff"} !important; }
+          body { margin: 0; padding: 0; background: ${mode==="white" ? "#fff" : (army.bg||"#050505")} !important; }
           @page { size: auto; margin: 8mm; }
         }
       `}</style>
