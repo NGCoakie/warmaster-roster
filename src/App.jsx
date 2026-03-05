@@ -135,6 +135,7 @@ const ARMIES = {
   empire: {
     name:"The Empire", color:"#c8940a", bg:"#0f0c02", accent:"#f0c040",
     lore:"The largest human nation of the Old World, fielding disciplined soldiers, battle wizards and fearsome war machines.",
+    armyRules:[{name:"Steam Tank", desc:"Steam Tanks move up to 20cm and must be given their own orders. They cannot brigade or be joined by characters, have 360 degree vision, and count enemy armour as one worse when shot. On a double-6 order roll on the Malfunction chart: 1=Destroyed; 2=Broken Down (cannot move); 3=Stuck (no move or shoot); 4=Commander Slain (-1 Command permanently); 5=Momentary Halt; 6=Steam Overload (double Attacks this turn)."}, {name:"Skirmishers and Flagellants", desc:"Any infantry unit except Flagellants may add one Skirmisher stand (unit becomes 4 stands). Skirmishers share the unit armour, fight as part of the unit, and casualties never count for Command penalties. Flagellants always charge on initiative, cannot evade, cannot be driven back by shooting, must pursue or advance if victorious, and ignore terror penalties."}],
     playstyle:"A versatile, well-rounded army. Solid infantry, powerful war machines and support magic make the Empire strong in defence and capable of punishing aggression. Best played with layered brigades.",
     fluff:"The Empire is the mightiest of all human nations, stretching from the Grey Mountains to the Worlds Edge. Divided into rival Elector States yet united under a single Emperor, its armies blend veteran state soldiery, fanatic warrior-priests, thunderous cannons and Colleges of Magic wizards. Where other realms field purer forces, the Empire fields everything \u2014 a grinding, adaptive war machine that has survived every Chaos incursion for two millennia.",
     traits:["Diverse combined arms", "Powerful artillery", "Battle wizards", "State troops backbone"],
@@ -192,6 +193,7 @@ const ARMIES = {
   chaos: {
     name:"Chaos", color:"#a01010", bg:"#080202", accent:"#e03030",
     lore:"Bloodthirsty northern tribes devoted to the Dark Gods, bringing destruction to the civilised world.",
+    armyRules:[{name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (e.g. 40cm = -2 penalty). Trolls automatically regenerate one hit per combat round after stand removal. Regenerated hits count toward combat result."}, {name:"Chaos Spawn", desc:"Spawn cannot be given orders or use initiative to charge or evade. Roll D6 at the start of each Command phase: 1=move toward nearest unit and charge if possible; 2-5=does nothing; 6=moves directly forward at full pace."}, {name:"Ogres", desc:"Ogres must use initiative to charge any enemy human unit (including Chaos Warriors and Marauders) within 20cm at the start of the Command phase. This is automatic and cannot be prevented by the commander."}],
     playstyle:"A small, elite army. Every unit hits hard \u2014 Chaos Warriors and Knights are among the best in the game. You will be outnumbered. Win by smashing enemy lines in decisive charges before attrition kills you.",
     fluff:"From the frozen wastes beyond Kislev they come \u2014 the Chaos Warriors, men so consumed by devotion to the Dark Gods that they have become something other than human. Alongside hordes of Marauder tribesmen, terrifying Chaos Knights, spell-hurling Sorcerers and abominations like Dragon Ogres and Chaos Spawn, they represent an existential threat to every civilised nation. When the Chaos tide rises, the world trembles.",
     traits:["Elite heavy warriors", "Devastating cavalry", "Powerful monsters", "High points cost"],
@@ -222,6 +224,7 @@ const ARMIES = {
   orcs: {
     name:"Orcs & Goblins", color:"#2a7a10", bg:"#040a02", accent:"#60c020",
     lore:"A vast greenskin horde driven by the Waaagh! — terrifying in numbers but plagued by animosity and infighting.",
+    armyRules:[{name:"Giants", desc:"Giants must be given separate orders and cannot brigade with other troops. On a failed order roll on the Giant Goes Wild chart. Giants with 5-7 accumulated hits while not in combat are Badly Hurt - halve their Attacks and Hits for the rest of the battle. A Giant causes terror."}, {name:"Trolls and Wolf Riders", desc:"Distance Command penalties to Trolls are always doubled. Trolls regenerate one hit per combat round. Wolf Riders have 15cm shooting range and 360 degree vision for evading and shooting. Goblin units may shoot as if with bows at 15cm range."}],
     playstyle:"Overwhelming mass of bodies backed by hard-hitting monsters and trolls. Animosity can cause chaos in your own lines \u2014 build brigades to mitigate it. Let the greenskin tide roll forward and drown the enemy.",
     fluff:"The Orc tribes of the Old World need little reason to go to war \u2014 a good scrap is its own reward. When a powerful Warboss emerges to unite the clans under a single Waaagh!, entire regions tremble. Greenskin hordes pour south in an unstoppable tide of violence, noise and barely-contained chaos. Their greatest weakness is themselves.",
     traits:["Massive numbers", "Animosity mechanic", "Varied unit types", "Giants and trolls"],
@@ -253,6 +256,7 @@ const ARMIES = {
   high_elves: {
     name:"High Elves", color:"#1060c0", bg:"#010510", accent:"#50a0ff",
     lore:"Ancient guardians of Ulthuan and the world's greatest bulwark against Chaos, fielding disciplined warriors and mighty dragons.",
+    armyRules:[{name:"Elven Archers", desc:"High Elf Archers add +1 to all shooting dice rolls: they hit on 3+ in the open, 4+ defended, and 5+ when the target is fortified. Note this is a bonus to the dice roll, not a reduction in the target number."}, {name:"Dragon Riders & Dragon Princes", desc:"Characters riding Dragons or Dragon Princes cause terror in their enemies. Dragons can fly (move 100cm), adding +2 Attacks to their rider. Dragon fire breath: 20cm range, 3 attacks. Dragons with 4-5 accumulated hits are Badly Hurt: halve their Attacks and Hits."}, {name:"Sisters of Avelorn", desc:"Sisters of Avelorn have 30cm shooting range and cause terror in Chaos Daemons. They can shoot at charging enemies. Targets hit must re-roll successful armour saves."}],
     playstyle:"A premium army where every unit is better than its equivalent elsewhere. The Command 10 General gives outstanding reliability. Use superior shooting to soften targets, then deliver decisive cavalry and dragon charges.",
     fluff:"From their island kingdom of Ulthuan, the High Elves have stood as the world's foremost bulwark against Chaos since time immemorial. Ancient beyond reckoning, their warriors train for centuries before seeing battle. Their Silver Helm cavalry are unmatched, their archers deadly, and their Dragon riders among the most feared creatures in existence. They fight not for conquest but for survival \u2014 and will not countenance failure.",
     traits:["Command 10 General", "Superior archers", "Dragons", "Balanced elite force"],
@@ -281,6 +285,7 @@ const ARMIES = {
   dwarfs: {
     name:"Dwarfs", color:"#8b4513", bg:"#050202", accent:"#cd7f32",
     lore:"Stubborn mountain folk with the finest artillery in the world and warriors who hold grudges for generations.",
+    armyRules:[{name:"Runesmith Anti-Magic", desc:"If an enemy Wizard within 50cm casts a spell, a Runesmith may attempt to dispel it on a D6 roll of 4+. Only one attempt per spell is allowed. A Runesmith with the Anvil of Doom adds +1 to this roll once per battle and grants units within 20cm immunity to Terror."}, {name:"Oathstone (Hero upgrade)", desc:"A Hero may carry an Oathstone (+15pts). Once per game, the Hero may invoke it: the joined unit (except Trollslayers) gains +1 Attack per stand and is immune to Terror until the end of the Combat phase."}, {name:"Rangers Infiltration", desc:"Up to 1 unit of Rangers per 1000pts may infiltrate onto the battlefield instead of deploying normally. Issue an order to a point in dense terrain or on any base edge except the enemy's. On success the unit appears there and counts that as its first order."}],
     playstyle:"The ultimate defensive army. Dwarf Warriors are the hardest infantry to kill. Multiple artillery pieces punish approaching enemies. Runesmiths neutralise enemy magic. Hold ground, shoot everything, then counter-charge.",
     fluff:"Dwelling in their mountain strongholds since before men walked the earth, the Dwarfs are a proud and stubborn race nursing grudges that span millennia. Their warriors are shorter than men but far tougher, clad in the finest gromril armour. Behind them roar Cannons, Flame Cannons and whirring Gyrocopters. Dwarfs never forget an insult, never break their word, and never, ever retreat.",
     traits:["Toughest infantry", "Finest artillery", "No cavalry", "Runesmiths dispel magic"],
@@ -394,6 +399,7 @@ const ARMIES = {
   kislev: {
     name:"Kislev", color:"#1080a0", bg:"#010508", accent:"#30b0d0",
     lore:"Hardy northern warriors of the steppes, masters of mounted combat and fierce defenders against Chaos.",
+    armyRules:[{name:"Kislevite Horsemen", desc:"Horse Archers and Cossacks have 15cm shooting range and 360 degree vision for evading and shooting (including against charging enemies). Winged Lancers gain +1 Attack in the first round of every combat to the front and are immune to terror."}, {name:"Tzarina Upgrade", desc:"The General may be upgraded to the Tzarina (+25pts, max 1). She can cast spells as a Wizard and may carry a Wizard magic item. Once per battle she may add +1 to a single casting roll (announced before rolling)."}],
     playstyle:"A fast, mobile army dominating open ground. Horse Archers screen and harry; Winged Lancers deliver the killing blow. The War Wagon is a powerful firebase. Avoid dense terrain \u2014 you want room to manoeuvre.",
     fluff:"Between the Empire and the Realm of Chaos stands Kislev \u2014 a cold, windswept land hardened by centuries of brutal winters and Chaos raids. Kislevite armies are dominated by cavalry: swift Horse Archers, heavy Cossacks and the feared Winged Lancers whose charge has broken many a Chaos warband. Their shamans call upon the elemental spirits of ice and storm.",
     traits:["Cavalry-heavy", "Good missile units", "War Wagon anchor", "Winged Lancer shock troops"],
@@ -422,6 +428,7 @@ const ARMIES = {
   dark_elves: {
     name:"Dark Elves", color:"#6010a0", bg:"#040008", accent:"#9020e0",
     lore:"Bitter exiles of Naggaroth devoted to Khaine, fielding merciless warriors and monstrous beasts.",
+    armyRules:[{name:"Repeating Crossbows", desc:"Dark Elf Crossbowmen and Dark Riders shoot twice per stand (2 attack dice) at targets within 15cm, and once per stand at longer range. They can also shoot once per stand against enemies that charge them."}, {name:"War Hydra", desc:"War Hydras cannot brigade even with other Hydras. They cause terror and have a fire breath attack (20cm range, 2 attacks). Cold One Knights get +1 Attack in the first round of each combat to the front but cannot brigade with non-Cold One units."}],
     playstyle:"An aggressive high-risk army. Repeating crossbows generate huge shooting volume. Cold One Knights cannot brigade \u2014 use them as independent hammers. The execution mechanic means characters may be killed for blunders.",
     fluff:"Exiled from Ulthuan ten thousand years ago, the Dark Elves of Naggaroth have nursed their hatred into something magnificent and terrible. Witch Elves driven to ecstatic frenzy, Cold One-riding knights, and monstrous War Hydras march alongside soldiers whose repeating crossbows can riddle an enemy unit before it reaches combat. Beauty and death are the same thing in Naggarond.",
     traits:["Repeating crossbows", "Execution mechanic", "Cold One Knights", "Witch Elves frenzy"],
@@ -538,6 +545,7 @@ const ARMIES = {
   daemons_chaos: {
     name:"Daemons", color:"#7a3a8a", bg:"#08010a", accent:"#cc88ff",
     lore:"The daemon armies of Chaos constantly reshape and reform. Most of all men dread the elemental horrors of life, represented by the four great gods: Khorne, Tzeentch, Nurgle and Slaanesh.",
+    armyRules:[{name:"Ignore Terror", desc:"All Daemon units ignore the -1 Attack penalty in combat for fighting terrifying troops — they cannot be frightened."}, {name:"Daemonic Instability", desc:"At the start of the Command phase, all Daemon units with at least 1 casualty must test. Roll D6 (−1 if 1 stand remains and >20cm from a friendly Wizard). 0-1: remove a stand; 2-3: confused; 4-5: no effect or clears confusion; 6: regain one stand."}],
     playstyle:"A flexible mixed-daemon force. Daemon Hordes are your reliable elite infantry, Daemon Cavalry are powerful and fast, Greater Daemons anchor the line with terror and raw hitting power. Daemon Sorcerers provide spell support to summon reinforcements and buff your troops. Daemonic Instability means you need to keep casualties low — get Wizards near damaged units to reduce instability risk.",
     fluff:"The dark dimension is home to things of an altogether different order to mortal creatures — not living flesh but a network of ethereal forces whose consciousnesses flow and interchange. From the terror of mankind itself they are self-created: gods, daemons and spirits made manifest in the stuff of the warp. Reshaped by Khorne, Tzeentch, Nurgle and Slaanesh, these daemon armies pour forth to reshape reality in the image of Chaos.",
     traits:["Ignore Terror","Daemonic Instability","Summon reinforcements","Flying Greater Daemons"],
@@ -929,6 +937,7 @@ const ARMIES = {
   araby: {
     name:"Araby", color:"#c07010", bg:"#080500", accent:"#e0a020",
     lore:"Proud desert warriors of the Southern lands, commanding war elephants, magic carpet riders and powerful djinn.",
+    armyRules:[{name:"Sultan Guards", desc:"The Sultan Guards obey the first order each turn on a Command roll of 10 or less when ordered by the General, with no penalties. Further orders use normal Command and penalties. Applies to Guards only, not brigades containing Guards."}, {name:"Camel Riders", desc:"Camel Riders ignore distance modifiers when given orders. However all orders to Camel Riders or brigades containing them suffer a -1 Command penalty. Camels are self-reliant but intractable."}, {name:"Elephants", desc:"Elephants cause terror and cannot brigade with cavalry. If they would normally become Confused they Stampede instead. Stampeding Elephants move automatically each turn according to the roll: 1-2=move toward nearest friendly unit; 3-4=move directly forward; 5-6=charge nearest unit. They cease stampeding at the end of their own Command phase."}],
     playstyle:"An exotic, fast-moving army with unique options. Djinn-mounted wizards can shoot and fight. Magic Carpet cavalry fly. Elephants cause terror but can stampede. Blend missile cavalry harassment with elephant charges.",
     fluff:"South of the Old World lie the golden desert kingdoms of Araby \u2014 a land of ancient learning, extravagant wealth and powerful magic. Their armies march behind banners of silk, mounted on swift desert horses or lumbering War Elephants, their sorcerers carried aloft on Flying Carpets or bound Djinn. To face Araby is to face mystery.",
     traits:["Flying Carpets", "War Elephants", "Djinn sorcery", "Good cavalry mix"],
@@ -957,6 +966,7 @@ const ARMIES = {
   dogs_of_war: {
     name:"Dogs of War", color:"#808020", bg:"#050500", accent:"#c0c030",
     lore:"Mercenary companies from across the Old World, hiring out to the highest bidder with diverse troops and tactics.",
+    armyRules:[{name:"For Hire", desc:"Each army in the game may hire up to 1 Regiment of Renown per full 1000pts, following the Allies Table. Hired units count against the army maximum allowance of their unit type. No magic items may be given to hired RoR units or heroes."}, {name:"Paymaster", desc:"Only one Paymaster may be in the army. Once per game using the Pay Wagon, the Paymaster may add +1 to all his Command checks for a single turn (announced before rolling)."}, {name:"Light Cavalry and Pikemen", desc:"Light Cavalry have 15cm shooting range and 360 degree vision. Pikemen count as defended against cavalry and chariots to their front in the first combat round only, but cannot benefit from defended or fortified status in dense terrain. Pikemen are based as cavalry but move as infantry."}],
     playstyle:"The most diverse army in the game. You can field Dwarfs, Ogres, Birdmen, Giants and Knights together. The Paymaster's Pay Wagon provides morale bonuses. Build a balanced force exploiting the best of every culture.",
     fluff:"Coin is the language that all people speak. The Dogs of War are mercenary companies from every corner of the Old World, selling their blades to whoever can afford them. Tilean pike blocks march beside Norse Marauders; Dwarf engineers maintain the Galloper Guns; even Ogres hire out for plunder. Led by their Paymaster, these disparate warriors fight with surprising cohesion when the gold is good.",
     traits:["Mixed races in one army", "Dwarfs and Ogres available", "Pikemen formation bonus", "Paymaster morale rules"],
@@ -989,6 +999,7 @@ const ARMIES = {
   ogre_kingdoms: {
     name:"Ogre Kingdoms", color:"#a05020", bg:"#060300", accent:"#e07030",
     lore:"Massive, brutal warriors from the mountains who eat everything and fear nothing.",
+    armyRules:[{name:"Bull Charge", desc:"All Ogre infantry must charge enemy human units on initiative if within 20cm at the start of the Command phase. This is automatic. Humans includes Chaos Warriors and Marauders but not Dwarfs or Elves."}, {name:"Gorgers Infiltration", desc:"Gorgers may infiltrate onto the battlefield instead of deploying normally. They always ignore distance Command penalties, can pursue any enemy troop type, and receive a -1 Command penalty on all orders."}],
     playstyle:"Pure aggression. Bull Ogres must charge humans on initiative \u2014 use this as a feature, not a bug. Ironguts and Rhinox Riders are devastating. Gnoblars screen your approach cheaply. Every engagement should end in one round.",
     fluff:"High in the mountains east of the Old World dwell the Ogres \u2014 massive, brutish beings driven by an insatiable hunger. They eat everything: livestock, enemies, the occasional ally. Rhinox-riding Maneaters charge like siege weapons; Yhetees howl through snowstorms; Gorgers emerge from underground to attack where least expected.",
     traits:["All units hit like monsters", "Must charge humans on initiative", "Rhinox Riders cause terror", "Gnoblars as cheap filler"],
@@ -1017,6 +1028,7 @@ const ARMIES = {
   albion: {
     name:"Albion", color:"#507030", bg:"#030502", accent:"#80b040",
     lore:"Mist-shrouded isle of fierce barbarian chieftains, druids, giants and great wolfhounds.",
+    armyRules:[{name:"Giants", desc:"Giants must be given separate orders and cannot brigade with other troops. On a failed order, roll on the Giant Goes Wild chart. Giants with 5-7 accumulated hits while not in combat are Badly Hurt: halve their Attacks and Hits for the rest of the battle. Giants cause terror."}, {name:"Fenbeast", desc:"Fenbeasts are summoned by the Summon Fenbeast spell and cannot deploy normally. They can only be ordered by Druids and cannot brigade. The army cannot have more Fenbeasts in play than it has Druids on the table. Fenbeasts do not count toward army withdrawal."}],
     playstyle:"A classic barbarian army of chariots, cavalry and monster support. Wolfhounds are cheap and fast. Chariots are required minimums and form the offensive core. Giants add shock value. Simple, direct, effective.",
     fluff:"Lost in the mists of the northern ocean lies Albion \u2014 a wild, rain-soaked isle of standing stones, ancient power and fierce tribal warriors. The natives paint themselves for war and hurl themselves at invaders from chariots and horseback with savage ferocity. Giant wolfhounds the size of ponies run at their sides. Albion may seem barbaric \u2014 but it has never been conquered.",
     traits:["Chariots as core", "Massive wolfhound packs", "Giants available", "Druid magic"],
@@ -1045,6 +1057,7 @@ const ARMIES = {
   goblin_army: {
     name:"Goblin Army", color:"#1a6010", bg:"#010400", accent:"#50b020",
     lore:"A vast all-goblin horde of wolf riders, night goblins, pump wagons and lumbering giants.",
+    armyRules:[{name:"Goblin Command Ratings", desc:"Goblin Warboss: Command 8. Goblin Heroes: Command 7. Goblin Shamans: Command 6. Up to 2 Goblin units per 1000pts may be replaced by Squig Herd while still counting toward the Goblin min/max requirement."}, {name:"Pump Wagons & Trolls", desc:"Pump Wagons move automatically D6x10cm each turn without a Command roll and cannot be given orders. Trolls require doubled distance Command penalties. Trolls automatically regenerate one hit per combat round. Wolf Riders have 15cm range and 360 degree vision."}],
     playstyle:"Masses of cheap goblins backed by hard-hitting Trolls and chaotic Pump Wagons. Win by sheer volume and troll-fuelled brawls in the middle. Pump Wagons are hilarious and occasionally devastating.",
     fluff:"When left entirely to their own devices \u2014 without even Orcs to boss them about \u2014 Goblins organise. Sort of. A Goblin Warboss of sufficient cunning can marshal Wolf Rider hordes, Night Goblin mobs clutching their beloved Squigs, lumbering Trolls and the utterly unpredictable Pump Wagons into a force perfectly capable of burying an enemy in sheer green numbers.",
     traits:["All-goblin force", "Pump Wagons auto-move", "Trolls regenerate", "Low command values"],
@@ -1100,6 +1113,7 @@ const ARMIES = {
   chaos_dwarfs: {
     name:"Chaos Dwarfs", color:"#803010", bg:"#050100", accent:"#c04010",
     lore:"Cruel subjugators of Zharr-Naggrund, commanding enslaved Orcs and Hobgoblins, riding monstrous flying beasts.",
+    armyRules:[{name:"Hobgoblin Hatred", desc:"Hobgoblins and Hobgoblin Wolf Riders may not brigade with Black Orcs or Orc Slaves unless a unit of Chaos Dwarfs or Blunderbusses is also part of that brigade."}, {name:"Earthshaker Cannon", desc:"Acts as a Stone Thrower. Drive-back rolls caused by the Earthshaker result in Confusion on a 4+ instead of the normal 6+. Units touching the target unit also risk Confusion on a roll of 6. Cannot fire at enemies within 30cm."}, {name:"Orc Slaves", desc:"Orc Slave units suffer an additional -1 Command penalty when ordered. This penalty is waived if Slaves are brigaded with Black Orcs, Chaos Dwarfs, or Blunderbusses."}],
     playstyle:"A hybrid of Dwarf toughness and Chaos aggression with slave infantry. The Earthshaker is the best stone thrower available. Great Taurus gives characters terrifying mobility. Mix Chaos Dwarfs and Blunderbusses for a devastating combined arms centre.",
     fluff:"Deep in the Dark Lands, in the shadow of the Tower of Zharr-Naggrund, dwell the Chaos Dwarfs \u2014 a civilisation twisted by dark sorcery into cruel, hat-wearing slavers. They enslave Orcs and Hobgoblins as expendable infantry, ride monstrous fire-breathing Taurus beasts, and build the most devastating siege weapons in the world. Their Sorcerer-Priests literally turn to stone over centuries of dark power.",
     traits:["Best stone thrower in game", "Flying Great Taurus mount", "Enslaved orc soldiers", "Lammasu anti-magic"],
@@ -1193,6 +1207,7 @@ const ARMIES = {
   norse: {
     name:"Norse", color:"#406080", bg:"#010305", accent:"#6090c0",
     lore:"Fearless raiders from the frozen north, with berserkers, mammoths and the Valkyries of the gods.",
+    armyRules:[{name:"Berserkers", desc:"Berserkers always charge on initiative, never evade, cannot be driven back by shooting, must pursue or advance if victorious in combat, and ignore terror (no -1 Attack modifier). They cannot be given orders to do anything other than charge when charging is possible."}, {name:"Ulfwerener", desc:"Based as cavalry (short-edge facing). Receive +1 Attack when charging in the open, like monsters and chariots. Can pursue cavalry and chariots. Cannot support or be supported by other units. Cannot take magic items. Only Were Kin characters may join them."}, {name:"War Mammoth", desc:"Uses a 40x60mm base. Causes terror. Can attack troops on ramparts with its trunk, or batter wall sections like a Giant. If a Mammoth would become Confused it Stampedes instead, moving automatically each turn until the end of its own Command phase."}],
     playstyle:"An aggressive hard-hitting infantry army with monster support. Huscarls are excellent heavy infantry. Berserkers always charge and cannot evade. The War Mammoth is devastating in open battles and can batter fortress walls.",
     fluff:"In the frozen seas north of the Empire, Viking warriors launch their longships toward warmer shores. The Norse are fearless raiders who worship gods of war, storm and death. Their Berserkers fight in a trance-like fury; and when they march overland, War Mammoths break walls and trample armies flat. They come for glory, for plunder, and for the joy of battle.",
     traits:["Huscarls elite infantry", "Berserkers frenzy", "War Mammoth siege capability", "Valkyries fly"],
@@ -1808,23 +1823,28 @@ function effectiveMax(unit, totalPts) {
   if (unit.max === "-" || unit.max === null || unit.max === undefined) return Infinity;
   const n = Number(unit.max);
   if (isNaN(n)) return Infinity;
+  // General type is always exactly 1 total — never scales with army size
+  if (unit.type === "General") return 1;
   return n * ptsToKBrackets(totalPts);
 }
 function effectiveMin(unit, totalPts) {
   if (unit.min === "-" || unit.min === null || unit.min === undefined) return 0;
   const n = Number(unit.min);
   if (isNaN(n)) return 0;
+  // Generals: always exactly 1 total, never multiplied by army size
+  if (unit.type === "General") return 1;
   return n * ptsToKBrackets(totalPts);
 }
 // Validation: returns array of warning strings for the current roster
 function validateRoster(roster, army, totalPts) {
   const warnings = [];
   const brackets = ptsToKBrackets(totalPts);
-  // Count each unit id
   const counts = {};
   roster.forEach(e => { counts[e.unit.id] = (counts[e.unit.id] || 0) + 1; });
-  // Check mins
+
+  // Check minimums for all non-General units (Generals handled below)
   army.units.forEach(unit => {
+    if (unit.type === "General") return;
     const minReq = effectiveMin(unit, totalPts);
     if (minReq > 0) {
       const taken = counts[unit.id] || 0;
@@ -1833,10 +1853,11 @@ function validateRoster(roster, army, totalPts) {
       }
     }
   });
-  // Must have exactly 1 General
+
+  // General: always exactly 1 — never multiplied by army size
   const generals = roster.filter(e => e.unit.type === "General").length;
   if (generals === 0) warnings.push("Army must include 1 General");
-  if (generals > 1) warnings.push("Army may only include 1 General");
+  if (generals > 1)  warnings.push("Army may only include 1 General");
   return warnings;
 }
 
@@ -2348,54 +2369,76 @@ function PrintView({ army, roster, onClose }) {
   const imgTextColor = mode==="white" ? "#aaaaaa" : army.accent;
 
   // ── ARMY RULES CARD ──────────────────────────────────────────────────────
-  function ArmyRulesCard() {
-    const isLandscape = printOpts.layout === "landscape";
-    const fs = lay.fontSize;
+  function SpecialRuleCard({ rule, ruleIndex, totalRules }) {
+    // Special rule cards are ALWAYS landscape (88x63mm) regardless of printOpts.layout
+    const CARD_W = "88mm";
+    const CARD_H = `${Math.round(63 * printOpts.fontScale * 10) / 10}mm`;
+    const basePx  = 8 * printOpts.fontScale;
+    const fs      = `${Math.round(basePx * 10) / 10}px`;
+    const fsSm    = `${Math.round(basePx * 0.78 * 10) / 10}px`;
+    const fsTiny  = `${Math.round(basePx * 0.62 * 10) / 10}px`;
+    const fsTitle = `${Math.round(basePx * 1.18 * 10) / 10}px`;
+
     return (
       <div style={{
-        width: lay.w, height: lay.h,
-        background: cardBg, border: `2px solid ${cardBorder}`, borderRadius:"5px",
-        display:"flex", flexDirection:"column", overflow:"hidden",
-        pageBreakInside:"avoid", breakInside:"avoid", boxSizing:"border-box",
-        fontFamily:"'Cinzel',Georgia,serif", fontSize: fs,
-        WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
+        width: CARD_W, height: CARD_H,
+        background: cardBg,
+        border: `2px solid ${cardBorder}`,
+        borderRadius: "4px",
+        display: "flex", flexDirection: "column",
+        overflow: "hidden",
+        pageBreakInside: "avoid", breakInside: "avoid",
+        boxSizing: "border-box",
+        fontFamily: "'Cinzel',Georgia,serif",
+        WebkitPrintColorAdjust: "exact", printColorAdjust: "exact",
+        position: "relative",
       }}>
-        {/* Header */}
-        <div style={{ background: cardBorder+"30", borderBottom:`1px solid ${divider}`, padding:"2mm 3mm", flexShrink:0 }}>
-          <div style={{ fontSize:`calc(${fs} * 1.1)`, fontWeight:700, color: cardText, lineHeight:1.2 }}>{army.name}</div>
-          <div style={{ fontSize:`calc(${fs} * 0.7)`, color: cardMuted, letterSpacing:"1px", marginTop:"0.5mm" }}>ARMY RULES REFERENCE</div>
+        {/* Gold top accent bar */}
+        <div style={{ height: "2.5px", background: `linear-gradient(90deg, transparent, ${army.color}, transparent)`, flexShrink: 0 }} />
+
+        {/* Header row */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "1.5mm 3mm 1mm",
+          borderBottom: `1px solid ${divider}`,
+          background: `${cardBorder}22`,
+          flexShrink: 0,
+        }}>
+          <div style={{ fontSize: fsTitle, fontWeight: 700, color: cardText, letterSpacing: "0.3px", lineHeight: 1.15, flex: 1 }}>
+            {rule.name}
+          </div>
+          <div style={{ fontSize: fsTiny, color: army.color, letterSpacing: "1.5px", textTransform: "uppercase", flexShrink: 0, marginLeft: "3mm", opacity: 0.85 }}>
+            Special Rule
+          </div>
         </div>
 
-        {/* Content — Special Rules only */}
-        <div style={{ flex:1, padding:"2mm 3mm", overflowY:"hidden", display:"flex", flexDirection:"column", gap:"1.5mm" }}>
-          <div style={{ fontSize:`calc(${fs} * 0.68)`, color: cardBorder, letterSpacing:"0.8px", marginBottom:"1mm", fontWeight:700 }}>SPECIAL RULES</div>
-          {/* Army special rules */}
-          {army.armyRules && army.armyRules.length > 0 ? (
-            <div style={{ display:"flex", flexDirection:"column", gap:"1.5mm", overflowY:"hidden" }}>
-              {army.armyRules.map((rule, i) => (
-                <div key={i} style={{ borderBottom: i < army.armyRules.length-1 ? `1px solid ${divider}` : "none", paddingBottom:"1.5mm" }}>
-                  <div style={{ fontSize:`calc(${fs} * 0.75)`, color: cardText, fontWeight:700, marginBottom:"0.5mm" }}>{rule.name}</div>
-                  <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.45 }}>{rule.desc}</div>
-                </div>
-              ))}
-            </div>
-          ) : army.lore ? (
-            <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.5 }}>{army.lore}</div>
-          ) : (
-            <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted }}>See army rulebook for special rules.</div>
-          )}
+        {/* Rule description */}
+        <div style={{ flex: 1, padding: "2mm 3mm 1.5mm", overflow: "hidden" }}>
+          <div style={{ fontSize: fsSm, color: cardMuted, lineHeight: 1.6, fontFamily: "Georgia,serif" }}>
+            {rule.desc}
+          </div>
         </div>
 
         {/* Footer */}
-        <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 3mm", display:"flex", justifyContent:"space-between", background: cardBorder+"12", flexShrink:0 }}>
-          <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted, letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</div>
-          <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted }}>ARMY REFERENCE</div>
+        <div style={{
+          borderTop: `1px solid ${divider}`,
+          padding: "1mm 3mm",
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          background: `${cardBorder}14`,
+          flexShrink: 0,
+        }}>
+          <div style={{ fontSize: fsTiny, color: cardMuted, letterSpacing: "0.5px", textTransform: "uppercase" }}>
+            Warmaster Revolution
+          </div>
+          <div style={{ fontSize: fsTiny, color: army.color, letterSpacing: "0.5px", textTransform: "uppercase", opacity: 0.9 }}>
+            {army.name}
+          </div>
         </div>
       </div>
     );
   }
 
-  // ── SPELL CARD (one card per spell) ──────────────────────────────────────
+
   function SpellCard({ spell, index, total }) {
     const fs = lay.fontSize;
     const isBloodRite = !!spell.bloodRite;
@@ -2749,7 +2792,7 @@ function PrintView({ army, roster, onClose }) {
             <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:10 }}>EXTRA REFERENCE CARDS</div>
             <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
               {[
-                { key:"includeArmyRules", label:"Army Rules Card",  sub:"Traits, playstyle & special rules for this army" },
+                { key:"includeArmyRules", label:"Special Rules Cards", sub:"One landscape card per special army rule" },
                 { key:"includeSpells",    label:"Spell List Card",   sub:"Spell cards (only shown if army has spells)"     },
               ].map(({ key, label, sub }) => (
                 <label key={key}
@@ -2844,7 +2887,9 @@ function PrintView({ army, roster, onClose }) {
         }
         return (
           <div style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
-            {printOpts.includeArmyRules && <ArmyRulesCard />}
+            {printOpts.includeArmyRules && army.armyRules && army.armyRules.length > 0 && army.armyRules.map((rule, i) => (
+            <SpecialRuleCard key={`rule-${i}`} rule={rule} ruleIndex={i} totalRules={army.armyRules.length} />
+          ))}
             {spellItems.map((spell, i) => (
               <SpellCard key={`spell-${i}`} spell={spell} index={i+1} total={spellItems.length} />
             ))}
