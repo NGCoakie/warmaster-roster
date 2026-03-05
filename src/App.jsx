@@ -164,6 +164,7 @@ const ARMIES = {
   tomb_kings: {
     name:"Tomb Kings", color:"#c8a44a", bg:"#0a0800", accent:"#f0d060",
     lore:"Ancient undead rulers of the desert, commanding skeletal armies that never tire, never waver, and never retreat.",
+    armyRules:[{name:"Undead", desc:"Undead units never act on initiative and only move if given orders. Unaffected by -1 Command penalty for enemy within 20cm, -1 Combat penalty for terrifying troops, and Confusion rules."}],
     playstyle:"An attrition army immune to psychology. Skeleton units are cheap and numerous; Chariots are the offensive backbone. Magic is critical \u2014 Liche Priests keep the host moving. Build brigades around chariot charges.",
     fluff:"Beneath the searing sands of Nehekhara lie the mummified remains of an ancient civilisation, entombed for millennia in vast pyramid-cities. When desecrators disturb their rest, the Tomb Kings stir \u2014 rising not as mindless shuffling corpses but as proud warrior-kings commanding the same armies that brought the ancient world to its knees, now animated by sacred incantations and bound to serve for eternity.",
     traits:["Undead \u2014 immune to terror", "Liche Priest magic", "Chariots as core", "Desert monsters"],
@@ -305,6 +306,7 @@ const ARMIES = {
   skaven: {
     name:"Skaven", color:"#6b8e23", bg:"#030402", accent:"#9acd32",
     lore:"Devious ratmen swarming from underground warrens, wielding deadly warp-powered war machines and overwhelming numbers.",
+    armyRules:[{name:"Strength in Numbers", desc:"Brigades may be of any size, not restricted to the normal four unit maximum."}, {name:"Vermintide", desc:"Skaven units that win a round of combat can pursue retreating enemy regardless of troop type."}, {name:"Under the Lash", desc:"All Skaven characters have a Command range of 20cm, including the General."}],
     playstyle:"A horde army with a crucial limitation \u2014 characters can only issue orders within 20cm. Brigades must stay tight. Overwhelm with numbers, flank with Gutter Runners, and let the Doomwheel run amok.",
     fluff:"Beneath every city in the Old World runs a network of tunnels teeming with the Skaven \u2014 a vast, paranoid civilisation of ratmen devoted to the Horned Rat. Their armies swarm with Clanrats, elite Stormvermin, plague monks and exotic warp-powered machines. What they lack in discipline they compensate for with sheer numbers and the most volatile technology in the world.",
     traits:["Swarm tactics", "20cm command range only", "Warp-powered machines", "Strength in numbers"],
@@ -333,6 +335,7 @@ const ARMIES = {
   lizardmen: {
     name:"Lizardmen", color:"#1a7a3a", bg:"#010502", accent:"#30d060",
     lore:"Ancient servants of the Old Ones, guided by the mighty Slann Mage-Priests and cold-blooded Saurus warriors.",
+    armyRules:[{name:"Born in Jungle", desc:"No command penalty is applied to any units in the army on account of dense terrain."}],
     playstyle:"Unique: the Slann General has Command 0 \u2014 succeeds on almost any roll but must be close. Cold-blooded Saurus are tough fighters; Terradons and Stegadons provide shock and terror. Dense terrain is your friend.",
     fluff:"Created by the mystical Old Ones as instruments of cosmic order, the Lizardmen of Lustria are ancient beyond comprehension. At their apex float the vast Slann Mage-Priests, borne on golden palanquins, their minds brushing the fabric of reality. Below them march cold-blooded Saurus warriors and nimble Skink skirmishers, while Stegadons crash through jungle and foe alike like living siege engines.",
     traits:["Command 0 Slann General", "Reptilian 20cm command range", "Massive monsters", "Born in Jungle"],
@@ -361,6 +364,7 @@ const ARMIES = {
   bretonnia: {
     name:"Bretonnia", color:"#1a4a8a", bg:"#010308", accent:"#3070d0",
     lore:"A feudal kingdom of honourable knights blessed by the Lady of the Lake, backed by masses of expendable peasantry.",
+    armyRules:[{name:"Feudal Society", desc:"The army's withdrawal is calculated by counting only Knights, Grail Knights and Pegasus Knights. Once half or more of these are lost, the army must withdraw."}],
     playstyle:"A cavalry-focused army where Knights always charge on initiative. Use them as your strike force. Peasant units are cheap filler \u2014 keep them brigaded with Knights to avoid their command penalty.",
     fluff:"A feudal realm of chivalric tradition, Bretonnia is ruled by a warrior nobility who dedicate their lives to feats of arms and the quest for the Grail. Blessed by the Lady of the Lake, Grail Knights are touched by divinity. Below them masses of expendable Peasant levies form a backdrop to the glittering cavalry charge \u2014 unstoppable, honour-bound, glorious.",
     traits:["Always-charging Knights", "Feudal withdrawal rule", "Peasant limitations", "Grail Knights elite"],
@@ -451,6 +455,7 @@ const ARMIES = {
   daemons: {
     name:"Daemons", color:"#7a3a8a", bg:"#08010a", accent:"#cc88ff",
     lore:"The daemon armies of Chaos constantly reshape and reform from mankind's ever shifting fears, servants of the four great gods erupting from the Realm of Chaos to destroy the mortal world.",
+    armyRules:[{name:"Ignore Terror", desc:"All units ignore the -1 Attack penalty in combat for fighting terrifying troops."}, {name:"Daemonic Instability", desc:"At the start of the Command phase, all Daemon units with casualties roll D6 (−1 if 1 stand remains and >20cm from a Wizard). 0–1: stand destroyed; 2–3: confused; 4–5: no effect/clears confusion; 6: regain one stand."}],
     playstyle:"A versatile, hard-hitting force immune to terror. Daemon Hordes are elite infantry, Daemon Cavalry are fast and powerful, and the Greater Daemon is a game-ending monster that flies and causes terror. The Daemon Sorcerer provides crucial support — keeping damaged units within 20cm improves their Instability rolls. Balance offence with proximity to your Sorcerer.",
     fluff:"The world is awash with unseen magic from the dark dimension between time and space. The great gods of Chaos — Khorne the Blood God, Tzeentch the Changer of Ways, Nurgle the Plague Lord, and Slaanesh the Lord of Pleasure — send forth their daemonic servants in a tide of nightmare. These are not creatures of flesh but ethereal forces given terrible purpose, reshaping themselves in the face of mortal fear.",
     traits:["Immune to Terror","Daemonic Instability","Flies (Greater Daemon)","Mixed daemon types"],
@@ -896,6 +901,7 @@ const ARMIES = {
   vampire_counts: {
     name:"Vampire Counts", color:"#6a0a6a", bg:"#050005", accent:"#b020b0",
     lore:"Ancient vampires commanding legions of undead in an eternal crusade to devour the living.",
+    armyRules:[{name:"Undead", desc:"All units except Ghouls never act on initiative, are unaffected by -1 Command penalty for enemy within 20cm, -1 Combat penalty vs terrifying troops, and cannot become Confused."}],
     playstyle:"Undead immunity makes this army psychologically unbreakable. The Vampire Lord doubles as a Wizard. Ethereal Hosts ignore armour entirely. Build a solid infantry core and use Dire Wolves and Fell Bats to threaten flanks.",
     fluff:"In the cursed lands of Sylvania dwell the Vampire Counts \u2014 ancient undead nobles who rule over legions of risen dead. Driven by insatiable hunger and iron will, they marshal skeletal warriors, shambling Zombies, spectral Wraith-hosts and galloping Black Knights in a relentless crusade against the living. At their head stands the Vampire Lord \u2014 warrior, sorcerer and monster in one immortal form.",
     traits:["Undead immunity", "Vampire Lord also a Wizard", "Black Knights cavalry", "Ethereal Host ignores armour"],
@@ -1067,6 +1073,7 @@ const ARMIES = {
   witch_hunters: {
     name:"Witch Hunters", color:"#505050", bg:"#030303", accent:"#909090",
     lore:"Fanatical warriors of righteousness hunting Chaos and Undead with purging fire and righteous steel.",
+    armyRules:[{name:"Chaos & Undead", desc:"'Chaos' means Chaos, Daemons, Beastmen, Chaos Dwarf, and Skaven armies. 'Undead' means Tomb Kings and Vampire Counts (including Ghouls). Some units gain bonuses against these enemy types."}],
     playstyle:"A specialised Empire variant optimised against Chaos and Undead opponents. Zealots charge those enemies for free and fight with bonus attacks. Stack Handgunners for armour-piercing fire. Best against specific matchups.",
     fluff:"In a world riven by Chaos corruption and undead horror, the Witch Hunters stand as humanity's last line of sanity. Armed with pistols, torches and unshakeable faith, they lead armies of fanatic Zealots who gain supernatural courage when facing Chaos or the Undead \u2014 fighting beings that would break ordinary soldiers with righteous fury instead of fear.",
     traits:["Zealots bonus vs Chaos/Undead", "Heavy on Handgunners", "Warrior Priest spells", "Righteous fury theme"],
@@ -1122,6 +1129,7 @@ const ARMIES = {
   wood_elves: {
     name:"Wood Elves", color:"#2a6020", bg:"#020501", accent:"#40a030",
     lore:"Guardians of the enchanted forest of Loren, masters of ambush and the bow, aided by the forest's living denizens.",
+    armyRules:[{name:"Woodland Folk", desc:"All Wood Elf infantry does not suffer the usual -1 Command penalty when within woodland."}],
     playstyle:"Masters of terrain. Woodland Folk units suffer no command penalty in dense terrain \u2014 turn forests into fortresses. Waywatchers infiltrate and pick off weak units. Treemen anchor your line.",
     fluff:"Within the enchanted forest of Athel Loren dwell the Wood Elves \u2014 ancient guardians grown as much a part of the forest as the trees themselves. They do not conquer; they protect. Those who threaten the forest meet ghostly Waywatchers materialising from nowhere, Glade Guard arrows darkening the sky, and eventually the slow inevitable advance of living Treemen who have seen ten thousand years pass.",
     traits:["Woodland Folk \u2014 dense terrain bonus", "Waywatcher ambush", "Treemen monsters", "Forest Dragon"],
@@ -1155,6 +1163,7 @@ const ARMIES = {
   beastmen: {
     name:"Beastmen", color:"#6b4010", bg:"#040200", accent:"#a06020",
     lore:"Savage half-beasts of the forest, devoted to Chaos, ambushing from the dark woods.",
+    armyRules:[{name:"The Things in the Woods", desc:"Beastmen infantry do not suffer the usual -1 Command penalty when within woodland."}],
     playstyle:"Ambush is everything. Up to half your core infantry can deploy using ambush rules. Push into dense terrain. Minotaurs always charge and cannot be driven back \u2014 use them as shock hammers.",
     fluff:"Deep in the forests of the Old World dwell creatures neither man nor beast but something horrible in between. The Beastmen descend from settlements at night, driven by dark devotion to Chaos and primal hatred of civilisation. Led by towering Doombulls and cunning Bray Shamans, they are at their most dangerous in forest depths where ambush is everything and civilised tactics count for nothing.",
     traits:["Woodland Folk", "Ambush up to half core infantry", "Minotaur frenzy", "Chaos Spawn surprise"],
@@ -1212,6 +1221,7 @@ const ARMIES = {
   cathay: {
     name:"Cathay", color:"#c01010", bg:"#080000", accent:"#e83030",
     lore:"The disciplined armies of a vast eastern empire, combining advanced weapons with ancient magical traditions.",
+    armyRules:[{name:"Structure and Discipline", desc:"Cathay commanders may issue orders to brigades of up to 6 units (instead of 4) if at least 2 of those units are Bannermen. 6-unit brigades cannot include chariots, cavalry, or Terracotta Warriors."}],
     playstyle:"Unique large brigade rule lets you field 6-unit brigades if Bannermen are included. This gives exceptional order efficiency. Terracotta Warriors are Undead \u2014 only ordered by Sorcerers. Celestial Dragon upgrade is a standout choice.",
     fluff:"Far to the east lies Cathay \u2014 a vast empire of rivers and mountains, silk and jade, ruled by the Grand Celestial Emperor. Its armies march in serried ranks of Bannermen and crossbowmen, supported by rocket-hurling war engines. Ancient Terracotta Warriors animated by sorcery guard sacred sites. And above all wheels the Celestial Dragon \u2014 a divine beast and the ultimate expression of Cathayan power.",
     traits:["Large brigade rule (6 units)", "Terracotta Warriors undead", "Rocket Launcher war machine", "Celestial Dragon wizard-mount"],
@@ -1243,6 +1253,7 @@ const ARMIES = {
   nippon: {
     name:"Nippon", color:"#c01818", bg:"#080000", accent:"#ff4040",
     lore:"Stoic samurai warriors from the eastern islands, bolstered by bound spirit creatures from their temple shrines.",
+    armyRules:[{name:"Honour and Duty", desc:"A Nippon army adds 1 to the number of units that must be lost before it withdraws. E.g. 16-unit army withdraws at 9 losses instead of 8."}],
     playstyle:"A disciplined army that fights with stubborn honour. Samurai and Samurai Cavalry cannot evade \u2014 position them carefully. The Honour and Duty rule means you need one more unit lost before withdrawal. Ninja infiltrators threaten artillery.",
     fluff:"On islands far to the east lies a land of rigid honour, meticulous ceremony and devastating martial tradition. The samurai warriors of Nippon have perfected the art of war over centuries of civil conflict. They march in disciplined formations behind silk banners, their blades among the finest in the world. Alongside them march bound spirit creatures \u2014 Tengu bird-men, Komainu lion-dogs \u2014 called forth by Shugenja priests.",
     traits:["Bushido \u2014 Samurai cannot evade", "Honour and Duty \u2014 harder to break", "Shrine summons spirits", "Ninja infiltrators"],
@@ -1892,7 +1903,7 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
 }
 
 // ── UNIT DETAIL PANEL ──────────────────────────────────────────────────────────
-function UnitDetail({ unit, army, onAdd }) {
+function UnitDetail({ unit, army, onAdd, roster }) {
   if (!unit) return (
     <div style={{ height:"100%", display:"flex", alignItems:"center", justifyContent:"center", color:"#444", fontSize:"1.25rem", fontStyle:"italic" }}>
       Select a unit to view details
@@ -1945,10 +1956,15 @@ function UnitDetail({ unit, army, onAdd }) {
           <h2 style={{ fontFamily:"'Cinzel',serif", fontSize:"1.1rem", color: army.accent }}>{unit.name}</h2>
           <TypeBadge type={unit.type} />
         </div>
-        <button onClick={() => onAdd(unit)}
-          style={{ background: army.color, color:"#000", padding:"6px 14px", borderRadius:4, fontFamily:"'Cinzel',serif", fontSize:"1.25rem", fontWeight:700, letterSpacing:1 }}>
-          + ADD TO ROSTER
-        </button>
+        {(() => {
+          const generalInRoster = unit.type === "General" && roster && roster.some(e => e.unit.type === "General");
+          return (
+            <button onClick={() => !generalInRoster && onAdd(unit)} disabled={generalInRoster}
+              style={{ background: generalInRoster ? "#333" : army.color, color: generalInRoster ? "#666" : "#000", padding:"6px 14px", borderRadius:4, fontFamily:"'Cinzel',serif", fontSize:"1.25rem", fontWeight:700, letterSpacing:1, cursor: generalInRoster ? "not-allowed" : "pointer", opacity: generalInRoster ? 0.6 : 1 }}>
+              {generalInRoster ? "✓ GENERAL ADDED" : "+ ADD TO ROSTER"}
+            </button>
+          );
+        })()}
       </div>
 
       {/* Stats */}
@@ -2000,7 +2016,7 @@ function UnitDetail({ unit, army, onAdd }) {
 // ── ROSTER ENTRY EDITOR ────────────────────────────────────────────────────────
 // Shown when a roster entry is expanded. Lets the user pick a magic item AND
 // (for characters) a mount from the same army's mount units.
-function RosterEntryEditor({ entry, idx, army, onUpdate }) {
+function RosterEntryEditor({ entry, idx, army, onUpdate, roster, totalPts }) {
   const unit = entry.unit;
   const isCharacter = ["General","Hero","Wizard"].includes(unit.type);
 
@@ -2028,6 +2044,22 @@ function RosterEntryEditor({ entry, idx, army, onUpdate }) {
     onUpdate(idx, { mount });
   }
 
+  // Count how many of each mount are already taken across the whole roster
+  const mountCounts = {};
+  roster.forEach((e, i) => {
+    if (i !== idx && e.mount) {
+      mountCounts[e.mount.id] = (mountCounts[e.mount.id] || 0) + 1;
+    }
+  });
+  // A mount option is available if it's not at max for this army size
+  const isMountAvailable = (mount) => {
+    if (!mount.max || mount.max === "-") return true;
+    const maxAllowed = effectiveMax(mount, totalPts);
+    const taken = mountCounts[mount.id] || 0;
+    // If current entry already has this mount, it counts as "not using a slot" here
+    return taken < maxAllowed;
+  };
+
   const hasMagic = allMagic.length > 0;
   const hasMounts = availableMounts.length > 0;
   if (!hasMagic && !hasMounts) return (
@@ -2051,11 +2083,14 @@ function RosterEntryEditor({ entry, idx, army, onUpdate }) {
           <span style={labelStyle}>Mount</span>
           <select value={selectedMount?.id || ""} onChange={handleMountChange} style={selStyle}>
             <option value="">— On foot / no mount —</option>
-            {availableMounts.map(m => (
-              <option key={m.id} value={m.id}>
-                {m.name} (+{m.pts}pts) — {m.atk} atk
-              </option>
-            ))}
+            {availableMounts.map(m => {
+              const available = isMountAvailable(m) || (selectedMount?.id === m.id);
+              return (
+                <option key={m.id} value={m.id} disabled={!available}>
+                  {m.name} (+{m.pts}pts) — {m.atk} atk{!available ? " [MAX REACHED]" : ""}
+                </option>
+              );
+            })}
           </select>
           {selectedMount && (
             <div style={{ fontSize:"0.93rem", color:"#888", marginTop:3, lineHeight:1.4, paddingLeft:2 }}>
@@ -2227,7 +2262,7 @@ function RosterPanel({ army, roster, onRemove, onUpdate, onPrint, onClear, onReo
               </div>
               {isOpen && (
                 <div style={{ padding:"0 12px 10px", background:"#0a0806", borderTop:"1px solid #1a1a1a" }}>
-                  <RosterEntryEditor entry={entry} idx={idx} army={army} onUpdate={onUpdate} />
+                  <RosterEntryEditor entry={entry} idx={idx} army={army} onUpdate={onUpdate} roster={roster} totalPts={totalPts} />
                 </div>
               )}
             </div>
@@ -2266,7 +2301,18 @@ function PrintView({ army, roster, onClose }) {
   };
   const baseLay = baseLayouts[printOpts.layout];
   const scaledFontPx = Math.round(baseLay.baseFontPx * printOpts.fontScale * 10) / 10;
-  const lay = { ...baseLay, fontSize: `${scaledFontPx}px` };
+  // Scale card height proportionally so text doesn't overflow at larger fonts
+  const scaleH = (mmStr) => {
+    if (!mmStr || mmStr === "0") return mmStr;
+    const val = parseFloat(mmStr);
+    return `${Math.round(val * printOpts.fontScale * 10) / 10}mm`;
+  };
+  const lay = {
+    ...baseLay,
+    fontSize: `${scaledFontPx}px`,
+    h: scaleH(baseLay.h),
+    imgH: scaleH(baseLay.imgH),
+  };
 
   // ── Colour scheme ─────────────────────────────────────────────────────────
   // "faction"   = full dark theme using army.bg + army.accent (screen-optimised)
@@ -2320,44 +2366,23 @@ function PrintView({ army, roster, onClose }) {
           <div style={{ fontSize:`calc(${fs} * 0.7)`, color: cardMuted, letterSpacing:"1px", marginTop:"0.5mm" }}>ARMY RULES REFERENCE</div>
         </div>
 
-        {/* Content */}
+        {/* Content — Special Rules only */}
         <div style={{ flex:1, padding:"2mm 3mm", overflowY:"hidden", display:"flex", flexDirection:"column", gap:"1.5mm" }}>
-          {/* Traits */}
-          {army.traits && army.traits.length > 0 && (
-            <div>
-              <div style={{ fontSize:`calc(${fs} * 0.7)`, color: cardBorder, letterSpacing:"0.8px", marginBottom:"0.8mm", fontWeight:700 }}>KEY TRAITS</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:"1mm" }}>
-                {army.traits.map((t,i) => (
-                  <span key={i} style={{ fontSize:`calc(${fs} * 0.72)`, color: cardText, background: cardBorder+"25", border:`1px solid ${cardBorder}50`, borderRadius:"2px", padding:"0.5mm 2mm", lineHeight:1.4 }}>{t}</span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Strengths / Weaknesses */}
-          {(army.strengths || army.weaknesses) && (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.5mm" }}>
-              {army.strengths && (
-                <div style={{ background: cardBorder+"15", border:`1px solid ${cardBorder}40`, borderRadius:"2px", padding:"1.5mm 2mm" }}>
-                  <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardBorder, letterSpacing:"0.5px", marginBottom:"0.5mm" }}>STRENGTHS</div>
-                  <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.4 }}>{army.strengths}</div>
+          <div style={{ fontSize:`calc(${fs} * 0.68)`, color: cardBorder, letterSpacing:"0.8px", marginBottom:"1mm", fontWeight:700 }}>SPECIAL RULES</div>
+          {/* Army special rules */}
+          {army.armyRules && army.armyRules.length > 0 ? (
+            <div style={{ display:"flex", flexDirection:"column", gap:"1.5mm", overflowY:"hidden" }}>
+              {army.armyRules.map((rule, i) => (
+                <div key={i} style={{ borderBottom: i < army.armyRules.length-1 ? `1px solid ${divider}` : "none", paddingBottom:"1.5mm" }}>
+                  <div style={{ fontSize:`calc(${fs} * 0.75)`, color: cardText, fontWeight:700, marginBottom:"0.5mm" }}>{rule.name}</div>
+                  <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.45 }}>{rule.desc}</div>
                 </div>
-              )}
-              {army.weaknesses && (
-                <div style={{ background:"#00000020", border:`1px solid ${divider}`, borderRadius:"2px", padding:"1.5mm 2mm" }}>
-                  <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted, letterSpacing:"0.5px", marginBottom:"0.5mm" }}>WEAKNESSES</div>
-                  <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.4 }}>{army.weaknesses}</div>
-                </div>
-              )}
+              ))}
             </div>
-          )}
-
-          {/* Playstyle */}
-          {army.playstyle && (
-            <div style={{ flex:1, borderTop:`1px solid ${divider}`, paddingTop:"1.5mm" }}>
-              <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardBorder, letterSpacing:"0.5px", marginBottom:"0.8mm" }}>PLAYSTYLE</div>
-              <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.5 }}>{army.playstyle}</div>
-            </div>
+          ) : army.lore ? (
+            <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted, lineHeight:1.5 }}>{army.lore}</div>
+          ) : (
+            <div style={{ fontSize:`calc(${fs} * 0.72)`, color: cardMuted }}>See army rulebook for special rules.</div>
           )}
         </div>
 
@@ -2782,7 +2807,7 @@ function PrintView({ army, roster, onClose }) {
   }
 
   return (
-    <div style={{ background: mode==="white" ? "#d8d8d8" : "#1a1a1a", minHeight:"100vh" }}>
+    <div style={{ background: mode==="white" ? "#e8e8e8" : "#111111", minHeight:"100vh" }}>
       <GS />
       {showOptions && <OptionsModal />}
 
@@ -2810,38 +2835,32 @@ function PrintView({ army, roster, onClose }) {
       </div>
 
       {/* Cards — shown on screen + printed */}
-      <div style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
-        {/* Army Rules card */}
-        {printOpts.includeArmyRules && <ArmyRulesCard />}
-
-        {/* Spell / Blood Rite / Instability cards */}
-        {printOpts.includeSpells && (() => {
-          const spellItems = [];
-          // Real spell list
-          if (army.spells && Array.isArray(army.spells) && army.spells.length > 0) {
-            army.spells.forEach(s => spellItems.push(s));
-          }
-          // Instability table rows
-          if (army.instabilityTable && Array.isArray(army.instabilityTable)) {
-            army.instabilityTable.forEach(s => spellItems.push({...s, instability: true}));
-          }
-          return spellItems.map((spell, i) => (
-            <SpellCard key={`spell-${i}`} spell={spell} index={i+1} total={spellItems.length} />
-          ));
-        })()}
-
-        {/* Unit cards */}
-        {roster.map((entry, idx) => (
-          <PrintCard key={idx} entry={entry} />
-        ))}
-      </div>
+      {(() => {
+        const spellItems = [];
+        if (printOpts.includeSpells) {
+          if (army.spells && Array.isArray(army.spells)) army.spells.forEach(s => spellItems.push(s));
+          if (army.instabilityTable && Array.isArray(army.instabilityTable))
+            army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
+        }
+        return (
+          <div style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+            {printOpts.includeArmyRules && <ArmyRulesCard />}
+            {spellItems.map((spell, i) => (
+              <SpellCard key={`spell-${i}`} spell={spell} index={i+1} total={spellItems.length} />
+            ))}
+            {roster.map((entry, idx) => (
+              <PrintCard key={idx} entry={entry} />
+            ))}
+          </div>
+        );
+      })()}
 
       {/* Print CSS — injected into page */}
       <style>{`
         @media print {
           .no-print { display: none !important; }
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          body { margin: 0; padding: 0; background: ${mode==="white" ? "#fff" : (army.bg||"#050505")} !important; }
+          body { margin: 0; padding: 0; background: ${mode==="white" ? "#fff" : "#111"} !important; }
           @page { size: auto; margin: 8mm; }
         }
       `}</style>
@@ -3272,7 +3291,17 @@ function App() {
   function handlePreview(key) { setPreviewArmy(key); }
   function handleConfirm() { setSelectedArmy(previewArmy); setRoster([]); setPreviewArmy(null); setScreen("builder"); }
   function handleBack() { setPreviewArmy(null); setScreen("factions"); }
-  function handleAddUnit(unit) { setRoster(r => [...r, { unit, count: unit.size !== "-" ? unit.size : 1, magicItem: null, mount: null }]); }
+  function handleAddUnit(unit) {
+    // Enforce only 1 General per army
+    if (unit.type === "General") {
+      setRoster(r => {
+        if (r.some(e => e.unit.type === "General")) return r; // already have one
+        return [...r, { unit, count: 1, magicItem: null, mount: null }];
+      });
+    } else {
+      setRoster(r => [...r, { unit, count: unit.size !== "-" ? unit.size : 1, magicItem: null, mount: null }]);
+    }
+  }
   function handleUpdateEntry(idx, changes) { setRoster(r => r.map((e, i) => i === idx ? { ...e, ...changes } : e)); }
   function handleRemoveEntry(idx) { setRoster(r => r.filter((_, i) => i !== idx)); }
   function handleReorderEntry(fromIdx, toIdx) {
