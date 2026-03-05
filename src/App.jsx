@@ -1,4 +1,92 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+
+// ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
+const SUPABASE_URL = "https://ynksmucteglcuterdpig.supabase.co";
+const SUPABASE_KEY = "sb_publishable_HmIwlQb2Y2mi83l1iRA1Ug_-iviDKdt";
+
+// Lightweight Supabase REST client — no npm package needed
+const sb = {
+  headers: {
+    "Content-Type": "application/json",
+    "apikey": SUPABASE_KEY,
+    "Authorization": `Bearer ${SUPABASE_KEY}`,
+  },
+
+  async signUp(email, password) {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+      method:"POST", headers: this.headers,
+      body: JSON.stringify({ email, password }),
+    });
+    return r.json();
+  },
+
+  async signIn(email, password) {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method:"POST", headers: this.headers,
+      body: JSON.stringify({ email, password }),
+    });
+    return r.json();
+  },
+
+  async signOut(accessToken) {
+    await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+      method:"POST",
+      headers: { ...this.headers, "Authorization": `Bearer ${accessToken}` },
+    });
+  },
+
+  async getUser(accessToken) {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { ...this.headers, "Authorization": `Bearer ${accessToken}` },
+    });
+    return r.json();
+  },
+
+  authHeaders(accessToken) {
+    return { ...this.headers, "Authorization": `Bearer ${accessToken}` };
+  },
+
+  async getLists(accessToken) {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/army_lists?select=*&order=updated_at.desc`,
+      { headers: this.authHeaders(accessToken) }
+    );
+    return r.json();
+  },
+
+  async saveList(accessToken, listData) {
+    // Upsert by id
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/army_lists`, {
+      method:"POST",
+      headers: {
+        ...this.authHeaders(accessToken),
+        "Prefer": "resolution=merge-duplicates,return=representation",
+      },
+      body: JSON.stringify(listData),
+    });
+    return r.json();
+  },
+
+  async deleteList(accessToken, id) {
+    await fetch(`${SUPABASE_URL}/rest/v1/army_lists?id=eq.${id}`, {
+      method:"DELETE", headers: this.authHeaders(accessToken),
+    });
+  },
+};
+
+// ── AUTH TOKEN STORAGE ────────────────────────────────────────────────────────
+function loadSession() {
+  try {
+    const s = localStorage.getItem("wmr_session");
+    return s ? JSON.parse(s) : null;
+  } catch { return null; }
+}
+function saveSession(session) {
+  try {
+    if (session) localStorage.setItem("wmr_session", JSON.stringify(session));
+    else localStorage.removeItem("wmr_session");
+  } catch {}
+}
 
 function useIsMobile() {
   const [mobile, setMobile] = useState(() => typeof window !== "undefined" ? window.innerWidth < 768 : false);
@@ -1288,7 +1376,7 @@ function HowToPlay({ onBack }) {
 }
 
 // ── FACTION SELECTOR ──────────────────────────────────────────────────────────
-function FactionSelector({ onPreview, onHowToPlay, onSavedLists }) {
+function FactionSelector({ onPreview, onHowToPlay, onSavedLists, session, onLogout, isGuest }) {
   const factions = Object.entries(ARMIES);
   return (
     <div style={{ minHeight:"100vh", background:"#0a0806", padding:"16px" }}>
@@ -1307,7 +1395,24 @@ function FactionSelector({ onPreview, onHowToPlay, onSavedLists }) {
               style={{ background:"transparent", color:"#888", border:"1px solid #333", borderRadius:4, padding:"6px 16px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
               onMouseEnter={e => { e.currentTarget.style.color="#c8a060"; e.currentTarget.style.borderColor="#666"; }}
               onMouseLeave={e => { e.currentTarget.style.color="#888"; e.currentTarget.style.borderColor="#333"; }}
-            >📋 SAVED LISTS</button>
+            {!isGuest && (
+              <button onClick={onSavedLists}
+                style={{ background:"transparent", color:"#888", border:"1px solid #333", borderRadius:4, padding:"6px 16px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
+                onMouseEnter={e => { e.currentTarget.style.color="#c8a060"; e.currentTarget.style.borderColor="#666"; }}
+                onMouseLeave={e => { e.currentTarget.style.color="#888"; e.currentTarget.style.borderColor="#333"; }}
+              >📋 SAVED LISTS</button>
+            )}
+            <button onClick={onLogout}
+              style={{ background:"transparent", color:"#555", border:"1px solid #222", borderRadius:4, padding:"6px 14px", fontSize:"1.1rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.color= isGuest ? "#60a060" : "#c05050"; e.currentTarget.style.borderColor= isGuest ? "#306030" : "#553030"; }}
+              onMouseLeave={e => { e.currentTarget.style.color="#555"; e.currentTarget.style.borderColor="#222"; }}
+            >{isGuest ? "⇢ SIGN IN" : "⏻ LOG OUT"}</button>
+          </div>
+          <div style={{ fontSize:"0.72rem", marginTop:6, letterSpacing:1 }}>
+            {isGuest
+              ? <span style={{ color:"#6a4a00" }}>⚠ Guest mode — lists will not be saved</span>
+              : session?.email && <span style={{ color:"#333" }}>Signed in as {session.email}</span>
+            }
           </div>
         </div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:10 }}>
@@ -2312,36 +2417,128 @@ function PrintView({ army, roster, onClose }) {
 }
 
 
-const STORAGE_PREFIX = "wmr_list_";
+// Storage handled via Supabase in App component (see useSession hook)
 
-async function getAllSavedLists() {
-  try {
-    const lists = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith(STORAGE_PREFIX)) {
-        try {
-          const val = localStorage.getItem(key);
-          if (val) lists.push(JSON.parse(val));
-        } catch {}
+// ── AUTH SCREEN ───────────────────────────────────────────────────────────────
+function AuthScreen({ onAuth, onGuest }) {
+  const [mode, setMode] = useState("login"); // "login" | "signup"
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
+
+  async function handleSubmit() {
+    setError(""); setInfo("");
+    if (!email.trim() || !password.trim()) { setError("Enter your email and password."); return; }
+    setLoading(true);
+    try {
+      let data;
+      if (mode === "signup") {
+        data = await sb.signUp(email.trim(), password);
+        if (data.error || data.msg) { setError(data.error?.message || data.msg || "Signup failed."); setLoading(false); return; }
+        setInfo("Account created! Check your email to confirm, then log in.");
+        setMode("login"); setLoading(false); return;
+      } else {
+        data = await sb.signIn(email.trim(), password);
+        if (data.error || !data.access_token) { setError(data.error_description || data.error?.message || "Login failed. Check your details."); setLoading(false); return; }
+        saveSession({ access_token: data.access_token, user_id: data.user?.id, email: data.user?.email });
+        onAuth({ access_token: data.access_token, user_id: data.user?.id, email: data.user?.email });
       }
+    } catch(e) {
+      setError("Network error. Check your connection.");
     }
-    return lists.sort((a, b) => b.savedAt - a.savedAt);
-  } catch { return []; }
-}
+    setLoading(false);
+  }
 
-async function saveList(listData) {
-  const key = STORAGE_PREFIX + listData.id;
-  localStorage.setItem(key, JSON.stringify(listData));
-}
+  const inputStyle = {
+    width:"100%", background:"#0a0806", border:"1px solid #444", color:"#d4c8a8",
+    borderRadius:6, padding:"10px 12px", fontSize:"1rem", outline:"none",
+    fontFamily:"Georgia,serif", boxSizing:"border-box",
+  };
 
-async function deleteList(id) {
-  localStorage.removeItem(STORAGE_PREFIX + id);
+  return (
+    <div style={{ minHeight:"100vh", background:"#0a0806", display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+      <GS />
+      <div style={{ width:"100%", maxWidth:380 }}>
+        {/* Logo */}
+        <div style={{ textAlign:"center", marginBottom:32 }}>
+          <div style={{ fontSize:"2.5rem", marginBottom:8 }}>⚔</div>
+          <h1 style={{ fontFamily:"'Cinzel',serif", fontSize:"1.4rem", color:"#f0c040", letterSpacing:3, margin:0 }}>WARMASTER</h1>
+          <p style={{ color:"#555", fontSize:"0.85rem", marginTop:4, letterSpacing:2 }}>REVOLUTION · ARMY ROSTER</p>
+        </div>
+
+        {/* Card */}
+        <div style={{ background:"#0d0b08", border:"1px solid #333", borderRadius:10, padding:28 }}>
+          {/* Tab switcher */}
+          <div style={{ display:"flex", background:"#0a0806", borderRadius:6, padding:3, marginBottom:24, border:"1px solid #222" }}>
+            {[["login","LOG IN"],["signup","SIGN UP"]].map(([m,label]) => (
+              <button key={m} onClick={() => { setMode(m); setError(""); setInfo(""); }}
+                style={{ flex:1, padding:"8px", borderRadius:4, border:"none", cursor:"pointer", fontFamily:"'Cinzel',serif", fontSize:"0.82rem", letterSpacing:1, transition:"all 0.15s",
+                  background: mode===m ? "#f0c040" : "transparent",
+                  color: mode===m ? "#111" : "#666",
+                  fontWeight: mode===m ? 700 : 400,
+                }}>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Fields */}
+          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+            <div>
+              <label style={{ fontSize:"0.75rem", color:"#666", fontFamily:"'Cinzel',serif", letterSpacing:1, display:"block", marginBottom:4 }}>EMAIL</label>
+              <input type="email" value={email} onChange={e=>setEmail(e.target.value)}
+                onKeyDown={e=>e.key==="Enter"&&handleSubmit()}
+                placeholder="your@email.com" style={inputStyle} />
+            </div>
+            <div>
+              <label style={{ fontSize:"0.75rem", color:"#666", fontFamily:"'Cinzel',serif", letterSpacing:1, display:"block", marginBottom:4 }}>PASSWORD</label>
+              <input type="password" value={password} onChange={e=>setPassword(e.target.value)}
+                onKeyDown={e=>e.key==="Enter"&&handleSubmit()}
+                placeholder={mode==="signup" ? "Min. 6 characters" : "••••••••"} style={inputStyle} />
+            </div>
+          </div>
+
+          {/* Error / info */}
+          {error && <div style={{ marginTop:12, padding:"8px 12px", background:"#1a0500", border:"1px solid #6a1500", borderRadius:5, fontSize:"0.82rem", color:"#ff7060" }}>{error}</div>}
+          {info  && <div style={{ marginTop:12, padding:"8px 12px", background:"#001a05", border:"1px solid #006a15", borderRadius:5, fontSize:"0.82rem", color:"#60c070" }}>{info}</div>}
+
+          {/* Submit */}
+          <button onClick={handleSubmit} disabled={loading}
+            style={{ marginTop:20, width:"100%", padding:"12px", background:"linear-gradient(135deg,#c8940a,#f0c040)", border:"none", borderRadius:6, fontFamily:"'Cinzel',serif", fontSize:"1rem", fontWeight:700, letterSpacing:1, color:"#111", cursor: loading?"not-allowed":"pointer", opacity: loading?0.7:1 }}>
+            {loading ? "..." : mode==="login" ? "LOG IN" : "CREATE ACCOUNT"}
+          </button>
+
+          {mode==="login" && (
+            <p style={{ textAlign:"center", fontSize:"0.72rem", color:"#444", marginTop:12 }}>
+              Your lists sync across all your devices
+            </p>
+          )}
+        </div>
+
+        {/* Guest option */}
+        <div style={{ marginTop:16, textAlign:"center" }}>
+          <button onClick={onGuest}
+            style={{ background:"none", border:"none", color:"#444", fontSize:"0.82rem", cursor:"pointer", fontFamily:"'Cinzel',serif", letterSpacing:1, padding:"8px 16px", borderRadius:5, transition:"color 0.15s" }}
+            onMouseEnter={e => e.currentTarget.style.color="#888"}
+            onMouseLeave={e => e.currentTarget.style.color="#444"}
+          >
+            CONTINUE AS GUEST
+          </button>
+          <p style={{ color:"#333", fontSize:"0.7rem", marginTop:4, lineHeight:1.5 }}>
+            Army lists will not be saved between sessions
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
 }
 
 // ── SAVE MODAL ────────────────────────────────────────────────────────────────
-function SaveModal({ army, roster, existingName, onSave, onClose }) {
-  const [name, setName] = useState(existingName || "");
+function SaveModal({ army, roster, totalPts, onSave, onClose, session }) {
+  const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -2355,52 +2552,46 @@ function SaveModal({ army, roster, existingName, onSave, onClose }) {
 
   async function handleSave() {
     const trimmed = name.trim();
-    if (!trimmed) { setError("Please enter a name for this list."); return; }
+    if (!trimmed) { setError("Enter a name for this list."); return; }
     setSaving(true);
     try {
+      const armyKey = Object.keys(ARMIES).find(k => ARMIES[k] === army) || "";
       const listData = {
-        id: Date.now().toString(),
+        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+        user_id: session.user_id,
         name: trimmed,
-        armyKey: army ? Object.keys(ARMIES).find(k => ARMIES[k] === army) : null,
-        armyName: army?.name || "",
-        roster,
-        totalPts: total,
-        savedAt: Date.now(),
+        army_key: armyKey,
+        army_name: army?.name || "",
+        roster: roster,
+        total_pts: total,
+        updated_at: new Date().toISOString(),
       };
-      await saveList(listData);
+      const result = await sb.saveList(session.access_token, listData);
+      if (result?.error || (Array.isArray(result) && result[0]?.message)) {
+        throw new Error(result?.message || "Save failed");
+      }
       onSave(listData);
     } catch(e) {
-      setError("Save failed. Please try again.");
-      setSaving(false);
+      setError("Save failed: " + e.message);
     }
+    setSaving(false);
   }
 
   return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }}>
-      <div style={{ background:"#0d0b08", border:`1px solid ${army?.color || "#444"}60`, borderRadius:8, padding:"24px", width:"100%", maxWidth:360, position:"relative" }}>
-        <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,transparent,${army?.color||"#888"},transparent)`, borderRadius:"8px 8px 0 0" }} />
-        <h3 style={{ fontFamily:"'Cinzel',serif", color: army?.accent || "#f0c040", fontSize:"1.15rem", letterSpacing:1, marginBottom:4 }}>SAVE ARMY LIST</h3>
-        <p style={{ fontSize:"0.88rem", color:"#666", marginBottom:16 }}>
-          {army?.name} · {roster.length} units · {total}pts
-        </p>
-        <label style={{ fontSize:"0.93rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:1, display:"block", marginBottom:6 }}>LIST NAME</label>
-        <input
-          value={name}
-          onChange={e => { setName(e.target.value); setError(""); }}
-          onKeyDown={e => e.key === "Enter" && handleSave()}
-          autoFocus
-          placeholder={`${army?.name || "Army"} — ${total}pts`}
-          style={{ width:"100%", background:"#0a0806", border:`1px solid ${army?.color||"#444"}50`, borderRadius:4, padding:"8px 10px", color:"#d4c8a8", fontSize:"1.25rem", outline:"none", marginBottom: error ? 6 : 16 }}
-        />
-        {error && <p style={{ fontSize:"1.25rem", color:"#c05050", marginBottom:12 }}>{error}</p>}
-        <div style={{ display:"flex", gap:8 }}>
-          <button onClick={onClose}
-            style={{ flex:1, background:"transparent", color:"#666", border:"1px solid #333", borderRadius:4, padding:"8px 0", fontSize:"0.88rem", fontFamily:"'Cinzel',serif" }}>
-            CANCEL
-          </button>
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000, padding:16 }}>
+      <div style={{ background:"#0d0b08", border:`1px solid ${army?.color||"#444"}60`, borderRadius:8, padding:24, width:"100%", maxWidth:340 }}>
+        <h3 style={{ fontFamily:"'Cinzel',serif", color: army?.accent||"#f0c040", fontSize:"1rem", letterSpacing:1, marginBottom:4 }}>SAVE ARMY LIST</h3>
+        <p style={{ fontSize:"0.78rem", color:"#555", marginBottom:16 }}>{army?.name} · {roster.length} units · {total}pts</p>
+        <input value={name} onChange={e=>setName(e.target.value)}
+          onKeyDown={e=>e.key==="Enter"&&handleSave()}
+          placeholder="List name e.g. 'Tournament 2000pts'"
+          style={{ width:"100%", background:"#0a0806", border:`1px solid ${army?.color||"#444"}60`, color:"#d4c8a8", borderRadius:5, padding:"9px 12px", fontSize:"0.95rem", outline:"none", boxSizing:"border-box", fontFamily:"Georgia,serif" }} />
+        {error && <div style={{ marginTop:8, fontSize:"0.78rem", color:"#ff6050" }}>{error}</div>}
+        <div style={{ display:"flex", gap:10, marginTop:16 }}>
+          <button onClick={onClose} style={{ flex:1, padding:"9px", background:"none", border:"1px solid #333", color:"#666", borderRadius:5, cursor:"pointer", fontFamily:"'Cinzel',serif" }}>CANCEL</button>
           <button onClick={handleSave} disabled={saving}
-            style={{ flex:2, background: army?.color || "#888", color:"#000", border:"none", borderRadius:4, padding:"8px 0", fontSize:"0.88rem", fontFamily:"'Cinzel',serif", fontWeight:700, letterSpacing:1, opacity: saving ? 0.6 : 1 }}>
-            {saving ? "SAVING…" : "💾 SAVE LIST"}
+            style={{ flex:2, padding:"9px", background:`linear-gradient(135deg,${army?.color||"#888"},${army?.color||"#888"}99)`, border:"none", color:"#fff", borderRadius:5, cursor: saving?"not-allowed":"pointer", fontFamily:"'Cinzel',serif", fontWeight:700, opacity: saving?0.7:1 }}>
+            {saving ? "SAVING…" : "💾 SAVE"}
           </button>
         </div>
       </div>
@@ -2409,119 +2600,84 @@ function SaveModal({ army, roster, existingName, onSave, onClose }) {
 }
 
 // ── SAVED LISTS SCREEN ────────────────────────────────────────────────────────
-function SavedLists({ onBack, onLoad }) {
-  const [lists, setLists] = useState(null); // null = loading
+function SavedLists({ onBack, onLoad, session }) {
+  const [lists, setLists] = useState(null);
   const [deleting, setDeleting] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    getAllSavedLists().then(setLists);
+    sb.getLists(session.access_token)
+      .then(data => {
+        if (Array.isArray(data)) setLists(data);
+        else { setError("Could not load lists."); setLists([]); }
+      })
+      .catch(() => { setError("Network error."); setLists([]); });
   }, []);
 
   async function handleDelete(id) {
     setDeleting(id);
-    try {
-      await deleteList(id);
-      setLists(prev => prev.filter(l => l.id !== id));
-    } catch {}
+    await sb.deleteList(session.access_token, id);
+    setLists(l => l.filter(x => x.id !== id));
     setDeleting(null);
   }
 
-  function formatDate(ts) {
-    return new Date(ts).toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
+  function handleLoad(list) {
+    const army = ARMIES[list.army_key];
+    if (!army) { setError(`Army "${list.army_name}" not found.`); return; }
+    onLoad({ armyKey: list.army_key, roster: list.roster || [] });
   }
 
-  const accentFor = (armyKey) => ARMIES[armyKey]?.accent || "#f0c040";
-  const colorFor  = (armyKey) => ARMIES[armyKey]?.color  || "#888";
-
   return (
-    <div style={{ minHeight:"100vh", background:"#0a0806", padding:"20px 16px" }}>
+    <div style={{ minHeight:"100vh", background:"#0a0806", padding:16 }}>
       <GS />
-      <div style={{ maxWidth:680, margin:"0 auto" }}>
-        <button onClick={onBack}
-          style={{ background:"transparent", color:"#555", border:"1px solid #333", borderRadius:4, padding:"5px 12px", fontSize:"1.1rem", marginBottom:20, cursor:"pointer", fontFamily:"'Cinzel',serif", letterSpacing:1 }}
-          onMouseEnter={e => e.currentTarget.style.color="#999"}
-          onMouseLeave={e => e.currentTarget.style.color="#555"}
-        >← BACK</button>
-
-        <div style={{ textAlign:"center", marginBottom:24 }}>
-          <h1 style={{ fontFamily:"'Cinzel',serif", fontSize:"clamp(1.2rem,3.5vw,1.8rem)", color:"#f0c040", letterSpacing:2 }}>📋 SAVED LISTS</h1>
-          <p style={{ color:"#555", fontSize:"0.97rem", marginTop:6, letterSpacing:1 }}>Your saved army rosters</p>
-          <div style={{ width:80, height:1, background:"linear-gradient(90deg,transparent,#c8940a,transparent)", margin:"10px auto 0" }} />
+      <div style={{ maxWidth:600, margin:"0 auto" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20 }}>
+          <button onClick={onBack} style={{ background:"none", border:"1px solid #333", color:"#888", borderRadius:5, padding:"7px 14px", fontSize:"0.9rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>← BACK</button>
+          <h2 style={{ fontFamily:"'Cinzel',serif", color:"#f0c040", fontSize:"1.1rem", letterSpacing:2, flex:1, margin:0 }}>SAVED LISTS</h2>
+          <span style={{ fontSize:"0.75rem", color:"#444" }}>{session.email}</span>
         </div>
 
-        {/* Loading */}
-        {lists === null && (
-          <div style={{ textAlign:"center", padding:40, color:"#444", fontStyle:"italic" }}>Loading saved lists…</div>
-        )}
+        {error && <div style={{ padding:"8px 12px", background:"#1a0500", border:"1px solid #6a1500", borderRadius:5, fontSize:"0.82rem", color:"#ff7060", marginBottom:12 }}>{error}</div>}
 
-        {/* Empty */}
-        {lists !== null && lists.length === 0 && (
-          <div style={{ background:"#0d0b08", border:"1px solid #1e1a10", borderRadius:8, padding:32, textAlign:"center" }}>
-            <div style={{ fontSize:"2rem", marginBottom:12 }}>📜</div>
-            <div style={{ fontFamily:"'Cinzel',serif", color:"#555", fontSize:"0.97rem", letterSpacing:1, marginBottom:8 }}>NO SAVED LISTS YET</div>
-            <p style={{ fontSize:"1.1rem", color:"#444" }}>Build a roster and hit 💾 Save List to store it here.</p>
-          </div>
-        )}
+        {lists === null && <div style={{ color:"#444", textAlign:"center", padding:40, fontSize:"0.9rem" }}>Loading…</div>}
+        {lists !== null && lists.length === 0 && <div style={{ color:"#444", textAlign:"center", padding:40, fontSize:"0.9rem", fontStyle:"italic" }}>No saved lists yet.</div>}
 
-        {/* List items */}
         {lists !== null && lists.map(list => {
-          const acol = accentFor(list.armyKey);
-          const ccol = colorFor(list.armyKey);
+          const army = ARMIES[list.army_key];
+          const color = army?.color || "#888";
+          const accent = army?.accent || "#f0c040";
           return (
-            <div key={list.id}
-              style={{ background:`linear-gradient(135deg, #0d0b08, ${ccol}12)`, border:`1px solid ${ccol}40`, borderRadius:8, padding:"14px 16px", marginBottom:10, display:"flex", alignItems:"center", gap:12 }}>
-              {/* Info */}
+            <div key={list.id} style={{ background:"#0d0b08", border:`1px solid ${color}40`, borderRadius:8, padding:"12px 14px", marginBottom:10, display:"flex", alignItems:"center", gap:10 }}>
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.25rem", color: acol, fontWeight:700, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                  {list.name}
+                <div style={{ fontFamily:"'Cinzel',serif", color: accent, fontSize:"0.95rem", fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{list.name}</div>
+                <div style={{ fontSize:"0.75rem", color:"#555", marginTop:2 }}>
+                  {list.army_name} · {list.total_pts}pts · {Array.isArray(list.roster)?list.roster.length:0} units
                 </div>
-                <div style={{ display:"flex", gap:8, marginTop:4, flexWrap:"wrap", alignItems:"center" }}>
-                  <span style={{ fontSize:"1.2rem", color: ccol }}>{list.armyName}</span>
-                  <span style={{ fontSize:"1.2rem", color:"#444" }}>·</span>
-                  <span style={{ fontSize:"1.2rem", color:"#888" }}>{list.roster?.length || 0} units</span>
-                  <span style={{ fontSize:"1.2rem", color:"#444" }}>·</span>
-                  <span style={{ fontSize:"1.2rem", color: acol }}>{list.totalPts}pts</span>
-                  <span style={{ fontSize:"1.2rem", color:"#444" }}>·</span>
-                  <span style={{ fontSize:"0.93rem", color:"#444" }}>{formatDate(list.savedAt)}</span>
+                <div style={{ fontSize:"0.68rem", color:"#333", marginTop:1 }}>
+                  {list.updated_at ? new Date(list.updated_at).toLocaleDateString() : ""}
                 </div>
-                {/* Unit preview */}
-                {list.roster && list.roster.length > 0 && (
-                  <div style={{ marginTop:6, fontSize:"1.1rem", color:"#555", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                    {list.roster.slice(0,6).map(e => e.unit.name).join(", ")}{list.roster.length > 6 ? ` +${list.roster.length-6} more` : ""}
-                  </div>
-                )}
               </div>
-              {/* Actions */}
               <div style={{ display:"flex", gap:6, flexShrink:0 }}>
-                <button
-                  onClick={() => onLoad(list)}
-                  style={{ background: ccol+"30", color: acol, border:`1px solid ${ccol}50`, borderRadius:4, padding:"6px 10px", fontSize:"0.93rem", fontFamily:"'Cinzel',serif", letterSpacing:0.5, cursor:"pointer" }}
-                  onMouseEnter={e => e.currentTarget.style.background = ccol+"50"}
-                  onMouseLeave={e => e.currentTarget.style.background = ccol+"30"}
-                >LOAD</button>
-                <button
-                  onClick={() => handleDelete(list.id)}
-                  disabled={deleting === list.id}
-                  style={{ background:"#1a0808", color:"#884040", border:"1px solid #330a0a", borderRadius:4, padding:"6px 8px", fontSize:"1.25rem", opacity: deleting === list.id ? 0.5 : 1, cursor:"pointer" }}
-                >✕</button>
+                <button onClick={() => handleLoad(list)}
+                  style={{ background: color+"30", border:`1px solid ${color}60`, color: accent, borderRadius:5, padding:"7px 14px", fontSize:"0.82rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
+                  LOAD
+                </button>
+                <button onClick={() => handleDelete(list.id)} disabled={deleting===list.id}
+                  style={{ background:"#1a0505", border:"1px solid #4a1010", color:"#884040", borderRadius:5, padding:"7px 10px", fontSize:"0.82rem", cursor:"pointer", opacity: deleting===list.id?0.5:1 }}>
+                  ✕
+                </button>
               </div>
             </div>
           );
         })}
-
-        {lists !== null && lists.length > 0 && (
-          <p style={{ fontSize:"0.93rem", color:"#333", textAlign:"center", marginTop:16 }}>
-            Lists are saved to this device/browser. Clearing browser data will remove them.
-          </p>
-        )}
       </div>
     </div>
   );
 }
 
-
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
 function App() {
-  const [screen, setScreen] = useState("factions"); // "factions" | "builder" | "print"
+  const [screen, setScreen] = useState("factions");
   const [selectedArmy, setSelectedArmy] = useState(null);
   const [previewArmy, setPreviewArmy] = useState(null);
   const [roster, setRoster] = useState([]);
@@ -2529,37 +2685,39 @@ function App() {
   const [savedListsOpen, setSavedListsOpen] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [session, setSession] = useState(() => loadSession());
 
   const army = selectedArmy ? ARMIES[selectedArmy] : null;
 
-  function handlePreview(key) {
-    setPreviewArmy(key);
+  // ── Auth handlers ──
+  function handleAuth(sess) {
+    setSession(sess);
+    saveSession(sess);
   }
 
-  function handleConfirm() {
-    setSelectedArmy(previewArmy);
-    setRoster([]);
-    setPreviewArmy(null);
-    setScreen("builder");
+  function handleGuest() {
+    setSession({ guest: true });
+    // Don't persist — guest session dies on refresh intentionally
   }
 
-  function handleBack() {
-    setPreviewArmy(null);
+  async function handleLogout() {
+    if (session?.access_token) {
+      try { await sb.signOut(session.access_token); } catch {}
+    }
+    saveSession(null);
+    setSession(null);
     setScreen("factions");
+    setSelectedArmy(null);
+    setRoster([]);
   }
 
-  function handleAddUnit(unit) {
-    setRoster(r => [...r, { unit, count: unit.size !== "-" ? unit.size : 1, magicItem: null, mount: null }]);
-  }
-
-  function handleUpdateEntry(idx, changes) {
-    setRoster(r => r.map((e, i) => i === idx ? { ...e, ...changes } : e));
-  }
-
-  function handleRemoveEntry(idx) {
-    setRoster(r => r.filter((_, i) => i !== idx));
-  }
-
+  // ── Roster handlers ──
+  function handlePreview(key) { setPreviewArmy(key); }
+  function handleConfirm() { setSelectedArmy(previewArmy); setRoster([]); setPreviewArmy(null); setScreen("builder"); }
+  function handleBack() { setPreviewArmy(null); setScreen("factions"); }
+  function handleAddUnit(unit) { setRoster(r => [...r, { unit, count: unit.size !== "-" ? unit.size : 1, magicItem: null, mount: null }]); }
+  function handleUpdateEntry(idx, changes) { setRoster(r => r.map((e, i) => i === idx ? { ...e, ...changes } : e)); }
+  function handleRemoveEntry(idx) { setRoster(r => r.filter((_, i) => i !== idx)); }
   function handleReorderEntry(fromIdx, toIdx) {
     setRoster(r => {
       const next = [...r];
@@ -2568,7 +2726,6 @@ function App() {
       return next;
     });
   }
-
   function handleLoadList(list) {
     const a = ARMIES[list.armyKey];
     if (!a) return;
@@ -2577,60 +2734,7 @@ function App() {
     setSavedListsOpen(false);
     setScreen("builder");
   }
-
-  function handleSaved(listData) {
-    setSaveModal(false);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 2500);
-  }
-
-  const GStyle = () => (
-    <GS />
-  );
-
-  if (howToPlay) return <><GS /><HowToPlay onBack={() => setHowToPlay(false)} /></>;
-  if (savedListsOpen) return <><GS /><SavedLists onBack={() => setSavedListsOpen(false)} onLoad={handleLoadList} /></>;
-
-  if (previewArmy && ARMIES[previewArmy]) {
-    return (
-      <>
-        <GS />
-        <ArmyConfirm
-          armyKey={previewArmy}
-          onConfirm={handleConfirm}
-          onBack={handleBack}
-        />
-      </>
-    );
-  }
-
-  if (screen === "factions" || !army) {
-    return (
-      <>
-        <GS />
-        <FactionSelector
-          onPreview={handlePreview}
-          onHowToPlay={() => setHowToPlay(true)}
-          onSavedLists={() => setSavedListsOpen(true)}
-        />
-      </>
-    );
-  }
-
-  // Print screen
-  if (screen === "print" && army) {
-    return (
-      <>
-        <GS />
-        <PrintView
-          army={army}
-          armyKey={selectedArmy}
-          roster={roster}
-          onClose={() => setScreen("builder")}
-        />
-      </>
-    );
-  }
+  function handleSaved() { setSaveModal(false); setSaveSuccess(true); setTimeout(() => setSaveSuccess(false), 2500); }
 
   const totalPts = roster.reduce((sum, e) => {
     const base = typeof e.unit.pts === "number" ? e.unit.pts : 0;
@@ -2639,50 +2743,62 @@ function App() {
     return sum + base + magic + mount;
   }, 0);
 
+  // ── Gate on auth ──
+  if (!session) return <AuthScreen onAuth={handleAuth} onGuest={handleGuest} />;
+
+  // ── Sub-screens ──
+  if (howToPlay) return <><GS /><HowToPlay onBack={() => setHowToPlay(false)} /></>;
+  if (savedListsOpen && !session?.guest) return <><GS /><SavedLists onBack={() => setSavedListsOpen(false)} onLoad={handleLoadList} session={session} /></>;
+  if (previewArmy && ARMIES[previewArmy]) return <><GS /><ArmyConfirm armyKey={previewArmy} onConfirm={handleConfirm} onBack={handleBack} /></>;
+  if (screen === "factions" || !army) {
+    return (
+      <>
+        <GS />
+        <FactionSelector
+          onPreview={handlePreview}
+          onHowToPlay={() => setHowToPlay(true)}
+          onSavedLists={() => setSavedListsOpen(true)}
+          session={session}
+          onLogout={handleLogout}
+          isGuest={!!session?.guest}
+        />
+      </>
+    );
+  }
+  if (screen === "print" && army) return <><GS /><PrintView army={army} roster={roster} onClose={() => setScreen("builder")} /></>;
+
+  // ── Builder ──
   return (
     <>
       <GS />
-      {saveModal && (
-        <SaveModal
-          army={army}
-          roster={roster}
-          totalPts={totalPts}
-          onSave={handleSaved}
-          onClose={() => setSaveModal(false)}
-        />
-      )}
+      {saveModal && <SaveModal army={army} roster={roster} totalPts={totalPts} onSave={handleSaved} onClose={() => setSaveModal(false)} session={session} />}
       <div style={{ minHeight:"100vh", background: army.bg || "#050505", paddingBottom:40 }}>
-        {/* Header */}
         <div style={{ position:"sticky", top:0, zIndex:100, background: army.bg || "#050505", borderBottom:`1px solid ${army.color}40`, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
           <button onClick={() => { setScreen("factions"); setSelectedArmy(null); setRoster([]); }}
-            style={{ background:"none", border:`1px solid ${army.color}40`, color: army.color, borderRadius:4, padding:"4px 10px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+            style={{ background:"none", border:`1px solid ${army.color}40`, color: army.color, borderRadius:4, padding:"4px 10px", fontSize:"1rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
             ← ARMIES
           </button>
-          <div style={{ flex:1, fontFamily:"'Cinzel',serif", fontSize:"1.25rem", color: army.accent, letterSpacing:2, textAlign:"center" }}>
+          <div style={{ flex:1, fontFamily:"'Cinzel',serif", fontSize:"1rem", color: army.accent, letterSpacing:2, textAlign:"center" }}>
             {army.name.toUpperCase()}
           </div>
           <div style={{ display:"flex", gap:6, alignItems:"center" }}>
-            {roster.length > 0 && (
-              <button onClick={() => setSaveModal(true)}
-                style={{ background:"none", border:`1px solid ${army.color}50`, color: saveSuccess ? "#50c050" : army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.93rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+            {roster.length > 0 && !session?.guest && (
+                style={{ background:"none", border:`1px solid ${army.color}50`, color: saveSuccess ? "#50c050" : army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
                 {saveSuccess ? "✓ SAVED" : "💾 SAVE"}
               </button>
             )}
             {roster.length > 0 && (
               <button onClick={() => setScreen("print")}
-                style={{ background:"none", border:`1px solid ${army.color}50`, color: army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.93rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+                style={{ background:"none", border:`1px solid ${army.color}50`, color: army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
                 🖨 PRINT
               </button>
             )}
           </div>
         </div>
-
-        <div className="no-print" style={{ display:"flex", gap:0, minHeight:"calc(100vh - 50px)" }}>
-          {/* Unit list sidebar */}
+        <div style={{ display:"flex", gap:0, minHeight:"calc(100vh - 50px)" }}>
           <div style={{ width:"40%", maxWidth:200, borderRight:`1px solid ${army.color}20`, overflowY:"auto" }}>
             <UnitList army={army} armyKey={selectedArmy} roster={roster} onAddUnit={handleAddUnit} />
           </div>
-          {/* Roster panel */}
           <div style={{ flex:1, overflowY:"auto" }}>
             <RosterPanel army={army} roster={roster} onUpdate={handleUpdateEntry} onRemove={handleRemoveEntry} totalPts={totalPts}
               onPrint={() => setScreen("print")}
@@ -2691,9 +2807,6 @@ function App() {
             />
           </div>
         </div>
-
-        {/* Print view */}
-        <PrintView army={army} armyKey={selectedArmy} roster={roster} totalPts={totalPts} />
       </div>
     </>
   );
