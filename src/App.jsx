@@ -447,8 +447,122 @@ const ARMIES = {
   // DAEMONS OF KHORNE — Blood God, Lord of Slaughter
   // No magic whatsoever. Pure combat aggression. Fastest, hardest-hitting.
   // ══════════════════════════════════════════════════════════════════════════
+  daemons_chaos: {
+    name:"Daemons of Chaos", color:"#7a3a8a", bg:"#08010a", accent:"#cc88ff",
+    lore:"When the Chaos Gods unite their power, a tide of daemons pours from the Realm of Chaos — a nightmarish host of Bloodletters, Plaguebearers, Pink Horrors and Daemonettes fighting side by side under the banner of the Ruinous Powers.",
+    playstyle:"A flexible mixed-daemon force drawing from all four Chaos gods. Bloodletters provide elite combat infantry, Plaguebearers offer resilient anvil units, Pink Horrors provide magic and shooting, and Daemonettes are fast flankers. Greater Daemons give you an anchor of terror and raw power. Balance your gods wisely — no single unit type dominates, but the mix creates unpredictable threats your opponent must respect from every direction.",
+    fluff:"The Realm of Chaos bleeds into reality and through the thinning veil they come — creatures of nightmare and dark purpose, servants of gods whose desires span the infinite. Bloodletters howl for skulls, Plaguebearers moan their pestilential hymns, Pink Horrors cackle as raw magic crackles from their fingers, and Daemonettes dance their razor-footed way across the battlefield. United by nothing but their master's will, they are nevertheless an army of terrible power.",
+    traits:["Mixed daemon types","All four Chaos gods","Flexible roster","Daemonic Instability"],
+    strengths:"Versatile unit mix; strong magic with Horrors; resilient Plaguebearers; devastating Greater Daemons",
+    weaknesses:"Daemonic Instability affects all units; no mundane troops; expensive points costs throughout",
+    generalCmd:8,
+    spells:[
+      { name:"Chaos Incantation", cast:"4+", range:"30cm",
+        desc:"The Daemon Wizard channels raw Chaos energy at a single enemy unit within 30cm. The target suffers D3 automatic hits with no armour saves. Daemons may not be targeted." },
+      { name:"Warp Surge", cast:"5+", range:"20cm",
+        desc:"A nearby friendly daemon unit is empowered with warp energy. The unit adds +1 Attack to every stand for the remainder of this combat phase. May only target a unit already in combat." },
+      { name:"Daemonic Veil", cast:"4+", range:"Army",
+        desc:"The Wizard throws a veil of chaos over the battlefield. One friendly daemon unit anywhere on the battlefield may immediately make a free move of up to 20cm, ignoring command penalties. It may not charge as part of this move." },
+      { name:"Screaming Doom", cast:"5+", range:"30cm",
+        desc:"A howling chorus of daemon voices tears at the minds of the enemy. One enemy unit within range must take a break test immediately as if it had lost a round of combat by 2 or more, even if not in combat." },
+      { name:"Mark of Chaos", cast:"4+", range:"30cm",
+        desc:"The Wizard brands an enemy unit with a Mark of Chaos. The unit is confused and takes -1 to all Command rolls until the end of the following Command phase. Cannot target characters." },
+    ],
+    instabilityTable:[
+      { roll:"1",   result:"Consumed by Chaos", effect:"The daemons dissolve screaming back into the warp. Lose D3 additional stands beyond normal losses." },
+      { roll:"2–3", result:"Wavering",           effect:"The unit is confused this turn — it cannot receive orders or act on initiative." },
+      { roll:"4–5", result:"Sustained",          effect:"No additional effect. The will of the Chaos Gods sustains the daemons through their pain." },
+      { roll:"6",   result:"Empowered",          effect:"The Chaos Gods reward blood spilled. Recover 1 previously lost stand as a new daemon manifests." },
+    ],
+    units:[
+      // ── CHARACTERS ──────────────────────────────────────────────────────
+      { id:"dc_daemon_prince_general", name:"Daemon Prince (General)", type:"General",
+        atk:"+4", hits:"-", armour:"-", cmd:8, size:1, pts:200, min:1, max:1,
+        special:"Causes terror. Command range covers entire battlefield. May be given wings (free) — if so, flies and moves 100cm. Counts as a Monstrous Mount. Daemonic Instability.",
+        upgrades:[], magic:["devices"] },
+      { id:"dc_herald_general", name:"Herald (General)", type:"General",
+        atk:"+2", hits:"-", armour:"-", cmd:8, size:1, pts:125, min:1, max:1,
+        special:"Command range covers entire battlefield. Daemonic Instability.",
+        upgrades:[], magic:["devices"] },
+      { id:"dc_herald_hero", name:"Herald (Hero)", type:"Hero",
+        atk:"+2", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2,
+        special:"Command range 60cm. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_chaos_wizard", name:"Daemon Wizard", type:"Wizard",
+        atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:65, min:"-", max:2,
+        special:"Command range 20cm. Casts spells. Daemonic Instability.",
+        upgrades:[], magic:["arcane"] },
+      // ── CORE INFANTRY ──────────────────────────────────────────────────
+      { id:"dc_bloodletters", name:"Bloodletters", type:"Infantry",
+        atk:4, hits:3, armour:"5+", cmd:"-", size:3, pts:80, min:2, max:6,
+        special:"Hell Blades: In the first round of any combat (including counter-charge), Bloodletters add +1 Attack. Daemonic Instability: test at start of own Command phase if unit has suffered casualties.",
+        upgrades:[], magic:[] },
+      { id:"dc_plaguebearers", name:"Plaguebearers", type:"Infantry",
+        atk:3, hits:3, armour:"4+", cmd:"-", size:3, pts:75, min:2, max:6,
+        special:"Causes disease: enemy units in combat with Plaguebearers take -1 Attack. Daemonic Instability: test at start of own Command phase if unit has suffered casualties. Immune to terror penalty.",
+        upgrades:[], magic:[] },
+      { id:"dc_pink_horrors", name:"Pink Horrors", type:"Infantry",
+        atk:"2/2", hits:3, armour:"6+", cmd:"-", size:3, pts:70, min:1, max:4,
+        special:"Shoot 30cm (magic bolts). When a stand is destroyed, it splits into two Blue Horrors: the unit gains +1 Attack in its next combat. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_daemonettes", name:"Daemonettes", type:"Infantry",
+        atk:4, hits:3, armour:"6+", cmd:"-", size:3, pts:65, min:2, max:6,
+        special:"Allure: enemy units within 20cm at start of combat phase must pass a Command check or lose -1 Attack that round. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      // ── CAVALRY ────────────────────────────────────────────────────────
+      { id:"dc_flesh_hounds", name:"Flesh Hounds", type:"Cavalry",
+        atk:3, hits:3, armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:4,
+        special:"Magic resistance: any magic spell targeting a unit that includes Flesh Hounds is cancelled on a roll of 4+. Causes terror. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_seekers", name:"Seekers of Slaanesh", type:"Cavalry",
+        atk:4, hits:3, armour:"6+", cmd:"-", size:3, pts:85, min:"-", max:3,
+        special:"Extremely fast: move 40cm. In the first round of any combat, Seekers add +1 Attack. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_plague_drones", name:"Plague Drones", type:"Cavalry",
+        atk:3, hits:3, armour:"4+", cmd:"-", size:3, pts:90, min:"-", max:3,
+        special:"Flies. Causes disease: enemy in combat take -1 Attack. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      // ── CHARIOTS ───────────────────────────────────────────────────────
+      { id:"dc_burning_chariot", name:"Burning Chariot", type:"Chariot",
+        atk:"2/2", hits:3, armour:"6+", cmd:"-", size:2, pts:80, min:"-", max:2,
+        special:"Flies. Shoots 30cm (warp fire). Causes terror. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      // ── MONSTERS ───────────────────────────────────────────────────────
+      { id:"dc_bloodcrushers", name:"Bloodcrushers", type:"Monster",
+        atk:5, hits:3, armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:2,
+        special:"Causes terror. In the first round of combat (including counter-charge), Bloodcrushers add +1 Attack. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_beasts_nurgle", name:"Beasts of Nurgle", type:"Monster",
+        atk:3, hits:4, armour:"4+", cmd:"-", size:2, pts:100, min:"-", max:2,
+        special:"Causes terror. Slime Trail: units pursuing Beasts of Nurgle add no pursuit bonus attacks. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_screamers", name:"Screamers", type:"Monster",
+        atk:3, hits:3, armour:"6+", cmd:"-", size:3, pts:75, min:"-", max:3,
+        special:"Flies. Slashing attack: add +1 Attack when charging. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      // ── GREATER DAEMONS ────────────────────────────────────────────────
+      { id:"dc_bloodthirster", name:"Bloodthirster", type:"Monster",
+        atk:8, hits:6, armour:"4+", cmd:"-", size:1, pts:275, min:"-", max:1,
+        special:"Causes terror. Flies. +4 Attacks to any unit it joins. May only be fielded at 1000pts+. Daemonic Instability: if reduced to 1–3 hits remaining, halved to 3 hits/4 attacks.",
+        upgrades:[], magic:[] },
+      { id:"dc_great_unclean_one", name:"Great Unclean One", type:"Monster",
+        atk:6, hits:6, armour:"4+", cmd:"-", size:1, pts:250, min:"-", max:1,
+        special:"Causes terror. +3 Attacks to any unit it joins. Regeneration: at start of own Command phase roll a D6; on a 4+ recover 1 hit. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_lord_of_change", name:"Lord of Change", type:"Monster",
+        atk:4, hits:6, armour:"5+", cmd:"-", size:1, pts:240, min:"-", max:1,
+        special:"Causes terror. Flies. +3 Attacks to any unit it joins. Casts spells as a Wizard. Magic resistance: spells targeting Lord of Change or its unit are cancelled on a 4+. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_keeper_of_secrets", name:"Keeper of Secrets", type:"Monster",
+        atk:6, hits:6, armour:"5+", cmd:"-", size:1, pts:245, min:"-", max:1,
+        special:"Causes terror. +3 Attacks to any unit it joins. Alluring Presence: all enemy units within 30cm take -1 to Command checks. Daemonic Instability.",
+        upgrades:[], magic:[] },
+    ],
+    upgradeRules:{},
+  },
+
   daemons_khorne: {
-    name:"Daemons of Khorne", color:"#8b0000", bg:"#060000", accent:"#ff2200",
+    name:"Daemons of Khorne", wip:true, color:"#8b0000", bg:"#060000", accent:"#ff2200",
     lore:"Blood for the Blood God. Skulls for the Skull Throne. The daemons of Khorne know only one purpose: slaughter.",
     playstyle:"Pure close-combat aggression with zero magic — Khorne despises sorcery. Bloodletters are elite infantry with Hell Blades that shred armour on the charge. Flesh Hounds are fast, magic-resistant cavalry. Bloodcrushers are the most powerful cavalry stand in the game, causing terror and dealing devastating charges. The Bloodthirster is the strongest Greater Daemon of any army. You have NO spells and NO shooting — get into combat as fast as possible and never stop.",
     fluff:"BLOOD FOR THE BLOOD GOD! SKULLS FOR THE SKULL THRONE! The daemons of Khorne are the purest expression of martial rage given form. Bloodletters march in iron-disciplined cohorts, their Hell Blades shearing through steel as if it were parchment. Flesh Hounds race ahead, immune to the trickery of wizards. Bloodcrushers — Bloodletters mounted upon brazen Juggernauts — are a force of nature unto themselves, the thunder of brass hooves heralding doom. Above all wings the Bloodthirster, eight attacks of annihilation in a single towering form, the mightiest warrior-daemon that walks or flies. Khorne cares not from whence the blood flows — only that it flows.",
@@ -523,7 +637,7 @@ const ARMIES = {
   // Slowest but toughest. Regeneration. Diseased touch debuffs enemies.
   // ══════════════════════════════════════════════════════════════════════════
   daemons_nurgle: {
-    name:"Daemons of Nurgle", color:"#4a6e1a", bg:"#020400", accent:"#88cc22",
+    name:"Daemons of Nurgle", wip:true, color:"#4a6e1a", bg:"#020400", accent:"#88cc22",
     lore:"In the Garden of Nurgle, all things fester and bloom. His daemons are the most resilient in existence — death itself cannot stop them.",
     playstyle:"The toughest daemon army. Plaguebearers are a wall of rot — their diseased touch forces enemies to fight at -1 Attack every round. Nurglings cannot be driven back and annoy enemy command. Plague Drones are flying cavalry that cause terror. Beasts of Nurgle regenerate hits in combat. The Great Unclean One is a vast, terrifying, regenerating monster-general. Your spells slow, weaken and disease the enemy. March forward, absorb punishment, and grind the foe into the mud.",
     fluff:"Papa Nurgle bestows his gifts with infinite generosity. Plaguebearers count his blessings on stubby, rotting fingers as they shamble through the muck, their diseased blades weakening any foe foolish enough to trade blows. Nurglings swarm in giggling masses, impossible to shift. Beasts of Nurgle slither with horrifying enthusiasm, leaving trails of corrosive slime. Plague Drones drip with filth as they wheel overhead. And the Great Unclean One — vast, joyful and utterly disgusting — roars its paternal love as it regenerates every wound dealt to it and tramples another regiment into ruin.",
@@ -593,7 +707,7 @@ const ARMIES = {
   // Most powerful magic. Horrors split on death. Flamers shoot AND move.
   // ══════════════════════════════════════════════════════════════════════════
   daemons_tzeentch: {
-    name:"Daemons of Tzeentch", color:"#1055b0", bg:"#000308", accent:"#40a0ff",
+    name:"Daemons of Tzeentch", wip:true, color:"#1055b0", bg:"#000308", accent:"#40a0ff",
     lore:"In the Realm of Chaos, Tzeentch laughs at all certainties. His daemons embody mutation, sorcery and the ever-shifting web of fate.",
     playstyle:"The magic-heavy daemon army with the strongest spell list in the game. Pink Horrors are peculiar infantry — when a stand is destroyed, place a Blue Horror stand in its place for free, making them extremely hard to eliminate. Flamers bounce around the battlefield shooting armour-piercing warpfire in 360° arcs. Screamers fly over enemy units and slash them for free automatic hits. The Lord of Change is both your General and your most powerful Wizard simultaneously. Wear the enemy down with spells and Flamer fire before finishing in combat.",
     fluff:"In the ever-shifting Realm of Chaos, Tzeentch laughs. His daemons are creatures of pure change — Pink Horrors writhe and cackle, hurling mutating fire with gleeful abandon, and when slain, split into Blue Horrors that continue the fight with bitter resentment. Flamers bounce with grotesque energy, spewing warpfire that melts armour and flesh alike. Screamers slash through the sky like living razors. Above all wheels the Lord of Change — vast, knowing, ancient — its inscrutable eyes already seeing how your opponent will lose before the first stand is placed.",
@@ -662,7 +776,7 @@ const ARMIES = {
   // Fastest army. Seductive spells disrupt command. Fiends cripple orders.
   // ══════════════════════════════════════════════════════════════════════════
   daemons_slaanesh: {
-    name:"Daemons of Slaanesh", color:"#8822aa", bg:"#050008", accent:"#dd66ff",
+    name:"Daemons of Slaanesh", wip:true, color:"#8822aa", bg:"#050008", accent:"#dd66ff",
     lore:"Speed, sensation and excess without limit. The daemons of Slaanesh strike before the enemy can react, and their spells make resistance feel futile.",
     playstyle:"The fastest daemon army — Daemonettes move 30cm, Seekers move 40cm, and even the Keeper of Secrets moves 40cm. Daemonettes are fragile but their Rending Claws grant +1 Attack on top of the normal charge bonus, making the charge devastating. Seekers are the fastest cavalry in the entire game. Fiends radiate Soporific Musk that imposes -1 Command on all nearby enemy orders. Your spells force enemy units to move involuntarily, reduce their attacks, and paralyse enemy characters. Speed is your weapon — dictate the terms of every engagement.",
     fluff:"Where Slaanesh's daemons pass, perfection and horror become indistinguishable. Daemonettes glide forward with inhuman grace, their razor-sharp claws leaving wounds that feel disturbingly like pleasure. Seekers mounted on Steeds of Slaanesh can outmanoeuvre any cavalry in the world. Fiends drift through the air on a cloud of soporific musk that leaves enemy commanders dull and hesitant. And the Keeper of Secrets — six-armed, towering, swift beyond all reason — embodies the Dark Prince's eternal promise that ecstasy and agony are merely different words for the same perfect feeling.",
@@ -1439,6 +1553,9 @@ function FactionSelector({ onPreview, onHowToPlay, onSavedLists, session, onLogo
               onMouseLeave={e => { e.currentTarget.style.borderColor = army.color+"50"; e.currentTarget.style.background = `linear-gradient(150deg, ${army.bg} 0%, ${army.color}18 100%)`; e.currentTarget.style.transform = "translateY(0)"; }}
             >
               <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.2rem", color: army.accent, fontWeight:700, marginBottom:5, lineHeight:1.3, letterSpacing:0.5 }}>{army.name.toUpperCase()}</div>
+              {army.wip && (
+                <div style={{ display:"inline-block", background:"#3a2000", border:"1px solid #c87800", borderRadius:3, padding:"1px 6px", fontSize:"0.6rem", color:"#c87800", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:3 }}>⚠ WIP</div>
+              )}
               <div style={{ fontSize:"1.1rem", color:"#666", lineHeight:1.35 }}>{army.lore.substring(0,55)}…</div>
               <div style={{ marginTop:8, fontSize:"1.25rem", color: army.color, opacity:0.8, letterSpacing:1 }}>VIEW DETAILS →</div>
             </button>
@@ -1479,6 +1596,19 @@ function ArmyConfirm({ armyKey, onConfirm, onBack }) {
           <h2 style={{ fontFamily:"'Cinzel',serif", fontSize:"clamp(1.6rem,5vw,2.4rem)", color: army.accent, letterSpacing:2, lineHeight:1.1 }}>{army.name.toUpperCase()}</h2>
           <div style={{ width:80, height:2, background:`linear-gradient(90deg, transparent, ${army.color}, transparent)`, margin:"12px auto" }} />
         </div>
+
+        {/* WIP Warning */}
+        {army.wip && (
+          <div style={{ background:"#1a0d00", border:"2px solid #c87800", borderRadius:8, padding:"12px 18px", marginBottom:16, display:"flex", alignItems:"flex-start", gap:12 }}>
+            <div style={{ fontSize:"1.3rem", flexShrink:0 }}>⚠</div>
+            <div>
+              <div style={{ fontFamily:"'Cinzel',serif", color:"#c87800", fontSize:"0.88rem", fontWeight:700, letterSpacing:1, marginBottom:4 }}>WORK IN PROGRESS — UNOFFICIAL LIST</div>
+              <div style={{ fontSize:"0.82rem", color:"#8a6030", lineHeight:1.5 }}>
+                This army list has been created as a custom/unofficial supplement and is not part of the official Warmaster Revolution v2.24 ruleset. Stats, points and rules may not be balanced for competitive play. Use with your opponent's agreement.
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Fluff text */}
         <div style={{ background:`linear-gradient(135deg, ${army.bg}, ${army.color}15)`, border:`1px solid ${army.color}40`, borderRadius:8, padding:"20px 24px", marginBottom:16, position:"relative", overflow:"hidden" }}>
