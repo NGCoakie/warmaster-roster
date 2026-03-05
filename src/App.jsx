@@ -1227,7 +1227,8 @@ const GS = () => (
     * { -webkit-tap-highlight-color: transparent; }
     @media print {
       .no-print { display: none !important; }
-      body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; }
+      body { margin: 0 !important; padding: 0 !important; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
   `}</style>
 );
@@ -2142,6 +2143,8 @@ function PrintView({ army, roster, onClose }) {
         boxSizing: "border-box",
         fontFamily: "'Cinzel', Georgia, serif",
         fontSize: fs,
+        WebkitPrintColorAdjust: "exact",
+        printColorAdjust: "exact",
       }}>
 
         {/* ══ PORTRAIT / SQUARE ══ */}
@@ -2422,6 +2425,7 @@ function PrintView({ army, roster, onClose }) {
       <style>{`
         @media print {
           .no-print { display: none !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           body { margin: 0; padding: 0; background: ${mode==="white" ? "#fff" : (army.bg||"#050505")} !important; }
           @page { size: auto; margin: 8mm; }
         }
