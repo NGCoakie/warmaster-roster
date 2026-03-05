@@ -1391,10 +1391,6 @@ function FactionSelector({ onPreview, onHowToPlay, onSavedLists, session, onLogo
               onMouseEnter={e => { e.currentTarget.style.color="#c8a060"; e.currentTarget.style.borderColor="#666"; }}
               onMouseLeave={e => { e.currentTarget.style.color="#888"; e.currentTarget.style.borderColor="#333"; }}
             >📖 HOW TO PLAY</button>
-            <button onClick={onSavedLists}
-              style={{ background:"transparent", color:"#888", border:"1px solid #333", borderRadius:4, padding:"6px 16px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
-              onMouseEnter={e => { e.currentTarget.style.color="#c8a060"; e.currentTarget.style.borderColor="#666"; }}
-              onMouseLeave={e => { e.currentTarget.style.color="#888"; e.currentTarget.style.borderColor="#333"; }}
             {!isGuest && (
               <button onClick={onSavedLists}
                 style={{ background:"transparent", color:"#888", border:"1px solid #333", borderRadius:4, padding:"6px 16px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
