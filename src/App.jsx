@@ -2797,6 +2797,7 @@ function App() {
           </div>
           <div style={{ display:"flex", gap:6, alignItems:"center" }}>
             {roster.length > 0 && !session?.guest && (
+              <button onClick={() => setSaveModal(true)}
                 style={{ background:"none", border:`1px solid ${army.color}50`, color: saveSuccess ? "#50c050" : army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
                 {saveSuccess ? "✓ SAVED" : "💾 SAVE"}
               </button>
