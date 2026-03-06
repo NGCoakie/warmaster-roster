@@ -2788,6 +2788,8 @@ function PrintView({ army, roster, onClose }) {
     const pts = entryTotal(entry);
     const isLandscape = printOpts.layout === "landscape";
     const fs = lay.fontSize; // base font size tied to physical card size
+    const borderUrl = ""; // IMAGES.factionBorders[army.key] — placeholder until generated
+    const crestUrl  = ""; // IMAGES.factionCrests[army.key]  — placeholder until generated
 
     // Stats for main grid: ATK, HITS, ARM only (CMD moves to side column)
     const mainStats = [
@@ -2850,7 +2852,6 @@ function PrintView({ army, roster, onClose }) {
           {/* Image area */}
           {printOpts.showImage && lay.imgH !== "0" && (() => {
             const unitImgUrl = IMAGES.units[u.id] || "";
-            const borderUrl = IMAGES.factionBorders[army.key] || "";
             return (
               <div style={{
                 width:"100%", height: lay.imgH,
