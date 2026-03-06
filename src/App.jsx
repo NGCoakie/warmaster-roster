@@ -2345,17 +2345,13 @@ function PrintView({ army, roster, onClose }) {
   };
   const baseLay = baseLayouts[printOpts.layout];
   const scaledFontPx = Math.round(baseLay.baseFontPx * printOpts.fontScale * 10) / 10;
-  // Scale card height proportionally so text doesn't overflow at larger fonts
-  const scaleH = (mmStr) => {
-    if (!mmStr || mmStr === "0") return mmStr;
-    const val = parseFloat(mmStr);
-    return `${Math.round(val * printOpts.fontScale * 10) / 10}mm`;
-  };
+  // Card dimensions are FIXED mm — only font size scales with fontScale
+  const scaleH = (mmStr) => mmStr;
   const lay = {
     ...baseLay,
     fontSize: `${scaledFontPx}px`,
-    h: scaleH(baseLay.h),
-    imgH: scaleH(baseLay.imgH),
+    h: baseLay.h,
+    imgH: baseLay.imgH,
   };
 
   // ── Colour scheme ─────────────────────────────────────────────────────────
