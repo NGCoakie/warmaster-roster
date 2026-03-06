@@ -2635,6 +2635,7 @@ function PrintView({ army, roster, onClose }) {
     includeArmyRules: true,
     includeSpells: true,
     fontScale: 1.0,          // 0.7 – 1.4 multiplier on all card text
+    includeMagicItems: true,
   });
 
   const entryTotal = (entry) => {
@@ -2696,6 +2697,153 @@ function PrintView({ army, roster, onClose }) {
   const imgTextColor = mode==="white" ? "#aaaaaa" : army.accent;
 
   // ── ARMY RULES CARD ──────────────────────────────────────────────────────
+  // ── Magic Item Card ───────────────────────────────────────────────────────
+  function MagicItemCard({ item }) {
+    const cardW = "63mm";
+    const cardH = scaleH("88mm");
+    const parchment = "#f4e8c1";
+    const parchmentDark = "#e8d4a0";
+    const inkColor = "#2a1a08";
+    const borderColor = "#8b6914";
+    const accentColor = army.color || "#8b6914";
+
+    // Determine item category label
+    const catLabel = item.restriction === "General only" ? "General"
+      : item.restriction === "Wizard only" ? "Wizard"
+      : item.restriction === "Wizard or Dwarf Runesmith only" ? "Wizard/Runesmith"
+      : item.restriction === "Wizard or Dwarf runesmith only" ? "Wizard/Runesmith"
+      : item.category === "weapon" ? "Magic Weapon"
+      : item.category === "device" ? "Device of Power"
+      : item.category === "banner" ? "Magic Standard"
+      : "Magic Item";
+
+    return (
+      <div style={{
+        width: cardW, height: cardH,
+        background: `linear-gradient(160deg, #f7efd4 0%, ${parchment} 40%, #ecdfa8 100%)`,
+        border: `3px solid ${borderColor}`,
+        borderRadius: "6px",
+        boxSizing: "border-box",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        fontFamily: "'Crimson Text', 'Georgia', serif",
+        boxShadow: "inset 0 0 30px rgba(139,105,20,0.15)",
+        pageBreakInside: "avoid",
+      }}>
+        {/* Scroll texture overlay */}
+        <div style={{
+          position:"absolute", inset:0, pointerEvents:"none", zIndex:1,
+          background: "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(139,105,20,0.04) 28px, rgba(139,105,20,0.04) 29px)",
+        }}/>
+        {/* Corner ornaments */}
+        {["0px 0px","0px auto","auto 0px","auto auto"].map((pos,i) => (
+          <div key={i} style={{
+            position:"absolute",
+            top: i<2 ? "4px" : "auto", bottom: i>=2 ? "4px" : "auto",
+            left: i%2===0 ? "4px" : "auto", right: i%2===1 ? "4px" : "auto",
+            width:"14px", height:"14px", zIndex:2,
+            background: `radial-gradient(circle, ${borderColor} 2px, transparent 2px), 
+                         linear-gradient(${i%2===0?45:-45}deg, ${borderColor} 0px, ${borderColor} 1px, transparent 1px)`,
+            opacity:0.6,
+          }}/>
+        ))}
+
+        {/* Name banner at top — dark ribbon */}
+        <div style={{
+          position:"relative", zIndex:3,
+          background: `linear-gradient(90deg, ${accentColor}dd, ${accentColor}99, ${accentColor}dd)`,
+          padding:"5px 8px 4px",
+          textAlign:"center",
+          borderBottom: `2px solid ${borderColor}`,
+          clipPath: "polygon(0 0, 100% 0, 96% 100%, 4% 100%)",
+        }}>
+          <div style={{ fontSize:"0.78rem", fontFamily:"'Cinzel',serif", color:"#fff", fontWeight:700, letterSpacing:"0.5px", textShadow:"0 1px 3px rgba(0,0,0,0.8)", lineHeight:1.2 }}>
+            {item.name}
+          </div>
+        </div>
+
+        {/* Category + Cost row */}
+        <div style={{
+          position:"relative", zIndex:3,
+          display:"flex", justifyContent:"space-between", alignItems:"center",
+          padding:"3px 10px",
+          borderBottom:`1px solid ${borderColor}60`,
+          background: "rgba(139,105,20,0.08)",
+        }}>
+          <span style={{ fontSize:"0.62rem", color: inkColor, fontStyle:"italic", opacity:0.8 }}>{catLabel}</span>
+          <span style={{ fontSize:"0.72rem", fontFamily:"'Cinzel',serif", color: accentColor, fontWeight:700 }}>{item.cost} pts</span>
+        </div>
+
+        {/* Image area */}
+        <div style={{
+          position:"relative", zIndex:3,
+          flex:"0 0 auto",
+          height:"28mm",
+          background: item.imageUrl
+            ? `url(${item.imageUrl}) center/cover no-repeat`
+            : `linear-gradient(135deg, ${parchmentDark} 0%, #d4b870 50%, ${parchmentDark} 100%)`,
+          borderBottom: `2px solid ${borderColor}80`,
+          display: item.imageUrl ? "block" : "flex",
+          alignItems:"center", justifyContent:"center",
+          overflow:"hidden",
+        }}>
+          {!item.imageUrl && (
+            <div style={{ textAlign:"center", opacity:0.4 }}>
+              <div style={{ fontSize:"1.8rem" }}>⚔</div>
+              <div style={{ fontSize:"0.55rem", color:inkColor, fontFamily:"'Cinzel',serif", letterSpacing:1 }}>IMAGE</div>
+            </div>
+          )}
+          {/* Decorative scroll curl at bottom of image */}
+          <div style={{
+            position:"absolute", bottom:0, left:0, right:0, height:"6px",
+            background: `linear-gradient(180deg, transparent, ${borderColor}40)`,
+          }}/>
+        </div>
+
+        {/* Description text area */}
+        <div style={{
+          position:"relative", zIndex:3,
+          flex:1, overflow:"hidden",
+          padding:"5px 8px 4px",
+          display:"flex", flexDirection:"column",
+        }}>
+          {/* Restriction note if any */}
+          {item.restriction && (
+            <div style={{ fontSize:"0.58rem", color:accentColor, fontStyle:"italic", marginBottom:"3px", fontWeight:600 }}>
+              {item.restriction}
+            </div>
+          )}
+          <div style={{
+            fontSize:"0.62rem", color: inkColor, lineHeight:1.45,
+            overflow:"hidden",
+            display:"-webkit-box", WebkitLineClamp:10, WebkitBoxOrient:"vertical",
+          }}>
+            {item.desc}
+          </div>
+        </div>
+
+        {/* Bottom scroll curl decoration */}
+        <div style={{
+          position:"relative", zIndex:3,
+          height:"8px",
+          background: `linear-gradient(180deg, transparent, ${borderColor}30)`,
+          borderTop:`1px solid ${borderColor}40`,
+        }}/>
+
+        {/* Army crest watermark */}
+        <div style={{
+          position:"absolute", bottom:"12px", right:"8px", zIndex:2,
+          fontSize:"0.55rem", color: borderColor, opacity:0.3,
+          fontFamily:"'Cinzel',serif", letterSpacing:1,
+        }}>
+          {army.name}
+        </div>
+      </div>
+    );
+  }
+
   function SpecialRuleCard({ rule, ruleIndex, totalRules }) {
     // Special rule cards are ALWAYS portrait 63x88mm
     const CARD_W = "63mm";
@@ -3169,6 +3317,7 @@ function PrintView({ army, roster, onClose }) {
               {[
                 { key:"includeArmyRules", label:"Special Rules Cards", sub:"One landscape card per special army rule" },
                 { key:"includeSpells",    label:"Spell List Card",   sub:"Spell cards (only shown if army has spells)"     },
+                { key:"includeMagicItems", label:"Magic Item Cards",  sub:"Parchment cards for each magic item in your roster" },
               ].map(({ key, label, sub }) => (
                 <label key={key}
                   style={{ display:"flex", alignItems:"center", gap:12, cursor:"pointer", padding:"10px 12px", borderRadius:6, background:"#0a0806", border:`1px solid ${local[key] ? army.color+"60" : "#222"}`, transition:"border 0.15s" }}>
@@ -3256,9 +3405,11 @@ function PrintView({ army, roster, onClose }) {
       {(() => {
         const spellItems = [];
         if (printOpts.includeSpells) {
-          if (army.spells && Array.isArray(army.spells)) army.spells.forEach(s => spellItems.push(s));
+          const seenSpells = new Set();
+          const addSpell = (s) => { if (!seenSpells.has(s.name)) { seenSpells.add(s.name); spellItems.push(s); } };
+          if (army.spells && Array.isArray(army.spells)) army.spells.forEach(addSpell);
           if (army.instabilityTable && Array.isArray(army.instabilityTable))
-            army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
+            army.instabilityTable.forEach(s => addSpell({...s, instability:true}));
         }
         return (
           <div style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
@@ -3291,6 +3442,53 @@ function PrintView({ army, roster, onClose }) {
             {spellItems.map((spell, i) => (
               <SpellCard key={`spell-${i}`} spell={spell} index={i+1} total={spellItems.length} />
             ))}
+            {/* ── Magic Item Cards ── */}
+            {printOpts.includeMagicItems !== false && (() => {
+              // Collect all magic items from the roster (deduplicated by name)
+              const seen = new Set();
+              const items = [];
+              // Army-wide magic items list
+              const allMagicItems = [
+                // Weapons
+                {name:"Sword of Destruction", cost:10, category:"weapon", restriction:"Infantry, Cavalry or Chariot unit or character", desc:"Enemy unit touching this unit must re-roll one successful Armour save each round of combat. Only one enemy unit can be affected."},
+                {name:"Sword of Fate", cost:5, category:"weapon", restriction:"Infantry, Cavalry or Chariot unit or character", desc:"In the first round of the unit's first combat, adds +1 Attack bonus to one stand (like a character Attack bonus). Only works once per game."},
+                {name:"Sword of Cleaving", cost:10, category:"weapon", restriction:"Infantry, Cavalry or Chariot unit or character", desc:"The unit may re-roll one unsuccessful Attack dice each round of combat."},
+                {name:"Sword of Might", cost:10, category:"weapon", restriction:"Infantry, Cavalry or Chariot unit or character", desc:"Adds +1 Attack to one stand in the unit. Gives +1 Attack in total, not +1 to each stand."},
+                // Devices
+                {name:"Crown of Command", cost:70, category:"device", restriction:"General only", desc:"The General may issue his first order each turn as if his Command value were 10, with no penalties. Subsequent orders use normal Command. If the General fails his first order (rolling 11 or 12), the Crown ceases to work."},
+                {name:"Helm of Dominion", cost:40, category:"device", restriction:"General only", desc:"The General's Command value is increased by +1 up to maximum 10. Works for one turn only during the entire battle — declare at start of that turn."},
+                {name:"Orb of Majesty", cost:30, category:"device", restriction:"General only", desc:"Once per game, disregard a single failed Command test and re-roll it as if Command value were 8 (normal adjustments apply). If the re-roll succeeds, the General can continue issuing orders normally."},
+                {name:"Sceptre of Sovereignty", cost:30, category:"device", restriction:"General only", desc:"Once per game, ignore one blundered double-6 roll by the General or any other character. You may roll to see what the blunder is before deciding. If ignored, the Command test is passed and the character continues normally."},
+                {name:"Ring of Magic", cost:30, category:"device", restriction:"Wizard only", desc:"The Wizard may cast one spell without making the usual dice roll. Works only once per game."},
+                {name:"Staff of Spellbinding", cost:30, category:"device", restriction:"Wizard or Dwarf Runesmith only", desc:"If an enemy Wizard fails to cast a spell, spellbind them on a D6 roll of 4+. A spellbound Wizard suffers -1 to all casting rolls. Ceases to work once used successfully. Only one enemy Wizard can be spellbound."},
+                {name:"Scroll of Dispelling", cost:20, category:"device", restriction:"Wizard or Dwarf Runesmith only", desc:"Automatically causes one enemy spell to fail. Can only be used once. For a Runesmith, can be used after a normal anti-magic roll has failed."},
+                {name:"Wand of Power", cost:10, category:"device", restriction:"Wizard only", desc:"Once per game, add +1 to the chance of a spell working. Must be declared before rolling. A roll of 1 always fails even with the Wand."},
+                {name:"Rod of Repetition", cost:10, category:"device", restriction:"Wizard only", desc:"Once per game, if a spell is successfully cast, the Wizard may cast a second spell. It can be the same or a different spell, cast normally. Combine with Teleport for up to 3 spells in one turn."},
+                // Banners
+                {name:"Banner of Fortune", cost:20, category:"banner", restriction:"Infantry, Cavalry or Chariot unit only", desc:"Once per game, the unit may re-roll all its dice in one round of combat."},
+                {name:"Banner of Steadfastness", cost:20, category:"banner", restriction:"Infantry, Cavalry or Chariot unit only", desc:"The unit never becomes confused as a result of a drive back from shooting."},
+                {name:"Banner of Shielding", cost:20, category:"banner", restriction:"Infantry unit only", desc:"The unit gains a 6+ Armour save if it has none, or improves its existing save by 1 (e.g. 5+ becomes 4+). This bonus applies only in combat, not shooting."},
+                {name:"Banner of Courage", cost:30, category:"banner", restriction:"Infantry, Cavalry or Chariot unit only", desc:"The unit is unaffected by the -1 Attack penalty for fighting terrifying troops. It still cannot cause terror itself unless it normally does so."},
+              ];
+              
+              roster.forEach(entry => {
+                if (entry.magicItem && entry.magicItem.name && !seen.has(entry.magicItem.name)) {
+                  seen.add(entry.magicItem.name);
+                  // Find full details from allMagicItems
+                  const detail = allMagicItems.find(m => m.name === entry.magicItem.name);
+                  items.push(detail || {
+                    name: entry.magicItem.name,
+                    cost: entry.magicItem.cost || 0,
+                    category: "magic",
+                    desc: entry.magicItem.desc || "See rulebook for details.",
+                  });
+                }
+              });
+              if (items.length === 0) return null;
+              return items.map((item, i) => (
+                <MagicItemCard key={`magic-${i}`} item={item} />
+              ));
+            })()}
             {roster.map((entry, idx) => (
               <PrintCard key={idx} entry={entry} />
             ))}
