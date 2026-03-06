@@ -130,6 +130,215 @@ const DEVICES_OF_POWER = [
 ];
 
 // ── ARMY DATA (Official WMR Armies v2.24) ────────────────────────────────────
+// ── IMAGE URLS ────────────────────────────────────────────────────────────────
+// Paste Midjourney URLs here after generating. All fields are optional —
+// if a URL is missing the card shows the placeholder.
+const IMAGES = {
+  // ── Scroll border frames (shown around card edges) ─────────────────────────
+  // Generate with --ar 3:4, transparent centre, parchment/scroll style per faction
+  factionBorders: {
+    empire: "",
+    tomb_kings: "",
+    chaos: "",
+    orcs: "",
+    high_elves: "",
+    dwarfs: "",
+    skaven: "",
+    lizardmen: "",
+    bretonnia: "",
+    kislev: "",
+    dark_elves: "",
+    daemons: "",
+    daemons_chaos: "",
+    daemons_khorne: "",
+    daemons_nurgle: "",
+    daemons_tzeentch: "",
+    daemons_slaanesh: "",
+    vampire_counts: "",
+    araby: "",
+    dogs_of_war: "",
+    ogre_kingdoms: "",
+    albion: "",
+    goblin_army: "",
+    witch_hunters: "",
+    chaos_dwarfs: "",
+    wood_elves: "",
+    beastmen: "",
+    norse: "",
+    cathay: "",
+    nippon: "",
+  },
+  // ── Unit art (shown in image strip at top of unit card) ───────────────────
+  units: {
+    emp_general: "",
+    emp_hero: "",
+    emp_wizard: "",
+    emp_griffon: "",
+    emp_warAltar: "",
+    emp_halberdiers: "",
+    emp_crossbowmen: "",
+    emp_handgunners: "",
+    emp_flagellants: "",
+    emp_skirmishers: "",
+    emp_knights: "",
+    emp_pistoliers: "",
+    emp_helblaster: "",
+    emp_cannon: "",
+    emp_steamTank: "",
+    orc_general: "",
+    orc_hero: "",
+    orc_shaman: "",
+    orc_goblinHero: "",
+    orc_goblinShaman: "",
+    orc_wyvern: "",
+    orc_chariot_mount: "",
+    orc_warriors: "",
+    orc_goblins: "",
+    orc_blackOrcs: "",
+    orc_trolls: "",
+    orc_ogres: "",
+    orc_boarRiders: "",
+    orc_wolfRiders: "",
+    orc_wolfChariots: "",
+    orc_giant: "",
+    orc_rockLobber: "",
+    dow_general: "",
+    dow_hero: "",
+    dow_paymaster: "",
+    dow_wizard: "",
+    dow_griffon: "",
+    dow_payWagon: "",
+    dow_pikemen: "",
+    dow_crossbowmen: "",
+    dow_handgunners: "",
+    dow_swordsmen: "",
+    dow_ogres: "",
+    dow_dwarfs: "",
+    dow_marauders: "",
+    dow_lightCavalry: "",
+    dow_knights: "",
+    dow_galloperguns: "",
+    dow_giant: "",
+    dow_birdmen: "",
+    wh_general: "",
+    wh_hero: "",
+    wh_warriorPriest: "",
+    wh_zealots: "",
+    wh_halberdiers: "",
+    wh_crossbowmen: "",
+    wh_handgunners: "",
+    wh_flagellants: "",
+    wh_warhounds: "",
+    wh_knights: "",
+    wh_pistoliers: "",
+    wh_cannon: "",
+  },
+  // ── Spell art (shown in image strip at top of spell card) ─────────────────
+  spells: {
+    empire_ball_of_flame: "https://cdn.midjourney.com/25a0ea7c-5b1e-460e-a401-e0a9c68f624c/0_1.png",
+    empire_voice_of_command: "https://cdn.midjourney.com/320bf206-9d03-48f4-8b11-317ffaa76be6/0_0.png",
+    empire_weird_enchantment: "https://cdn.midjourney.com/3c0a0853-84f6-447f-9530-042c2e8f5de6/0_0.png",
+    tomb_kings_raise_dead: "https://cdn.midjourney.com/e26e6ef1-738e-4c80-a06a-76a8d4d59a94/0_0.png",
+    tomb_kings_touch_of_death: "https://cdn.midjourney.com/3dc92744-4dbe-461e-bed8-0028da912e10/0_2.png",
+    tomb_kings_incantation_of_summoning: "https://cdn.midjourney.com/d8b8bc1a-6cb5-4df4-928d-90cc9aafafa4/0_0.png",
+    tomb_kings_desert_wind: "https://cdn.midjourney.com/25e94ed1-e567-40c6-9ac4-2d652506fd87/0_0.png",
+    chaos_boon_of_chaos: "https://cdn.midjourney.com/1393b7a8-0887-4d1e-b232-278182441c63/0_3.png",
+    chaos_anger_of_the_gods: "https://cdn.midjourney.com/c16221d5-f297-420d-b903-a0d6ff7f6c72/0_0.png",
+    chaos_rage_of_chaos: "https://cdn.midjourney.com/605d946d-cfc0-4424-9418-25f8dea67894/0_0.png",
+    orcs_foot_of_gork: "https://cdn.midjourney.com/a0f842d4-2dff-4a48-9789-98a7953c61ad/0_1.png",
+    orcs_gotcha: "https://cdn.midjourney.com/5fd70088-ec83-4a77-bad5-de9528c75d5c/0_3.png",
+    orcs_gerroff: "https://cdn.midjourney.com/cd8844a8-1326-4047-8e70-250f2c6abead/0_3.png",
+    high_elves_storm_of_stone: "https://cdn.midjourney.com/4c9d4af8-f060-43b0-abdd-06de1d0e1282/0_0.png",
+    high_elves_light_of_battle: "https://cdn.midjourney.com/79135968-7eef-4999-bb36-5232f7d73fb0/0_0.png",
+    high_elves_heaven_s_fire: "https://cdn.midjourney.com/3b201ebe-b12d-4e30-a006-0161ec221dd0/0_3.png",
+    high_elves_hail_of_destruction: "https://cdn.midjourney.com/bbb7a1ef-04fe-4aa8-8bd9-c26a233eda45/0_2.png",
+    skaven_wither: "https://cdn.midjourney.com/c209989e-640d-4239-9023-067658fa7b9a/0_0.png",
+    skaven_warp_lightning: "https://cdn.midjourney.com/c85e6c3a-53cc-478e-a933-bc6054bfa01d/0_3.png",
+    skaven_death_frenzy: "https://cdn.midjourney.com/bef33db0-51e1-44f5-b002-b4bf1cd5799e/0_2.png",
+    lizardmen_gaze_of_sotek: "https://cdn.midjourney.com/eb399064-1571-4f59-a917-d2751f8cc947/0_2.png",
+    lizardmen_mazdamundi_s_revenge: "https://cdn.midjourney.com/f7a73185-4d64-4040-b049-c26b25ade201/0_1.png",
+    lizardmen_wings_of_the_jungle: "https://cdn.midjourney.com/5628cd7b-1c5b-49fe-8cdf-b09fda1720e6/0_0.png",
+    lizardmen_shield_of_the_old_ones: "https://cdn.midjourney.com/211eaee3-f89c-4b64-8bcb-17e7db5fbdfb/0_3.png",
+    bretonnia_shield_of_combat: "https://cdn.midjourney.com/55a32df9-d0ea-4777-bdae-84c036ed23e7/0_2.png",
+    bretonnia_eerie_mist: "https://cdn.midjourney.com/9bef13eb-f684-400a-9bbc-0e4506149bae/0_0.png",
+    bretonnia_aerial_shield: "https://cdn.midjourney.com/2d575df6-b089-4e3a-9abd-d942023801aa/0_0.png",
+    bretonnia_lady_s_favour: "https://cdn.midjourney.com/420cd497-97d5-4e4d-b2c8-c15b0923d991/0_2.png",
+    kislev_monster_bear: "https://cdn.midjourney.com/bae88cc8-acaf-4356-b7d1-2311301c659c/0_0.png",
+    kislev_icy_blast: "https://cdn.midjourney.com/88669832-3b38-4a9e-9d55-0329625404f5/0_2.png",
+    kislev_chill: "https://cdn.midjourney.com/6b8bf7a6-9b33-476d-8e8c-43d03ea31a34/0_3.png",
+    kislev_freeze: "https://cdn.midjourney.com/42e29d66-11aa-46ad-8a6d-63b4df73b68a/0_2.png",
+    dark_elves_doom_bolt: "https://cdn.midjourney.com/0e3fbf56-b857-4e7b-ab19-0df4354e2ca5/0_1.png",
+    dark_elves_black_horror: "https://cdn.midjourney.com/7adee6ef-a7b8-42c5-a571-8bbc6540d46f/0_0.png",
+    dark_elves_dominion: "https://cdn.midjourney.com/853bf37e-2367-4dfb-98a5-507e7d16b643/0_1.png",
+    dark_elves_soul_stealer: "https://cdn.midjourney.com/0899b3e9-2cdd-4b0a-b3bc-7f5b66ee4748/0_2.png",
+    vampire_counts_raise_dead: "https://cdn.midjourney.com/32a98bca-3c93-46df-8860-5b8e81595e50/0_3.png",
+    vampire_counts_vanhel_s_danse_macabre: "https://cdn.midjourney.com/583c3e3c-d10e-4134-9431-17eb509a3818/0_1.png",
+    vampire_counts_death_bolt: "https://cdn.midjourney.com/b6f3b689-9f2b-43c8-99ac-6c8355a2c9ea/0_2.png",
+    vampire_counts_vile_curse: "https://cdn.midjourney.com/2b45fc1e-85c0-448c-8676-1a2c292f2a4c/0_0.png",
+    araby_sand_storm: "",
+    araby_mirage: "",
+    araby_sunstrike: "",
+    araby_djinn_summons: "",
+    ogre_kingdoms_tooth_cracker: "",
+    ogre_kingdoms_bone_cruncher: "",
+    ogre_kingdoms_bull_gorger: "",
+    ogre_kingdoms_troll_guts: "",
+    albion_downpour: "",
+    albion_storm_of_hail: "",
+    albion_mists_of_albion: "",
+    albion_summon_fenbeast: "",
+    goblin_army_mork_save_uz: "",
+    goblin_army_gerroff: "",
+    goblin_army_brain_busta: "",
+    goblin_army_waaagh: "",
+    witch_hunters_sanctuary: "",
+    witch_hunters_doctrine_of_sigmar: "",
+    witch_hunters_holy_fervour: "",
+    witch_hunters_divine_curse: "",
+    chaos_dwarfs_flaming_hand: "",
+    chaos_dwarfs_volcanic_eruption: "",
+    chaos_dwarfs_word_of_fear: "",
+    chaos_dwarfs_meteor_storm: "",
+    wood_elves_tree_singing: "",
+    wood_elves_twilight_host: "",
+    wood_elves_call_of_the_hunt: "",
+    wood_elves_fury_of_the_forest: "",
+    beastmen_traitor_kin: "",
+    beastmen_hunting_for_gore: "",
+    beastmen_chaos_bolt: "",
+    beastmen_power_of_herd: "",
+    norse_aspect_of_wulfen: "",
+    norse_thunder_of_fowor: "",
+    norse_eye_of_the_raven: "",
+    cathay_glory_of_cathay: "",
+    cathay_lion_dogs_attack: "",
+    cathay_ferocity_of_tigers: "",
+    cathay_tranquility_of_heaven: "",
+    nippon_spirit_ward: "",
+    nippon_kami_strike: "",
+    nippon_divine_wind: "",
+    nippon_honour_of_ancestors: "",
+    daemons_khorne_blood_for_the_blood_god: "",
+    daemons_nurgle_stream_of_corruption: "",
+    daemons_tzeentch_bolt_of_tzeentch: "",
+    daemons_slaanesh_pavane_of_slaanesh: "",
+  },
+  // ── UI Icons (transparent background, gold style) ─────────────────────────
+  icons: {
+    atk: "", hits: "", arm: "", cmd: "", mov: "",
+    ranged: "", special: "", skull: "", coins: "", banner: "",
+    magic: "", crown: "", wing: "", hoof: "", terror: "",
+  },
+};
+// Helper: slugify spell name to match IMAGES.spells keys
+function spellKey(armyKey, spellName) {
+  return (armyKey + "_" + spellName)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "");
+}
+
 const ARMIES = {
 
   empire: {
@@ -1668,6 +1877,8 @@ function FactionSelector({ onPreview, onHowToPlay, onSavedLists, session, onLogo
 // ── ARMY CONFIRMATION SCREEN ──────────────────────────────────────────────────
 function ArmyConfirm({ armyKey, onConfirm, onBack }) {
   const army = ARMIES[armyKey];
+  // Attach key to army object for convenient access in sub-components
+  if (army && !army.key) army.key = armyKey;
   const unitCounts = { Infantry:0, Cavalry:0, Chariot:0, Monster:0, Artillery:0, Machine:0, Character:0, Mount:0, Special:0 };
   army.units.forEach(u => {
     if (["General","Hero","Wizard"].includes(u.type)) unitCounts.Character++;
@@ -2389,9 +2600,11 @@ function PrintView({ army, roster, onClose }) {
 
   // ── ARMY RULES CARD ──────────────────────────────────────────────────────
   function SpecialRuleCard({ rule, ruleIndex, totalRules }) {
-    // Special rule cards are ALWAYS landscape (88x63mm) regardless of printOpts.layout
+    // Special rule cards are ALWAYS portrait 63x88mm
     const CARD_W = "63mm";
     const CARD_H = scaleH("88mm");
+    const borderUrl = IMAGES.factionBorders[army.key] || "";
+
     const basePx  = 8 * printOpts.fontScale;
     const fs      = `${Math.round(basePx * 10) / 10}px`;
     const fsSm    = `${Math.round(basePx * 0.78 * 10) / 10}px`;
@@ -2404,6 +2617,7 @@ function PrintView({ army, roster, onClose }) {
         background: cardBg,
         border: `2px solid ${cardBorder}`,
         borderRadius: "4px",
+        position: "relative",
         display: "flex", flexDirection: "column",
         overflow: "hidden",
         pageBreakInside: "avoid", breakInside: "avoid",
@@ -2412,6 +2626,16 @@ function PrintView({ army, roster, onClose }) {
         WebkitPrintColorAdjust: "exact", printColorAdjust: "exact",
         position: "relative",
       }}>
+        {/* Faction border overlay */}
+        {borderUrl && (
+          <div style={{
+            position:"absolute", inset:0, zIndex:10, pointerEvents:"none",
+            backgroundImage:`url(${borderUrl})`,
+            backgroundSize:"100% 100%",
+            backgroundRepeat:"no-repeat",
+            opacity:0.8,
+          }} />
+        )}
         {/* Gold top accent bar */}
         <div style={{ height: "2.5px", background: `linear-gradient(90deg, transparent, ${army.color}, transparent)`, flexShrink: 0 }} />
 
@@ -2454,6 +2678,8 @@ function PrintView({ army, roster, onClose }) {
           </div>
         </div>
       </div>
+        );
+      })()} {/* end faction border IIFE */}
     );
   }
 
@@ -2471,11 +2697,26 @@ function PrintView({ army, roster, onClose }) {
         fontFamily:"'Cinzel',Georgia,serif",
         WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
       }}>
+        {/* Spell image strip */}
+        {(() => {
+          const sKey = spellKey(army.key || "", spell.name);
+          const spellImgUrl = IMAGES.spells[sKey] || "";
+          return spellImgUrl ? (
+            <div style={{ width:"100%", height:"28mm", flexShrink:0, overflow:"hidden", borderBottom:`1px solid ${divider}` }}>
+              <img src={spellImgUrl} alt={spell.name}
+                style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block" }} />
+            </div>
+          ) : null;
+        })()}
+
         {/* Header */}
         <div style={{ background: cardBorder+"30", borderBottom:`1px solid ${divider}`, padding:"2mm 3mm", flexShrink:0 }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline" }}>
-            <div style={{ fontSize:`calc(${fs} * 0.75)`, fontWeight:700, color: cardText }}>
-              {isBloodRite ? "⚔ BLOOD RITE" : isInstability ? "☠ INSTABILITY" : "✦ SPELL"}
+            <div style={{ display:"flex", alignItems:"center", gap:"1.5mm" }}>
+
+              <div style={{ fontSize:`calc(${fs} * 0.75)`, fontWeight:700, color: cardText }}>
+                {isBloodRite ? "⚔ BLOOD RITE" : isInstability ? "☠ INSTABILITY" : "✦ SPELL"}
+              </div>
             </div>
             <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted }}>{index}/{total}</div>
           </div>
@@ -2566,6 +2807,11 @@ function PrintView({ army, roster, onClose }) {
     );
 
     return (
+      {/* Faction border overlay — wraps everything */}
+      {(() => {
+        const borderUrl = IMAGES.factionBorders[army.key] || "";
+
+        return (
       <div style={{
         width: lay.w, height: lay.h,
         background: cardBg,
@@ -2581,25 +2827,48 @@ function PrintView({ army, roster, onClose }) {
         fontSize: fs,
         WebkitPrintColorAdjust: "exact",
         printColorAdjust: "exact",
+        position: "relative",
       }}>
+        {/* Faction border frame */}
+        {borderUrl && (
+          <div style={{
+            position:"absolute", inset:0, zIndex:10, pointerEvents:"none",
+            backgroundImage:`url(${borderUrl})`,
+            backgroundSize:"100% 100%",
+            backgroundRepeat:"no-repeat",
+            mixBlendMode:"multiply",
+            opacity:0.85,
+          }} />
+        )}
 
         {/* ══ PORTRAIT / SQUARE ══ */}
         {!isLandscape && (<>
 
           {/* Image area */}
-          {printOpts.showImage && lay.imgH !== "0" && (
-            <div style={{
-              width:"100%", height: lay.imgH,
-              background: imgBg,
-              borderBottom: `1px solid ${cardBorder}`,
-              display:"flex", flexDirection:"column",
-              alignItems:"center", justifyContent:"center",
-              flexShrink:0,
-            }}>
-              <div style={{ fontSize:`calc(${fs} * 2.2)`, opacity:0.3, color: imgTextColor }}>✕</div>
-              <div style={{ fontSize:`calc(${fs} * 0.7)`, letterSpacing:"2px", color: imgTextColor, opacity:0.4, marginTop:"1mm" }}>IMAGE</div>
-            </div>
-          )}
+          {printOpts.showImage && lay.imgH !== "0" && (() => {
+            const unitImgUrl = IMAGES.units[u.id] || "";
+            const borderUrl = IMAGES.factionBorders[army.key] || "";
+            return (
+              <div style={{
+                width:"100%", height: lay.imgH,
+                background: unitImgUrl ? "none" : imgBg,
+                borderBottom: `1px solid ${cardBorder}`,
+                display:"flex", flexDirection:"column",
+                alignItems:"center", justifyContent:"center",
+                flexShrink:0, position:"relative", overflow:"hidden",
+              }}>
+                {unitImgUrl ? (
+                  <img src={unitImgUrl} alt={u.name}
+                    style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block" }} />
+                ) : (
+                  <>
+                    <div style={{ fontSize:`calc(${fs} * 2.2)`, opacity:0.3, color: imgTextColor }}>✕</div>
+                    <div style={{ fontSize:`calc(${fs} * 0.7)`, letterSpacing:"2px", color: imgTextColor, opacity:0.4, marginTop:"1mm" }}>IMAGE</div>
+                  </>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Name + pts bar */}
           <div style={{
@@ -2608,13 +2877,16 @@ function PrintView({ army, roster, onClose }) {
             display:"flex", justifyContent:"space-between", alignItems:"baseline",
             flexShrink:0, gap:"2mm",
           }}>
-            <div style={{ overflow:"hidden" }}>
-              <div style={{ fontSize:`calc(${fs} * 1.15)`, fontWeight:700, color: cardText, lineHeight:1.2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
-                {u.name}
+            <div style={{ overflow:"hidden", display:"flex", alignItems:"center", gap:"1.5mm" }}>
+
+              <div>
+                <div style={{ fontSize:`calc(${fs} * 1.15)`, fontWeight:700, color: cardText, lineHeight:1.2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+                  {u.name}
+                </div>
+                {entry.mount && (
+                  <div style={{ fontSize:`calc(${fs} * 0.78)`, color: cardMuted, lineHeight:1.1 }}>+ {entry.mount.name}</div>
+                )}
               </div>
-              {entry.mount && (
-                <div style={{ fontSize:`calc(${fs} * 0.78)`, color: cardMuted, lineHeight:1.1 }}>+ {entry.mount.name}</div>
-              )}
             </div>
             <div style={{ fontSize:`calc(${fs} * 1.05)`, fontWeight:700, color: cardText, whiteSpace:"nowrap", flexShrink:0 }}>{pts}pts</div>
           </div>
