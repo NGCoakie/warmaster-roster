@@ -357,8 +357,7 @@ const ARMIES = {
     lore:"The largest human nation of the Old World, fielding disciplined soldiers, battle wizards and fearsome war machines.",
     armyRules:[{name:"Handgunners", desc:"Count enemy Armour values as one worse when shot by a handgun (3+ counts as 4+, 4+ as 5+, 5+ as 6+, 6+ gives no save). One Crossbowmen unit per 1000pts can be replaced by Handgunners at +10pts, still counting for Crossbowmen min/max."}, {name:"Flagellants", desc:"Always use initiative to charge an enemy if possible; cannot be given orders instead. Never evade. Cannot be driven back by shooting and do not roll for drive backs. Must pursue or advance if victorious. Unaffected by terror — no -1 Attack modifier."}, {name:"Skirmishers", desc:"Not deployed independently. Any infantry unit (except Flagellants) may add one Skirmisher stand, making the unit 4 stands total. Skirmishers share the unit Armour value, fight as part of the unit and can be removed as a casualty. Their casualties never count for Command penalties and they never cause Irregular Formation."}, {name:"Pistoliers", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies. Still needs Line of Sight from front edge to charge."}, {name:"Helblaster", desc:"Range 30cm. Attacks vary by range: 01-10cm = 8 attacks, 11-20cm = 4 attacks, 21-30cm = 2 attacks. Targets count Armour one worse than normal. If any 1s are rolled when shooting, count them: 1-2 = Fizzle (resolve attacks normally); 3 = Misfire (no shots this turn); 4+ = Ka-boom! (Helblaster destroyed, no hits struck on enemy)."}, {name:"Steam Tank", desc:"Always counts as defended (5 or 6 to hit). Cannot be driven back or routed by shooting. Cannot brigade. No character may join it. 360 degree vision. Shoots to front, side or rear against closest enemy target (30cm range, counts armour one worse). On a double-6 order, roll Malfunction: 1=Destroyed; 2=Broken Down (cannot move ever again); 3=Stuck (no move/shoot this turn); 4=Commander Slain (-1 Command permanently); 5=Momentary Halt; 6=Steam Overload (cannot move but shoots with 6 Attacks)."}, {name:"Griffon", desc:"Generals, Wizards and Heroes can ride Griffons. Flies (move 100cm), adds +2 Attacks to rider. Unit causes terror. Max 1 per army."}, {name:"War Altar", desc:"Only one War Altar in the entire army regardless of size. Can only be a mount for a Wizard (who becomes the Grand Theogonist). Adds +1 Attack. Once per battle the Grand Theogonist may add +1 to a casting dice result (announce before rolling)."}],
         spells:[{name:"Ball of Flame", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Wizard in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Voice of Command", cast:"5+", range:"30cm", desc:"Cast on any unengaged friendly unit within range (no LoS needed). The unit can be moved as if it had received an order. Character stands that have joined the unit do not move with it."}, {name:"Weird Enchantment", cast:"4+", range:"30cm", desc:"Cast on any enemy unit (no LoS needed). Lasts until end of opposing player's next turn. The unit moves at half pace in all situations, even when charging. The unit counts all enemies as terrifying (-1 Attack), even if normally immune to terror."},
-      { name:"Teleport", cast:"2+", range:"N/A", desc:"The Wizard vanishes in a swirl of cloak and crack of thunder, reappearing anywhere on the battlefield. Move the Wizard to any new position on the table. He can leave or join a unit, enabling him to move into or out of combat. Once the Wizard has moved he can cast a second spell — but it must be a different spell, not another Teleport. Roll to cast the second spell normally. A Wizard that Teleports can therefore cast two spells that turn." }
-    , {name:"Teleport", cast:"2+", range:"N/A", desc:"The Wizard is moved to a new position anywhere on the table. He can leave or join a unit, enabling movement into or out of combat. Once the Wizard has moved he can cast a second spell — but it must be a different spell, not another Teleport!"}],
+      { name:"Teleport", cast:"2+", range:"N/A", desc:"The Wizard vanishes in a swirl of cloak and crack of thunder, reappearing anywhere on the battlefield. Move the Wizard to any new position on the table. He can leave or join a unit, enabling him to move into or out of combat. Once the Wizard has moved he can cast a second spell — but it must be a different spell, not another Teleport. Roll to cast the second spell normally. A Wizard that Teleports can therefore cast two spells that turn." }],
     playstyle:"A versatile, well-rounded army. Solid infantry, powerful war machines and support magic make the Empire strong in defence and capable of punishing aggression. Best played with layered brigades.",
     fluff:"The Empire is the mightiest of all human nations, stretching from the Grey Mountains to the Worlds Edge. Divided into rival Elector States yet united under a single Emperor, its armies blend veteran state soldiery, fanatic warrior-priests, thunderous cannons and Colleges of Magic wizards. Where other realms field purer forces, the Empire fields everything \u2014 a grinding, adaptive war machine that has survived every Chaos incursion for two millennia.",
     traits:["Diverse combined arms", "Powerful artillery", "Battle wizards", "State troops backbone"],
@@ -421,8 +420,7 @@ const ARMIES = {
     lore:"Bloodthirsty northern tribes devoted to the Dark Gods, bringing destruction to the civilised world.",
     armyRules:[{name:"Ogres", desc:"If an Ogre unit can use initiative to charge an enemy unit of humans at the start of the Command phase it must do so automatically — commanders cannot prevent it. 'Humans' includes Chaos Warriors and Marauders but not Dwarfs or Elves."}, {name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (40cm = -2, 60cm = -4, etc.). Trolls regenerate wounds: in each combat round after whole stands are removed, Trolls automatically regenerate one outstanding hit. Regenerated hits still count towards the combat result."}, {name:"Harpies", desc:"Harpies are based facing the long edge of the base like infantry. They can fly. A unit of Harpies cannot be joined by a character."}, {name:"Dragon Ogres", desc:"Dragon Ogres are immune to terror."}, {name:"Chaos Spawn", desc:"Spawn have -1 Command penalty unless in a brigade with more non-Spawn than Spawn units. Up to two Spawn can be in any brigade without counting towards maximum brigade size. Spawn cause terror in combat. Cannot be driven back by shooting. Must pursue or advance if victorious. 15cm shooting range and 360 degree vision."}, {name:"Chaos Dragon", desc:"Generals, Wizards and Heroes can ride a Chaos Dragon. Flies (move 100cm), adds +3 Attacks to rider. Dragon breathes fire at 20cm range with 3 Attacks. Unit causes terror. Dragon with 4-5 hits becomes Badly Hurt — Hits and Attacks halved."}],
         spells:[{name:"Boon of Chaos", cast:"4+", range:"N/A", desc:"The Sorcerer must have joined a unit in combat. Every stand in that unit, including the Sorcerer and any other characters, adds +1 to its Attacks value for the duration of the following Combat phase."}, {name:"Anger of the Gods", cast:"4+", range:"30cm", desc:"Cast on the Sorcerer himself. Affects all enemy units within 30cm. Lasts until end of the opposing player's following turn. All affected enemy units suffer a -1 Command penalty when orders are issued to them."}, {name:"Rage of Chaos", cast:"5+", range:"30cm", desc:"Cast on a friendly unit engaged in combat and within range (no LoS needed). Lasts for the following Combat phase. The unit gains bonus Rage attacks — roll D6 repeatedly (up to 1 per stand), adding results. Stop at any time, but if a repeat value is rolled all attacks hit the Chaos unit instead."},
-      { name:"Curse of Chaos", cast:"5+", range:"30cm", desc:"An arc of pure energy strikes the foe, wreaking monstrous changes, melting flesh and twisting bones. Cast on an enemy unit the Sorcerer can see; cannot be directed at a unit engaged in combat. The Curse of Chaos is treated like three ordinary shooting attacks except that armour has no effect (all targets count as having no armour). A unit can be driven back by a Curse of Chaos as with ordinary shooting." }
-    , {name:"Curse of Chaos", cast:"5+", range:"30cm", desc:"The Sorcerer must be able to see the target; cannot be cast into combat. Treated like 3 shooting attacks except armour has no effect (all targets count as having no armour). A unit can be driven back by a Curse of Chaos as with ordinary shooting."}],
+      { name:"Curse of Chaos", cast:"5+", range:"30cm", desc:"An arc of pure energy strikes the foe, wreaking monstrous changes, melting flesh and twisting bones. Cast on an enemy unit the Sorcerer can see; cannot be directed at a unit engaged in combat. The Curse of Chaos is treated like three ordinary shooting attacks except that armour has no effect (all targets count as having no armour). A unit can be driven back by a Curse of Chaos as with ordinary shooting." }],
     playstyle:"A small, elite army. Every unit hits hard \u2014 Chaos Warriors and Knights are among the best in the game. You will be outnumbered. Win by smashing enemy lines in decisive charges before attrition kills you.",
     fluff:"From the frozen wastes beyond Kislev they come \u2014 the Chaos Warriors, men so consumed by devotion to the Dark Gods that they have become something other than human. Alongside hordes of Marauder tribesmen, terrifying Chaos Knights, spell-hurling Sorcerers and abominations like Dragon Ogres and Chaos Spawn, they represent an existential threat to every civilised nation. When the Chaos tide rises, the world trembles.",
     traits:["Elite heavy warriors", "Devastating cavalry", "Powerful monsters", "High points cost"],
@@ -488,7 +486,7 @@ const ARMIES = {
   },
 
   high_elves: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_anakonda","ror_voland","ror_almuktar","ror_tichi","ror_birdmen","ror_asarnil","ror_witchhunters"],
+    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_anakonda","ror_voland","ror_almuktar","ror_tichi","ror_birdmen","ror_asarnil","ror_witchhunters"],
     name:"High Elves", color:"#1060c0", bg:"#010510", accent:"#50a0ff",
     lore:"Ancient guardians of Ulthuan and the world's greatest bulwark against Chaos, fielding disciplined warriors and mighty dragons.",
     armyRules:[{name:"Archers", desc:"High Elf Archers add +1 to their dice roll when making Shooting attacks. They score a hit against targets in the open on 3+, defended on 4+, and fortified on 5+."}, {name:"Giant Eagles", desc:"Giant Eagles can fly."}, {name:"Dragons", desc:"Fly (move 100cm). Dragon Rider units and units with a Dragon-riding character cause terror. Dragon breathes fire: 20cm range, 3 Attacks at 4+. Generals, Wizards and Heroes can ride Dragons (+3 Attacks). Dragon Riders with 4-5 hits become Badly Hurt — Hits and Attacks halved (3 Hits, 3/2 Attacks). A Dragon ridden by a lone character (not in a unit) cannot breathe fire."}, {name:"High Elf Wizard", desc:"High Elf Mages can re-roll a failed spell on any dice result except a 1. If a spell is failed because a 1 is rolled, no re-roll is permitted."}],
@@ -551,8 +549,7 @@ const ARMIES = {
     lore:"Devious ratmen swarming from underground warrens, wielding deadly warp-powered war machines and overwhelming numbers.",
     armyRules:[{name:"Strength in Numbers (Army Rule)", desc:"The Flame Cannon shoots 2D6 Attacks. If a double is rolled it has misfired: Double 1: Explodes, destroyed, no attacks. Double 2: 4+2D6 attacks on target then explodes and destroys itself. Double 3: Worrying wheeze — 6 attacks this turn, all further shooting reduced from 2D6 to 1D6. Double 4: Boiler goes out; does not shoot this turn, otherwise unaffected. Double 5: Chuffs soot and coals — 10 attacks this turn, otherwise unaffected. Double 6: Lurches and heaves enormous flame — 12+D6 attacks on target, otherwise unaffected. Can shoot at charging enemies normally."}, {name:"Vermintide (Army Rule)", desc:"Skaven units that win a round of combat can choose to pursue retreating enemy regardless of troop type. Any Skaven unit (including artillery) can pursue any enemy (including flyers, cavalry and chariots). Normal terrain and fortified status restrictions still apply."}, {name:"Under the Lash (Army Rule)", desc:"All Skaven characters — General, Heroes and Wizards alike — have a Command range of only 20cm. Even the General's range is reduced to 20cm."}, {name:"Jezzails", desc:"Count enemy armour values as one worse than normal (3+ becomes 4+, 5+ becomes 6+, 6+ gives no save)."}, {name:"Plague Monks", desc:"Always charge on initiative; cannot be given orders instead. Never evade. Cannot be driven back by shooting. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier."}, {name:"Rat Swarms", desc:"Cannot be driven back by shooting and do not roll for drive backs. Can only be supported by other Rat Swarm stands (not other infantry), though they can support other infantry as normal. Cannot be given magic items."}, {name:"Gutter Runners", desc:"Shoot with throwing stars/darts at 15cm range with 360 degree vision. May infiltrate: issue an infiltration order to a point in dense terrain or on any table edge except the enemy's. On success the unit appears there. Infiltrators can attempt infiltration again on subsequent turns if they fail."}, {name:"Screaming Bell", desc:"The Screaming Bell is a Machine (not a mount). A unit with the Screaming Bell is unaffected by the -1 Command penalty from enemy within 20cm."}],
         spells:[{name:"Wither", cast:"4+", range:"30cm", desc:"Cast on an enemy unit engaged in combat and within range (no LoS needed). Lasts for the following Combat phase. Every stand in the unit, including characters, deducts -1 from its Attacks value."}, {name:"Warp Lightning", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not engaged in combat. Treated as 3 shooting attacks but armour has no effect — all targets count as having no armour. The unit can be driven back as with ordinary shooting."}, {name:"Death Frenzy", cast:"5+", range:"30cm", desc:"Cast on a friendly unit engaged in combat (no LoS needed). Roll D6s one at a time (up to 1 per stand), adding results as bonus attacks. Stop at any time — but if a repeat value is rolled, those total attacks hit the Skaven unit instead."},
-      { name:"Plague", cast:"6+", range:"30cm", desc:"A swirling cloud of virulence envelopes the enemy troops, causing their bodies to erupt in pustules, their skins to split apart with running sores, their joints to swell with buboes and their hair to crawl with lice and fleas. Cast on any unengaged enemy unit within range regardless of whether the Wizard can see it or not. Cannot be cast on a unit engaged in combat. The unit suffers six attacks worked out in the usual way. A unit cannot be driven back by Plague — the vile Plague erupts from within!" }
-    , {name:"Plague", cast:"6+", range:"30cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). Cannot be cast on a unit in combat. The unit suffers 6 attacks worked out in the usual way. A unit cannot be driven back by Plague — the vile Plague erupts from within!"}],
+      { name:"Plague", cast:"6+", range:"30cm", desc:"A swirling cloud of virulence envelopes the enemy troops, causing their bodies to erupt in pustules, their skins to split apart with running sores, their joints to swell with buboes and their hair to crawl with lice and fleas. Cast on any unengaged enemy unit within range regardless of whether the Wizard can see it or not. Cannot be cast on a unit engaged in combat. The unit suffers six attacks worked out in the usual way. A unit cannot be driven back by Plague — the vile Plague erupts from within!" }],
     playstyle:"A horde army with a crucial limitation \u2014 characters can only issue orders within 20cm. Brigades must stay tight. Overwhelm with numbers, flank with Gutter Runners, and let the Doomwheel run amok.",
     fluff:"Beneath every city in the Old World runs a network of tunnels teeming with the Skaven \u2014 a vast, paranoid civilisation of ratmen devoted to the Horned Rat. Their armies swarm with Clanrats, elite Stormvermin, plague monks and exotic warp-powered machines. What they lack in discipline they compensate for with sheer numbers and the most volatile technology in the world.",
     traits:["Swarm tactics", "20cm command range only", "Warp-powered machines", "Strength in numbers"],
@@ -1144,8 +1141,7 @@ const ARMIES = {
     lore:"Mercenary companies from across the Old World, hiring out to the highest bidder with diverse troops and tactics.",
     armyRules:[{name:"Pikemen", desc:"Never benefit from defended or fortified status in dense terrain or on fortress walls. Count as defended against cavalry or chariots charging their front (first combat round only). Based as cavalry but move as infantry. Can only give/receive support from infantry or other Pikemen stands facing the same direction, touching flank with whole flank. No support from behind or in front."}, {name:"Handgunners", desc:"Count enemy Armour values as one worse when shot by a handgun. One Crossbowmen unit per 1000pts can be replaced by Handgunners at +10pts, still counting for Crossbowmen min/max."}, {name:"Ogres", desc:"Must use initiative to charge enemy human units within 20cm at start of Command phase. Automatic — commanders cannot prevent it. 'Humans' includes most men but not Dwarfs or Elves."}, {name:"Light Cavalry", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Giants", desc:"Must be given separate orders; cannot brigade with other troops. On a failed order, roll on the Giant Goes Wild chart. Giants with 5-7 hits while not engaged become Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Giants cause terror."}, {name:"Paymaster", desc:"Only one Paymaster per army. Once per game using the Pay Wagon, the Paymaster may add +1 to all his Command checks for a single turn (announce before rolling)."}],
         spells:[{name:"Ball of Flame", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Wizard in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Voice of Command", cast:"5+", range:"30cm", desc:"Cast on any unengaged friendly unit within range (no LoS needed). The unit moves as if it had received an order. Character stands that have joined do not move with it."}, {name:"Weird Enchantment", cast:"4+", range:"30cm", desc:"Cast on any enemy unit (no LoS needed). Lasts until end of opposing player's following turn. The unit moves at half pace in all situations. Counts all enemies as terrifying (-1 Attack), even if normally immune — unless the target is Undead or Daemon."},
-      { name:"Teleport", cast:"2+", range:"N/A", desc:"The Wizard vanishes in a swirl of cloak and crack of thunder, reappearing anywhere on the battlefield. Move the Wizard to any new position on the table. He can leave or join a unit, enabling him to move into or out of combat. Once the Wizard has moved he can cast a second spell — but it must be a different spell, not another Teleport. Roll to cast the second spell normally. A Wizard that Teleports can therefore cast two spells that turn." }
-    , {name:"Teleport", cast:"2+", range:"N/A", desc:"The Wizard is moved to a new position anywhere on the table. He can leave or join a unit, enabling movement into or out of combat. Once the Wizard has moved he can cast a second spell — but it must be a different spell, not another Teleport!"}],
+      { name:"Teleport", cast:"2+", range:"N/A", desc:"The Wizard vanishes in a swirl of cloak and crack of thunder, reappearing anywhere on the battlefield. Move the Wizard to any new position on the table. He can leave or join a unit, enabling him to move into or out of combat. Once the Wizard has moved he can cast a second spell — but it must be a different spell, not another Teleport. Roll to cast the second spell normally. A Wizard that Teleports can therefore cast two spells that turn." }],
     playstyle:"The most diverse army in the game. You can field Dwarfs, Ogres, Birdmen, Giants and Knights together. The Paymaster's Pay Wagon provides morale bonuses. Build a balanced force exploiting the best of every culture.",
     fluff:"Coin is the language that all people speak. The Dogs of War are mercenary companies from every corner of the Old World, selling their blades to whoever can afford them. Tilean pike blocks march beside Norse Marauders; Dwarf engineers maintain the Galloper Guns; even Ogres hire out for plunder. Led by their Paymaster, these disparate warriors fight with surprising cohesion when the gold is good.",
     traits:["Mixed races in one army", "Dwarfs and Ogres available", "Pikemen formation bonus", "Paymaster morale rules"],
@@ -1404,8 +1400,7 @@ const ARMIES = {
     lore:"Fearless raiders from the frozen north, with berserkers, mammoths and the Valkyries of the gods.",
     armyRules:[{name:"Berserkers", desc:"Always use initiative to charge an enemy if possible; cannot be given orders instead. Never evade. Cannot be driven back by shooting and do not roll for drive backs. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier."}, {name:"Ulfwerener", desc:"Based facing the short edge like cavalry. Receive +1 Attack when charging in the open (like monsters and chariots). Can pursue cavalry and chariots. Cannot support or be supported. Cannot take magic items. Only characters with the Were Kin upgrade may join them."}, {name:"Storm Giant", desc:"Must be given separate orders; cannot brigade. On failed order roll on Giant Goes Wild chart. With 5-7 accumulated hits while not engaged, becomes Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Causes terror."}, {name:"War Mammoth", desc:"Uses a 40x60mm base. Causes terror. Can attack troops on ramparts with its trunk (like a Giant) or batter wall sections. If it would become Confused it Stampedes instead — moving automatically each turn until the end of its own Command phase. Uses special Stampede movement rules."}],
         spells:[{name:"Aspect of Wulfen", cast:"4+", range:"30cm", desc:"Cast on any friendly unit within range (no LoS needed). The unit counts as causing terror for the duration of the Combat phase."}, {name:"Thunder of Fo'Wor", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Shaman in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits."}, {name:"Eye of the Raven", cast:"5+", range:"N/A", desc:"The Norse player may re-roll a single D6 at any time during the rest of his turn, through the opponent's turn, or in his following turn (until end of next Command phase). Cannot be used on blunder Command rolls, but can re-roll the blunder chart result."},
-      { name:"Spite of Low'Key", cast:"5+", range:"30cm", desc:"The Shaman makes a weird enchantment calling the gods to curse the enemy with bad luck and failure. All enemy characters within 30cm that roll a double have those orders count as blunders — from double 1 through double 5. As a result all doubles rolled not only blunder but count as failed orders. The only exception is the enemy general, who cannot blunder. The spell lasts until the end of the enemy Command phase." }
-    , {name:"Spite of Low'Key", cast:"5+", range:"30cm", desc:"All enemy characters within 30cm of the spell caster that roll a double have those orders count as blunders. This works on all results from double one to double five — all doubles both blunder and count as a failed order. The enemy general is the only exception, as he cannot blunder. Lasts until the end of enemy Command phase."}],
+      { name:"Spite of Low'Key", cast:"5+", range:"30cm", desc:"The Shaman makes a weird enchantment calling the gods to curse the enemy with bad luck and failure. All enemy characters within 30cm that roll a double have those orders count as blunders — from double 1 through double 5. As a result all doubles rolled not only blunder but count as failed orders. The only exception is the enemy general, who cannot blunder. The spell lasts until the end of the enemy Command phase." }],
     playstyle:"An aggressive hard-hitting infantry army with monster support. Huscarls are excellent heavy infantry. Berserkers always charge and cannot evade. The War Mammoth is devastating in open battles and can batter fortress walls.",
     fluff:"In the frozen seas north of the Empire, Viking warriors launch their longships toward warmer shores. The Norse are fearless raiders who worship gods of war, storm and death. Their Berserkers fight in a trance-like fury; and when they march overland, War Mammoths break walls and trample armies flat. They come for glory, for plunder, and for the joy of battle.",
     traits:["Huscarls elite infantry", "Berserkers frenzy", "War Mammoth siege capability", "Valkyries fly"],
@@ -2111,6 +2106,7 @@ function validateRoster(roster, army, totalPts) {
 }
 
 function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit }) {
+  const [showRoR, setShowRoR] = React.useState(false);
   // Mount types are handled via character upgrade dropdowns, not as standalone units
   // Exception: units explicitly marked as purchasable (isUnit:true) still show
   const mountTypes = ["Monstrous Mount","Chariot Mount","Special Mount"];
@@ -2169,7 +2165,7 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
         </div>
       ))}
 
-      {/* ── Regiments of Renown ─────────────────────────────────── */}
+      {/* ── Regiments of Renown toggle + section ─────────────── */}
       {(army.hireableRoR || []).length > 0 && (() => {
         const rorArmy = ARMIES.regiments_of_renown;
         if (!rorArmy) return null;
@@ -2178,9 +2174,20 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
         const alreadyHired = roster.filter(r => (army.hireableRoR||[]).includes(r.unit.id)).length;
         return (
           <div>
-            <div style={{ padding:"4px 12px", fontSize:"0.88rem", fontFamily:"'Cinzel',serif", color:"#b8860b", letterSpacing:2, textTransform:"uppercase", borderBottom:"1px solid #2a2010", background:"#0e0c04", display:"flex", justifyContent:"space-between" }}>
-              <span>Regiments of Renown</span>
-              <span style={{ fontSize:"0.75rem", color:"#666" }}>Max 1 per 1000pts</span>
+            {/* Checkbox toggle */}
+            <label style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 12px", cursor:"pointer", background:"#0e0c04", borderBottom:"1px solid #2a2010", userSelect:"none" }}>
+              <input type="checkbox" checked={showRoR} onChange={e => setShowRoR(e.target.checked)}
+                style={{ accentColor:"#b8860b", width:14, height:14, cursor:"pointer" }} />
+              <span style={{ fontSize:"0.82rem", fontFamily:"'Cinzel',serif", color:"#b8860b", letterSpacing:2, textTransform:"uppercase" }}>
+                Regiments of Renown
+              </span>
+              <span style={{ marginLeft:"auto", fontSize:"0.72rem", color:"#555" }}>
+                {hireableUnits.length} available
+              </span>
+            </label>
+            {showRoR && <div>
+            <div style={{ padding:"4px 12px", fontSize:"0.78rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:1, background:"#0e0c04", borderBottom:"1px solid #1a1800" }}>
+              Max 1 Regiment per 1000pts · Counts as allied unit
             </div>
             {hireableUnits.map(unit => {
               const count = roster.filter(r => r.unit.id === unit.id).length;
@@ -2206,6 +2213,7 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
               );
             })}
           </div>
+        </div>}{/* /showRoR */}
         );
       })()}
       {/* ── Regiments of Renown ──────────────────────────────────────── */}
@@ -2720,7 +2728,7 @@ function PrintView({ army, roster, onClose }) {
     return (
       <div style={{
         width: cardW, height: cardH,
-        background: `linear-gradient(160deg, #f7efd4 0%, ${parchment} 40%, #ecdfa8 100%)`,
+        background: `url(https://cdn.midjourney.com/7921febd-021d-4c05-af66-6a0f8232a944/0_1.png) center/cover no-repeat`,
         border: `3px solid ${borderColor}`,
         borderRadius: "6px",
         boxSizing: "border-box",
@@ -2859,7 +2867,7 @@ function PrintView({ army, roster, onClose }) {
     return (
       <div style={{
         width: CARD_W, height: CARD_H,
-        background: cardBg,
+        background: `url(https://cdn.midjourney.com/7921febd-021d-4c05-af66-6a0f8232a944/0_1.png) center/cover no-repeat`,
         border: `2px solid ${cardBorder}`,
         borderRadius: "4px",
         position: "relative",
@@ -2934,7 +2942,7 @@ function PrintView({ army, roster, onClose }) {
     return (
       <div style={{
         width: "63mm", height: scaleH("88mm"),
-        background: cardBg, border: `2px solid ${cardBorder}`, borderRadius:"5px",
+        background: `url(https://cdn.midjourney.com/7921febd-021d-4c05-af66-6a0f8232a944/0_1.png) center/cover no-repeat`, border: `2px solid ${cardBorder}`, borderRadius:"5px",
         display:"flex", flexDirection:"column", overflow:"hidden",
         pageBreakInside:"avoid", breakInside:"avoid", boxSizing:"border-box",
         fontFamily:"'Cinzel',Georgia,serif",
@@ -3020,224 +3028,194 @@ function PrintView({ army, roster, onClose }) {
     function PrintCard({ entry }) {
     const u = entry.unit;
     const pts = entryTotal(entry);
-    const isLandscape = printOpts.layout === "landscape";
-    const fs = lay.fontSize; // base font size tied to physical card size
-    const borderUrl = ""; // IMAGES.factionBorders[army.key] — placeholder until generated
-    const crestUrl  = ""; // IMAGES.factionCrests[army.key]  — placeholder until generated
+    const crestUrl = IMAGES.factionCrests[army.key] || "";
 
-    // Stats for main grid: ATK, HITS, ARM only (CMD moves to side column)
-    const mainStats = [
-      { k:"ATK",  v:u.atk    },
-      { k:"HITS", v:u.hits   },
-      { k:"ARM",  v:u.armour },
-    ];
-    // Side column: CMD on top, then SZ, MIN, MAX
-    const sideStats = [
-      { k:"CMD", v:u.cmd === "-" ? "-" : u.cmd },
-      { k:"SZ",  v:u.size },
-      { k:"MIN", v:u.min  },
-      { k:"MAX", v:u.max  },
+    // ── Colour tokens ──────────────────────────────────────────────────────
+    const factionColor = army.color || "#8b0000";
+    const factionAccent = army.accent || "#c0a030";
+    const inkDark   = "#1a0e05";
+    const parchment = "#f2e8ce";
+    const parchDark = "#e0cfa0";
+    const woodDark  = "#1c1208";
+    const woodMid   = "#2e1e0a";
+
+    // ── Stats ──────────────────────────────────────────────────────────────
+    const stats = [
+      { icon:"⚔", k:"ATK",  v: u.atk    },
+      { icon:"◈", k:"HITS", v: u.hits   },
+      { icon:"◇", k:"ARM",  v: u.armour },
+      { icon:"✦", k:"CMD",  v: u.cmd === "-" ? "-" : u.cmd },
     ];
 
-    const statCell = (k, v, extra={}) => (
-      <div key={k} style={{
-        textAlign:"center", background: statBg,
-        border:`1px solid ${statBorder}`, borderRadius:"2px",
-        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-        ...extra,
-      }}>
-        <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted, letterSpacing:"0.3px", lineHeight:1 }}>{k}</div>
-        <div style={{ fontSize:`calc(${fs} * 1.15)`, fontWeight:700, color: cardText, lineHeight:1.1 }}>{String(v ?? "-")}</div>
-      </div>
-    );
+    // ── Special rules text ─────────────────────────────────────────────────
+    const rulesText = (u.special || []).join(" · ");
+    const hasRules = rulesText.length > 0;
+    const upgradeLines = (entry.selectedUpgrades || []).map(upg => `+ ${upg.name}`);
+    const mountLine = entry.mount ? `Mount: ${entry.mount.name}` : null;
 
     return (
       <div style={{
-        width: lay.w, height: lay.h,
-        background: cardBg,
-        border: `2px solid ${cardBorder}`,
-        borderRadius: "5px",
-        display: "flex",
-        flexDirection: isLandscape ? "row" : "column",
-        overflow: "hidden",
-        pageBreakInside: "avoid",
-        breakInside: "avoid",
-        boxSizing: "border-box",
-        fontFamily: "'Cinzel', Georgia, serif",
-        fontSize: fs,
-        WebkitPrintColorAdjust: "exact",
-        printColorAdjust: "exact",
-        position: "relative",
+        width:"63mm", height:"88mm",
+        position:"relative", overflow:"hidden",
+        boxSizing:"border-box",
+        border:`2px solid ${factionColor}`,
+        borderRadius:"5px",
+        boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
+        fontFamily:"'Georgia','Times New Roman',serif",
+        pageBreakInside:"avoid",
+        background: `url(${SCROLL_BG}) center/cover no-repeat`,
       }}>
-        {/* Faction border frame */}
-        {borderUrl && (
-          <div style={{
-            position:"absolute", inset:0, zIndex:10, pointerEvents:"none",
-            backgroundImage:`url(${borderUrl})`,
-            backgroundSize:"100% 100%",
-            backgroundRepeat:"no-repeat",
-            opacity:0.85,
-          }} />
-        )}
+        {/* Dark overlay to soften scroll bg */}
+        <div style={{ position:"absolute", inset:0, background:"rgba(15,8,2,0.18)", zIndex:0, borderRadius:"3px" }}/>
 
-        {/* ══ PORTRAIT / SQUARE ══ */}
-        {!isLandscape && (<>
-
-          {/* Image area */}
-          {printOpts.showImage && lay.imgH !== "0" && (() => {
-            const unitImgUrl = IMAGES.units[u.id] || "";
-            return (
-              <div style={{
-                width:"100%", height: lay.imgH,
-                background: unitImgUrl ? "none" : imgBg,
-                borderBottom: `1px solid ${cardBorder}`,
-                display:"flex", flexDirection:"column",
-                alignItems:"center", justifyContent:"center",
-                flexShrink:0, position:"relative", overflow:"hidden",
-              }}>
-                {unitImgUrl ? (
-                  <img src={unitImgUrl} alt={u.name}
-                    style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block" }} />
-                ) : (
-                  <>
-                    <div style={{ fontSize:`calc(${fs} * 2.2)`, opacity:0.3, color: imgTextColor }}>✕</div>
-                    <div style={{ fontSize:`calc(${fs} * 0.7)`, letterSpacing:"2px", color: imgTextColor, opacity:0.4, marginTop:"1mm" }}>IMAGE</div>
-                  </>
-                )}
-              </div>
-            );
-          })()}
-
-          {/* Name + pts bar */}
-          <div style={{
-            padding:"2mm 2.5mm 1.5mm",
-            borderBottom:`1px solid ${divider}`,
-            display:"flex", justifyContent:"space-between", alignItems:"baseline",
-            flexShrink:0, gap:"2mm",
-          }}>
-            <div style={{ overflow:"hidden", display:"flex", alignItems:"center", gap:"1.5mm" }}>
-
-              <div>
-                <div style={{ fontSize:`calc(${fs} * 1.15)`, fontWeight:700, color: cardText, lineHeight:1.2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
-                  {u.name}
-                </div>
-                {entry.mount && (
-                  <div style={{ fontSize:`calc(${fs} * 0.78)`, color: cardMuted, lineHeight:1.1 }}>+ {entry.mount.name}</div>
-                )}
-              </div>
-            </div>
-            <div style={{ fontSize:`calc(${fs} * 1.05)`, fontWeight:700, color: cardText, whiteSpace:"nowrap", flexShrink:0 }}>{pts}pts</div>
-          </div>
-
-          {/* Stats row: [TYPE vertical] [ATK|HITS|ARM grid] [CMD/SZ/MIN/MAX column] */}
-          <div style={{
-            display:"flex", alignItems:"stretch",
-            borderBottom:`1px solid ${divider}`,
-            flexShrink:0, height:"17mm",
-          }}>
-            {/* Rotated type label */}
-            <div style={{
-              writingMode:"vertical-rl", transform:"rotate(180deg)",
-              fontSize:`calc(${fs} * 0.68)`, letterSpacing:"0.8px",
-              color: cardMuted, padding:"1mm 1.5mm",
-              borderRight:`1px solid ${divider}`,
-              background: cardBorder+"18",
-              display:"flex", alignItems:"center", justifyContent:"center",
-              flexShrink:0,
-            }}>{u.type.toUpperCase()}</div>
-
-            {/* ATK / HITS / ARM — 3 equal columns */}
-            <div style={{ flex:1, display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1px", padding:"1.5mm 1mm" }}>
-              {mainStats.map(({k,v}) => statCell(k, v, { height:"100%" }))}
-            </div>
-
-            {/* CMD / SZ / MIN / MAX — right column */}
-            <div style={{
-              width:"11mm", display:"flex", flexDirection:"column",
-              gap:"1px", padding:"1.5mm 1mm",
-              borderLeft:`1px solid ${divider}`,
+        {/* ── LEFT STAT BAR (dark wood-grain column) ─────────────────── */}
+        <div style={{
+          position:"absolute", left:0, top:0, bottom:0, width:"11mm", zIndex:2,
+          background:`linear-gradient(180deg, ${woodDark} 0%, ${woodMid} 40%, ${woodDark} 100%)`,
+          borderRight:`2px solid ${factionColor}80`,
+          display:"flex", flexDirection:"column", alignItems:"center",
+          paddingTop:"2mm",
+        }}>
+          {/* Wood grain lines */}
+          {[15,30,45,60,75,85].map(pct => (
+            <div key={pct} style={{
+              position:"absolute", left:"2px", right:"2px", top:`${pct}%`,
+              height:"1px", background:"rgba(255,255,255,0.04)",
+            }}/>
+          ))}
+          {/* Stat rows */}
+          {stats.map(({icon,k,v}) => (
+            <div key={k} style={{
+              width:"100%", display:"flex", flexDirection:"column", alignItems:"center",
+              padding:"2mm 0 1.5mm", borderBottom:`1px solid rgba(255,255,255,0.07)`,
+              flex:"0 0 auto",
             }}>
-              {sideStats.map(({k,v}) => statCell(k, v, { flex:1 }))}
+              <div style={{ fontSize:"0.9rem", color: factionAccent, lineHeight:1 }}>{icon}</div>
+              <div style={{ fontSize:"1rem", fontWeight:700, color:"#fff", lineHeight:1, marginTop:"0.5mm", fontFamily:"'Cinzel',serif" }}>
+                {v ?? "-"}
+              </div>
+              <div style={{ fontSize:"0.42rem", color:"#aaa", letterSpacing:"0.5px", marginTop:"0.3mm" }}>{k}</div>
             </div>
+          ))}
+          {/* Points at bottom */}
+          <div style={{ marginTop:"auto", width:"100%", textAlign:"center", padding:"2mm 0 1.5mm", borderTop:`1px solid ${factionColor}50` }}>
+            <div style={{ fontSize:"0.8rem", fontWeight:700, color: factionAccent, fontFamily:"'Cinzel',serif", lineHeight:1 }}>{pts}</div>
+            <div style={{ fontSize:"0.42rem", color:"#888", letterSpacing:"0.5px" }}>PTS</div>
           </div>
+        </div>
 
-          {/* Rules text */}
+        {/* ── MAIN CARD AREA (right of stat bar) ────────────────────── */}
+        <div style={{
+          position:"absolute", left:"11mm", top:0, right:0, bottom:0, zIndex:1,
+          display:"flex", flexDirection:"column",
+        }}>
+          {/* ── NAME BANNER ────────────────────────────────────────── */}
           <div style={{
-            flex:1, padding:"2mm 2.5mm",
-            fontSize:`calc(${fs} * 0.85)`,
-            color: cardMuted, lineHeight:1.55,
-            overflowY:"hidden",
+            flex:"0 0 auto",
+            background:`linear-gradient(90deg, ${factionColor}ee, ${factionColor}99 80%, transparent)`,
+            padding:"1.5mm 2mm 1.5mm 2.5mm",
+            display:"flex", alignItems:"center", justifyContent:"space-between",
+            borderBottom:`1px solid ${factionColor}80`,
+            minHeight:"7mm",
           }}>
-            {u.special && <div>{u.special}</div>}
-            {entry.magicItem && (
-              <div style={{ marginTop:"1mm", color: mode==="white" ? "#553300" : "#d4b060" }}>
-                <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
-              </div>
-            )}
-            {entry.mount?.special && (
-              <div style={{ marginTop:"1mm" }}>
-                <strong>{entry.mount.name}:</strong> {entry.mount.special}
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div style={{
-            borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
-            display:"flex", justifyContent:"space-between", alignItems:"center",
-            background: cardBorder+"12", flexShrink:0,
-          }}>
-            <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted, letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</div>
-            <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted }}>{army.name.toUpperCase()}</div>
-          </div>
-        </>)}
-
-        {/* ══ LANDSCAPE ══ */}
-        {isLandscape && (<>
-          {/* Left stat column */}
-          <div style={{
-            width:"18mm", background: cardBorder+"20",
-            borderRight:`1px solid ${divider}`,
-            display:"flex", flexDirection:"column",
-            padding:"2mm 1.5mm", gap:"1px", flexShrink:0,
-          }}>
-            {/* Rotated type at top of column */}
-            <div style={{
-              writingMode:"vertical-rl", transform:"rotate(180deg)",
-              fontSize:`calc(${fs} * 0.65)`, color: cardMuted, letterSpacing:"0.8px",
-              textAlign:"center", marginBottom:"1mm", height:"14mm",
-              display:"flex", alignItems:"center", justifyContent:"center",
-            }}>{u.type.toUpperCase()}</div>
-            {[...mainStats, ...sideStats].map(({k,v}) => statCell(k, v, { padding:"1px 0", marginBottom:"1px" }))}
-          </div>
-
-          {/* Right content */}
-          <div style={{ flex:1, display:"flex", flexDirection:"column", padding:"2mm 2.5mm", overflow:"hidden" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", borderBottom:`1px solid ${divider}`, paddingBottom:"1mm", marginBottom:"1.5mm" }}>
-              <div style={{ fontSize:`calc(${fs} * 1.1)`, fontWeight:700, color: cardText }}>
-                {u.name}
-                {entry.mount && <span style={{ fontSize:`calc(${fs} * 0.75)`, color: cardMuted, display:"block" }}>+ {entry.mount.name}</span>}
-              </div>
-              <div style={{ fontSize:`calc(${fs} * 1)`, fontWeight:700, color: cardText, whiteSpace:"nowrap" }}>{pts}pts</div>
+            <div style={{ fontSize:"0.72rem", fontFamily:"'Cinzel',serif", fontWeight:700, color:"#fff", lineHeight:1.1,
+              textShadow:"0 1px 3px rgba(0,0,0,0.9)", flex:1, marginRight:"1mm",
+              overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
+              {u.name}
             </div>
-            <div style={{ flex:1, fontSize:`calc(${fs} * 0.88)`, color: cardMuted, lineHeight:1.5, overflowY:"hidden" }}>
-              {u.special && <div>{u.special}</div>}
-              {entry.magicItem && (
-                <div style={{ marginTop:"1mm", color: mode==="white" ? "#553300" : "#d4b060" }}>
-                  <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
+            {crestUrl ? (
+              <img src={crestUrl} style={{ width:"7mm", height:"7mm", objectFit:"contain", flexShrink:0, filter:"drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
+            ) : (
+              <div style={{ width:"7mm", height:"7mm", borderRadius:"50%", background:`${factionColor}40`,
+                border:`1px solid ${factionColor}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center",
+                fontSize:"0.5rem", color: factionAccent }}>⚔</div>
+            )}
+          </div>
+
+          {/* ── TYPE BADGE ─────────────────────────────────────────── */}
+          <div style={{
+            flex:"0 0 auto", padding:"0.8mm 2.5mm",
+            background:"rgba(0,0,0,0.35)",
+            display:"flex", alignItems:"center", justifyContent:"space-between",
+          }}>
+            <span style={{ fontSize:"0.52rem", color: factionAccent, fontFamily:"'Cinzel',serif", letterSpacing:"0.8px", textTransform:"uppercase" }}>{u.type}</span>
+            <span style={{ fontSize:"0.52rem", color:"#aaa", fontStyle:"italic" }}>{u.size && `${u.min || 1}–${u.max || "∞"} stands`}</span>
+          </div>
+
+          {/* ── IMAGE AREA ─────────────────────────────────────────── */}
+          <div style={{
+            flex:"0 0 28mm", overflow:"hidden", position:"relative",
+            borderBottom:`1px solid ${factionColor}60`,
+          }}>
+            {IMAGES.units[u.id] ? (
+              <img src={IMAGES.units[u.id]} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+            ) : (
+              <div style={{
+                width:"100%", height:"100%",
+                background:`linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%)`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+              }}>
+                <div style={{ textAlign:"center", opacity:0.25 }}>
+                  <div style={{ fontSize:"1.6rem" }}>⚔</div>
                 </div>
-              )}
-            </div>
-            <div style={{ borderTop:`1px solid ${divider}`, paddingTop:"1mm", fontSize:`calc(${fs} * 0.62)`, color: cardMuted, display:"flex", justifyContent:"space-between" }}>
-              <span>WARMASTER REVOLUTION</span><span>{army.name.toUpperCase()}</span>
-            </div>
+              </div>
+            )}
+            {/* Gradient fade into parchment below */}
+            <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"8px",
+              background:"linear-gradient(transparent, rgba(0,0,0,0.4))" }}/>
           </div>
-        </>)}
+
+          {/* ── RULES / DESCRIPTION AREA (parchment) ──────────────── */}
+          <div style={{
+            flex:1, overflow:"hidden",
+            padding:"1.5mm 2.5mm 1mm",
+            display:"flex", flexDirection:"column", gap:"1mm",
+          }}>
+            {/* Special rules */}
+            {hasRules && (
+              <div style={{ fontSize:"0.52rem", color: inkDark, lineHeight:1.4,
+                overflow:"hidden", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical" }}>
+                <span style={{ fontWeight:700, color: factionColor, fontFamily:"'Cinzel',serif", fontSize:"0.5rem" }}>RULES </span>
+                {rulesText}
+              </div>
+            )}
+            {/* Upgrades */}
+            {upgradeLines.length > 0 && (
+              <div style={{ fontSize:"0.5rem", color: factionColor, lineHeight:1.3, overflow:"hidden",
+                display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
+                {upgradeLines.join("  ·  ")}
+              </div>
+            )}
+            {/* Magic item */}
+            {entry.magicItem && (
+              <div style={{ fontSize:"0.5rem", color: inkDark, lineHeight:1.3, marginTop:"0.5mm",
+                borderTop:`1px solid ${factionColor}30`, paddingTop:"0.8mm",
+                overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
+                <span style={{ color: factionColor, fontWeight:700 }}>✦ {entry.magicItem.name}: </span>
+                {entry.magicItem.desc}
+              </div>
+            )}
+            {/* Mount */}
+            {mountLine && (
+              <div style={{ fontSize:"0.5rem", color:"#555", fontStyle:"italic" }}>{mountLine}</div>
+            )}
+          </div>
+
+          {/* ── FOOTER ─────────────────────────────────────────────── */}
+          <div style={{
+            flex:"0 0 auto", padding:"1mm 2.5mm",
+            background:"rgba(0,0,0,0.3)",
+            borderTop:`1px solid ${factionColor}40`,
+            display:"flex", justifyContent:"space-between", alignItems:"center",
+          }}>
+            <span style={{ fontSize:"0.42rem", color:"#999", letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</span>
+            <span style={{ fontSize:"0.42rem", color: factionAccent, letterSpacing:"0.5px", fontFamily:"'Cinzel',serif" }}>{army.name.toUpperCase()}</span>
+          </div>
+        </div>
       </div>
     );
   }
 
-    // Options modal
   function OptionsModal() {
     const [local, setLocal] = useState({...printOpts});
     return (
