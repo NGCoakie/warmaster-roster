@@ -100,33 +100,33 @@ function useIsMobile() {
 
 // ── MAGIC ITEMS (from WMR Armies v2.24 p.88) ─────────────────────────────────
 const MAGIC_STANDARDS = [
-  { id:"battle_banner", name:"Battle Banner", cost:30, desc:"+1 Attack in the first Combat engagement.", restriction:"infantry/cavalry/chariot" },
-  { id:"banner_shielding_sup", name:"Banner of Shielding (Superior)", cost:50, desc:"+1 Armour value until stand is lost. 4+ Armour units only.", restriction:"armour4+" },
-  { id:"banner_shielding_maj", name:"Banner of Shielding (Major)", cost:30, desc:"+1 Armour value until stand is lost. 5+ Armour units only.", restriction:"armour5+" },
-  { id:"banner_shielding_min", name:"Banner of Shielding (Minor)", cost:15, desc:"+1 Armour value until stand is lost. 6+ or 0 Armour only.", restriction:"armour6+/0" },
-  { id:"banner_fortitude_maj", name:"Banner of Fortitude (Major)", cost:50, desc:"+1 Hit in first Combat engagement. 4 Hits units only.", restriction:"hits4" },
-  { id:"banner_fortitude_min", name:"Banner of Fortitude (Minor)", cost:30, desc:"+1 Hit in first Combat engagement. 2–3 Hits units only.", restriction:"hits2-3" },
-  { id:"banner_steadfastness_sup", name:"Banner of Steadfastness (Superior)", cost:20, desc:"Ignore 1 shooting hit after saves until stand lost. 4+ Armour only.", restriction:"armour4+" },
-  { id:"banner_steadfastness_maj", name:"Banner of Steadfastness (Major)", cost:15, desc:"Ignore 1 shooting hit after saves until stand lost. 5+ Armour only.", restriction:"armour5+" },
-  { id:"banner_steadfastness_min", name:"Banner of Steadfastness (Minor)", cost:10, desc:"Ignore 1 shooting hit after saves until stand lost. 6+ Armour only.", restriction:"armour6+" },
-  { id:"banner_fortune", name:"Banner of Fortune", cost:15, desc:"Once per game re-roll all Attack dice in Shooting or Combat phase.", restriction:"any" },
+  { id:"battle_banner",            category:"Banner",  name:"Battle Banner",                    cost:30, restriction:"Infantry, Cavalry or Chariot unit only. One per army.", desc:"+1 Attack in the first Combat engagement. Carried by Infantry, Cavalry, or Chariot units only. Maximum one per army." },
+  { id:"banner_shielding_sup",     category:"Banner",  name:"Banner of Shielding (Superior)",   cost:50, restriction:"4+ Armour units only. One per army.",                  desc:"+1 Armour value until stand is lost. Only units with 4+ Armour save may carry this banner. Maximum one per army." },
+  { id:"banner_shielding_maj",     category:"Banner",  name:"Banner of Shielding (Major)",      cost:30, restriction:"5+ Armour units only. One per army.",                  desc:"+1 Armour value until stand is lost. Only units with 5+ Armour save may carry this banner. Maximum one per army." },
+  { id:"banner_shielding_min",     category:"Banner",  name:"Banner of Shielding (Minor)",      cost:15, restriction:"6+ or 0 Armour units only. One per army.",             desc:"+1 Armour value until stand is lost. Only units with 6+ or no Armour save may carry this banner. Maximum one per army." },
+  { id:"banner_fortitude_maj",     category:"Banner",  name:"Banner of Fortitude (Major)",      cost:50, restriction:"4 Hits units only. One per army.",                     desc:"+1 Hit in first Combat engagement. Only units with 4 Hits per stand may carry this. Maximum one per army." },
+  { id:"banner_fortitude_min",     category:"Banner",  name:"Banner of Fortitude (Minor)",      cost:30, restriction:"2–3 Hits units only. One per army.",                   desc:"+1 Hit in first Combat engagement. Only units with 2 or 3 Hits per stand may carry this. Maximum one per army." },
+  { id:"banner_steadfastness_sup", category:"Banner",  name:"Banner of Steadfastness (Superior)",cost:20,restriction:"4+ Armour only. One per army.",                        desc:"Ignore 1 shooting hit after saves until stand is lost. 4+ Armour units only. Maximum one per army." },
+  { id:"banner_steadfastness_maj", category:"Banner",  name:"Banner of Steadfastness (Major)",  cost:15, restriction:"5+ Armour only. One per army.",                       desc:"Ignore 1 shooting hit after saves until stand is lost. 5+ Armour units only. Maximum one per army." },
+  { id:"banner_steadfastness_min", category:"Banner",  name:"Banner of Steadfastness (Minor)",  cost:10, restriction:"6+ Armour only. One per army.",                       desc:"Ignore 1 shooting hit after saves until stand is lost. 6+ Armour units only. Maximum one per army." },
+  { id:"banner_fortune",           category:"Banner",  name:"Banner of Fortune",                cost:15, restriction:"Any unit. One per army.",                              desc:"Once per game re-roll all Attack dice in one Shooting or Combat phase. Any unit may carry this banner. Maximum one per army." },
 ];
 const MAGIC_WEAPONS = [
-  { id:"sword_destruction", name:"Sword of Destruction", cost:10, desc:"Enemy must re-roll one successful Armour save per combat round." },
-  { id:"sword_fate", name:"Sword of Fate", cost:5, desc:"+1 Attack to the unit/character in the first Combat round." },
-  { id:"sword_cleaving", name:"Sword of Cleaving", cost:10, desc:"Re-roll one unsuccessful Attack dice per combat round." },
-  { id:"sword_might", name:"Sword of Might", cost:10, desc:"+1 Attack to the unit/character in the Combat Phase." },
+  { id:"sword_destruction", category:"Weapon", name:"Sword of Destruction", cost:10, restriction:"General or Hero only. One per army.", desc:"Enemy must re-roll one successful Armour save per combat round. Carried by a General or Hero character stand. Maximum one per army." },
+  { id:"sword_fate",        category:"Weapon", name:"Sword of Fate",        cost:5,  restriction:"General or Hero only. One per army.", desc:"+1 Attack to the character's unit in the first Combat round only. Carried by a General or Hero. Maximum one per army." },
+  { id:"sword_cleaving",    category:"Weapon", name:"Sword of Cleaving",    cost:10, restriction:"General or Hero only. One per army.", desc:"Re-roll one unsuccessful Attack dice per combat round. Carried by a General or Hero character stand. Maximum one per army." },
+  { id:"sword_might",       category:"Weapon", name:"Sword of Might",       cost:10, restriction:"General or Hero only. One per army.", desc:"+1 Attack to the character's unit in every Combat Phase. Carried by a General or Hero. Maximum one per army." },
 ];
 const DEVICES_OF_POWER = [
-  { id:"crown_command", name:"Crown of Command", cost:70, desc:"First General's command roll each turn at unmodified Command 10. Lost if failed.", restriction:"General only" },
-  { id:"helm_dominion", name:"Helm of Dominion", cost:40, desc:"+1 Command (max 10) for one Command phase.", restriction:"General only" },
-  { id:"orb_majesty", name:"Orb of Majesty", cost:30, desc:"Re-roll one failed Command roll at Command 8.", restriction:"General only" },
-  { id:"ring_magic", name:"Ring of Magic", cost:30, desc:"Cast one spell without a roll.", restriction:"Wizard only" },
-  { id:"staff_spellbinding", name:"Staff of Spellbinding", cost:30, desc:"If enemy Wizard fails to cast, spellbound on 4+. -1 to all future spells.", restriction:"Wizard/Runesmith" },
-  { id:"sceptre_sovereignty", name:"Sceptre of Sovereignty", cost:30, desc:"Ignore one Blunder roll; order counts as successful.", restriction:"General only" },
-  { id:"scroll_dispelling", name:"Scroll of Dispelling", cost:20, desc:"Automatically dispel one enemy spell.", restriction:"Wizard/Runesmith" },
-  { id:"wand_power", name:"Wand of Power", cost:10, desc:"+1 to one spell casting attempt. 1 always fails.", restriction:"Wizard only" },
-  { id:"rod_repetition", name:"Rod of Repetition", cost:10, desc:"After casting a spell, immediately try to cast another. Once per game.", restriction:"Wizard only" },
+  { id:"crown_command",     category:"Device", name:"Crown of Command",     cost:70, restriction:"General only. One per army.",          desc:"The General's first command roll each turn is made at unmodified Command 10. Lost permanently if the roll is failed. General only. Maximum one per army." },
+  { id:"helm_dominion",     category:"Device", name:"Helm of Dominion",     cost:40, restriction:"General only. One per army.",          desc:"+1 to Command (max 10) for one Command phase per game. General only. Maximum one per army." },
+  { id:"orb_majesty",       category:"Device", name:"Orb of Majesty",       cost:30, restriction:"General only. One per army.",          desc:"Re-roll one failed Command roll at Command value 8. General only. Maximum one per army." },
+  { id:"ring_magic",        category:"Device", name:"Ring of Magic",        cost:30, restriction:"Wizard only. One per army.",           desc:"Cast one spell automatically without making a casting roll. Wizard only. Maximum one per army." },
+  { id:"staff_spellbinding",category:"Device", name:"Staff of Spellbinding",cost:30, restriction:"Wizard or Runesmith only. One per army.",desc:"If an enemy Wizard fails to cast a spell, they are spellbound on a 4+ and suffer -1 to all future casting rolls. Wizard or Runesmith only. Maximum one per army." },
+  { id:"sceptre_sovereignty",category:"Device",name:"Sceptre of Sovereignty",cost:30,restriction:"General only. One per army.",          desc:"Ignore one Blunder roll; the order is treated as successful instead. General only. Maximum one per army." },
+  { id:"scroll_dispelling", category:"Device", name:"Scroll of Dispelling", cost:20, restriction:"Wizard or Runesmith only. One per army.",desc:"Automatically dispel one enemy spell without a roll. One use only. Wizard or Runesmith only. Maximum one per army." },
+  { id:"wand_power",        category:"Device", name:"Wand of Power",        cost:10, restriction:"Wizard only. One per army.",           desc:"+1 to one spell casting attempt. A roll of 1 always fails. Wizard only. Maximum one per army." },
+  { id:"rod_repetition",    category:"Device", name:"Rod of Repetition",    cost:10, restriction:"Wizard only. One per army.",           desc:"After successfully casting a spell, immediately attempt to cast it again. Once per game only. Wizard only. Maximum one per army." },
 ];
 
 // ── ARMY DATA (Official WMR Armies v2.24) ────────────────────────────────────
@@ -1844,6 +1844,11 @@ function FactionSelector({ onPreview, onHowToPlay, onSavedLists, session, onLogo
               onMouseEnter={e => { e.currentTarget.style.color="#c8a060"; e.currentTarget.style.borderColor="#666"; }}
               onMouseLeave={e => { e.currentTarget.style.color="#888"; e.currentTarget.style.borderColor="#333"; }}
             >📖 HOW TO PLAY</button>
+            <button onClick={() => onPreview && onPreview("magic_items")}
+              style={{ background:"transparent", color:"#c8a040", border:"1px solid #6a4a10", borderRadius:4, padding:"6px 16px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.background="#c8a04022"; }}
+              onMouseLeave={e => { e.currentTarget.style.background="transparent"; }}
+            >✦ MAGIC ITEMS</button>
             {!isGuest && (
               <button onClick={onSavedLists}
                 style={{ background:"transparent", color:"#888", border:"1px solid #333", borderRadius:4, padding:"6px 16px", fontSize:"1.25rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer", transition:"all 0.15s" }}
@@ -2541,15 +2546,14 @@ function RosterPanel({ army, roster, onRemove, onUpdate, onPrint, onClear, onReo
 
 // ── PRINT VIEW ─────────────────────────────────────────────────────────────────
 function PrintView({ army, roster, onClose }) {
-  const [showOptions, setShowOptions] = useState(false);
-  const [printOpts, setPrintOpts] = useState({
-    layout: "portrait",      // "portrait" | "landscape" | "square"
-    colorMode: "faction",    // "faction" | "cardcolor" | "white"
+  // Print options are now standardised — no user controls
+  const printOpts = {
+    layout: "portrait",
+    colorMode: "faction",
     showImage: true,
     includeArmyRules: true,
-    includeSpells: true,
-    fontScale: 1.0,          // 0.7 – 1.4 multiplier on all card text
-  });
+    fontScale: 1.0,
+  };
 
   const entryTotal = (entry) => {
     let t = typeof entry.unit.pts === "number" ? entry.unit.pts : 0;
@@ -2610,539 +2614,478 @@ function PrintView({ army, roster, onClose }) {
   const imgTextColor = mode==="white" ? "#aaaaaa" : army.accent;
 
   // ── ARMY RULES CARD ──────────────────────────────────────────────────────
-  function SpecialRuleCard({ rule, ruleIndex, totalRules }) {
-    // Special rule cards are ALWAYS portrait 63x88mm
-    const CARD_W = "63mm";
-    const CARD_H = scaleH("88mm");
+  // ── SHARED CARD SHELL ──────────────────────────────────────────────────────
+  // Every card: black 3mm outer (≈1/8in), 4mm corner radius, inner card with faction colour
+  // imgOverlay: optional { top, left } stat overlays rendered inside the image area
+  function CardShell({ children, imgUrl, imgFallbackIcon="⚔", accentColor, imgOverlay }) {
+    const clr = accentColor || army.color;
     const borderUrl = IMAGES.factionBorders[army.key] || "";
+    return (
+      <div style={{
+        width:"63mm", height:"88mm",
+        background:"#000",
+        borderRadius:"4mm",
+        padding:"3mm",
+        boxSizing:"border-box",
+        pageBreakInside:"avoid", breakInside:"avoid",
+        WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
+        flexShrink:0,
+      }}>
+        <div style={{
+          width:"100%", height:"100%",
+          background: cardBg,
+          borderRadius:"2mm",
+          display:"flex", flexDirection:"column",
+          overflow:"hidden",
+          position:"relative",
+          fontFamily:"'Cinzel',Georgia,serif",
+          boxSizing:"border-box",
+        }}>
+          {/* Faction border overlay */}
+          {borderUrl && (
+            <div style={{
+              position:"absolute", inset:0, zIndex:10, pointerEvents:"none",
+              backgroundImage:`url(${borderUrl})`,
+              backgroundSize:"100% 100%",
+              backgroundRepeat:"no-repeat",
+              opacity:0.6,
+            }} />
+          )}
 
-    const basePx  = 8 * printOpts.fontScale;
-    const fs      = `${Math.round(basePx * 10) / 10}px`;
-    const fsSm    = `${Math.round(basePx * 0.78 * 10) / 10}px`;
-    const fsTiny  = `${Math.round(basePx * 0.62 * 10) / 10}px`;
-    const fsTitle = `${Math.round(basePx * 1.18 * 10) / 10}px`;
+          {/* ── 1:1 Image — top ~50% of inner card ── */}
+          <div style={{
+            width:"100%",
+            flexShrink:0,
+            position:"relative",
+            overflow:"hidden",
+            borderBottom:`1.5px solid ${cardBorder}`,
+            height:"40mm",
+          }}>
+            {imgUrl ? (
+              <img src={imgUrl} alt=""
+                style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block" }} />
+            ) : (
+              <div style={{
+                width:"100%", height:"100%",
+                background:`linear-gradient(160deg,${clr}55,${cardBg})`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+              }}>
+                <div style={{ fontSize:"28px", opacity:0.3 }}>{imgFallbackIcon}</div>
+              </div>
+            )}
+            {/* Stat overlays inside the image */}
+            {imgOverlay}
+            {/* Faction accent bar at bottom of image */}
+            <div style={{
+              position:"absolute", bottom:0, left:0, right:0,
+              height:"2px",
+              background:`linear-gradient(90deg,transparent,${clr},transparent)`,
+            }} />
+          </div>
+
+          {/* Content area — passed as children */}
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  // ── BASE FONT SIZE (140% of original 8px = 11.2px) ──────────────────────
+  function cardFs(mult=1) {
+    const base = 11.2 * printOpts.fontScale;
+    return `${Math.round(base * mult * 10)/10}px`;
+  }
+
+  // ── STAT BOX — scaled for 140% text, supports 'sm' size for overlays ──────
+  function StatBox({ label, value, style={}, sm=false }) {
+    const labelSz = sm ? cardFs(0.5)  : cardFs(0.6);
+    const valueSz = sm ? cardFs(0.85) : cardFs(1.1);
+    return (
+      <div style={{
+        textAlign:"center",
+        background: sm ? "rgba(0,0,0,0.72)" : statBg,
+        border: sm ? `1px solid rgba(255,255,255,0.25)` : `1.5px solid ${statBorder}`,
+        borderRadius:"2px",
+        display:"flex", flexDirection:"column",
+        alignItems:"center", justifyContent:"center",
+        padding: sm ? "0.8mm 1.2mm" : "1.5mm 1mm",
+        backdropFilter: sm ? "blur(2px)" : "none",
+        WebkitBackdropFilter: sm ? "blur(2px)" : "none",
+        ...style,
+      }}>
+        <div style={{ fontSize:labelSz, color: sm ? "rgba(255,255,255,0.7)" : cardMuted, letterSpacing:"0.3px", lineHeight:1 }}>{label}</div>
+        <div style={{ fontSize:valueSz, fontWeight:700, color: sm ? "#fff" : cardText, lineHeight:1.15 }}>{String(value ?? "-")}</div>
+      </div>
+    );
+  }
+
+  // ── UNIT CARD ─────────────────────────────────────────────────────────────
+  function PrintCard({ entry }) {
+    const u = entry.unit;
+    const pts = entryTotal(entry);
+    const imgUrl = IMAGES.units[u.id] || "";
+
+    // Find special rules that apply to this unit
+    const unitRules = (army.armyRules || []).filter(rule => {
+      const rn = rule.name.toLowerCase().replace(/\(army rule\)/,'').trim();
+      const un = u.name.toLowerCase();
+      return un.includes(rn) || rn.includes(un) ||
+        rn.split(/[\s,\/&]+/).some(w => w.length > 3 && un.includes(w));
+    });
+
+    // Stat overlays — rendered inside the image area
+    const statOverlay = (
+      <>
+        {/* CMD / SZ / MIN / MAX — horizontal row across the TOP of the image */}
+        <div style={{
+          position:"absolute", top:"1.5mm", left:0, right:0,
+          display:"flex", justifyContent:"flex-start",
+          gap:"1mm", padding:"0 1.5mm",
+          zIndex:5,
+        }}>
+          {[{k:"CMD",v:u.cmd},{k:"SZ",v:u.size},{k:"MIN",v:u.min},{k:"MAX",v:u.max}].map(({k,v}) =>
+            <StatBox key={k} label={k} value={v} sm={true}
+              style={{ minWidth:"9mm" }} />
+          )}
+        </div>
+
+        {/* ATK / HITS / ARM — vertical column on the LEFT of the image */}
+        <div style={{
+          position:"absolute", top:"1.5mm", left:"1.5mm",
+          display:"flex", flexDirection:"column",
+          gap:"1mm",
+          zIndex:5,
+          marginTop:"8mm", /* push below the top row */
+        }}>
+          {[{k:"ATK",v:u.atk},{k:"HITS",v:u.hits},{k:"ARM",v:u.armour}].map(({k,v}) =>
+            <StatBox key={k} label={k} value={v} sm={true}
+              style={{ width:"11mm" }} />
+          )}
+        </div>
+      </>
+    );
+
+    return (
+      <CardShell imgUrl={imgUrl} imgFallbackIcon="⚔" imgOverlay={statOverlay}>
+        {/* Name + pts */}
+        <div style={{
+          padding:"1.5mm 2.5mm 1mm",
+          borderBottom:`1px solid ${divider}`,
+          display:"flex", justifyContent:"space-between", alignItems:"baseline",
+          flexShrink:0, background:`${cardBorder}18`,
+        }}>
+          <div>
+            <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:cardText, lineHeight:1.2 }}>{u.name}</div>
+            <div style={{ fontSize:cardFs(0.68), color:cardMuted, letterSpacing:"0.8px", textTransform:"uppercase" }}>{u.type}</div>
+          </div>
+          <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:cardText, flexShrink:0, marginLeft:"2mm" }}>{pts}pts</div>
+        </div>
+
+        {/* Special text + inline unit rules */}
+        <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
+          {u.special && (
+            <div style={{ fontSize:cardFs(0.78), color:cardMuted, lineHeight:1.5, fontFamily:"Georgia,serif" }}>
+              {u.special}
+            </div>
+          )}
+          {unitRules.map((r,i) => (
+            <div key={i} style={{ fontSize:cardFs(0.72), color:army.color, lineHeight:1.4, marginTop:"0.8mm", fontFamily:"Georgia,serif" }}>
+              <strong style={{ color:cardText }}>{r.name}:</strong> {r.desc}
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+          display:"flex", justifyContent:"space-between", alignItems:"center",
+          background:`${cardBorder}12`, flexShrink:0,
+        }}>
+          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
+          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
+        </div>
+      </CardShell>
+    );
+  }
+
+  // ── MOUNT CARD ────────────────────────────────────────────────────────────
+  function MountCard({ entry }) {
+    const m = entry.mount;
+    const imgUrl = IMAGES.units[m.id] || IMAGES.units[entry.unit.id] || "";
+    return (
+      <CardShell imgUrl={imgUrl} imgFallbackIcon="🐴" accentColor={army.color}>
+        {/* Name bar */}
+        <div style={{
+          padding:"1.5mm 2.5mm 1mm",
+          borderBottom:`1px solid ${divider}`,
+          display:"flex", justifyContent:"space-between", alignItems:"baseline",
+          flexShrink:0, background:`${cardBorder}18`,
+        }}>
+          <div>
+            <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:cardText, lineHeight:1.2 }}>{m.name}</div>
+            <div style={{ fontSize:cardFs(0.68), color:cardMuted, letterSpacing:"0.8px", textTransform:"uppercase" }}>Mount · {entry.unit.name}</div>
+          </div>
+          {m.pts > 0 && <div style={{ fontSize:cardFs(1.0), fontWeight:700, color:cardText, flexShrink:0, marginLeft:"2mm" }}>{m.pts}pts</div>}
+        </div>
+
+        {/* Mount stats if available */}
+        {(m.atk || m.hits || m.armour) && (
+          <div style={{
+            display:"flex", gap:"1.5px", padding:"1.5mm 1mm",
+            borderBottom:`1px solid ${divider}`,
+            flexShrink:0, height:"16mm",
+          }}>
+            {[{k:"ATK",v:m.atk},{k:"HITS",v:m.hits},{k:"ARM",v:m.armour}].filter(x=>x.v!=null).map(({k,v}) =>
+              <StatBox key={k} label={k} value={v} style={{ flex:1, height:"100%" }} />
+            )}
+          </div>
+        )}
+
+        {/* Mount special rules */}
+        <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
+          {m.special && (
+            <div style={{ fontSize:cardFs(0.78), color:cardMuted, lineHeight:1.5, fontFamily:"Georgia,serif" }}>{m.special}</div>
+          )}
+          {!m.special && (
+            <div style={{ fontSize:cardFs(0.78), color:cardMuted, opacity:0.5, fontFamily:"Georgia,serif" }}>No special rules.</div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+          display:"flex", justifyContent:"space-between", alignItems:"center",
+          background:`${cardBorder}12`, flexShrink:0,
+        }}>
+          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Mount</div>
+          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
+        </div>
+      </CardShell>
+    );
+  }
+
+  // ── MAGIC ITEM CARD ───────────────────────────────────────────────────────
+  // ── MAGIC ITEM CARD (neutral colors — works across all factions) ────────
+  function MagicItemCard({ mi }) {
+    // neutral gold/parchment palette — not faction-coloured
+    const miAccent  = "#c8a040";
+    const miBg      = mode === "white" ? "#fdf6e3" : "#1a1508";
+    const miBorder  = "#8a6820";
+    const miText    = mode === "white" ? "#2a1a04" : "#f0d890";
+    const miMuted   = mode === "white" ? "#6a4a10" : "#b89840";
+    const catIcon   = { Weapon:"⚔", Device:"✦", Banner:"🏳" }[mi.category] || "✦";
+    const imgUrl    = IMAGES.magicItems?.[mi.id] || "";
+
+    // Name overlay on image — same pattern as other cards
+    const nameOverlay = (
+      <div style={{
+        position:"absolute", bottom:0, left:0, right:0,
+        background:"linear-gradient(transparent, rgba(0,0,0,0.82))",
+        padding:"6mm 2.5mm 2mm",
+        zIndex:5,
+      }}>
+        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>
+          {mi.name}
+        </div>
+      </div>
+    );
 
     return (
       <div style={{
-        width: CARD_W, height: CARD_H,
-        background: cardBg,
-        border: `2px solid ${cardBorder}`,
-        borderRadius: "4px",
-        position: "relative",
-        display: "flex", flexDirection: "column",
-        overflow: "hidden",
-        pageBreakInside: "avoid", breakInside: "avoid",
-        boxSizing: "border-box",
-        fontFamily: "'Cinzel',Georgia,serif",
-        WebkitPrintColorAdjust: "exact", printColorAdjust: "exact",
-        position: "relative",
+        width:"63mm", height:"88mm",
+        background:"#000",
+        borderRadius:"4mm",
+        padding:"3mm",
+        boxSizing:"border-box",
+        pageBreakInside:"avoid", breakInside:"avoid",
+        WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
+        flexShrink:0,
       }}>
-        {/* Faction border overlay */}
-        {borderUrl && (
-          <div style={{
-            position:"absolute", inset:0, zIndex:10, pointerEvents:"none",
-            backgroundImage:`url(${borderUrl})`,
-            backgroundSize:"100% 100%",
-            backgroundRepeat:"no-repeat",
-            opacity:0.8,
-          }} />
-        )}
-        {/* Gold top accent bar */}
-        <div style={{ height: "2.5px", background: `linear-gradient(90deg, transparent, ${army.color}, transparent)`, flexShrink: 0 }} />
-
-        {/* Header row */}
         <div style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "1.5mm 3mm 1mm",
-          borderBottom: `1px solid ${divider}`,
-          background: `${cardBorder}22`,
-          flexShrink: 0,
+          width:"100%", height:"100%",
+          background: miBg,
+          borderRadius:"2mm",
+          display:"flex", flexDirection:"column",
+          overflow:"hidden", position:"relative",
+          fontFamily:"'Cinzel',Georgia,serif",
+          boxSizing:"border-box",
+          border:`1px solid ${miBorder}44`,
         }}>
-          <div style={{ fontSize: fsTitle, fontWeight: 700, color: cardText, letterSpacing: "0.3px", lineHeight: 1.15, flex: 1 }}>
-            {rule.name}
+          {/* Image + name overlay */}
+          <div style={{ width:"100%", height:"40mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`1.5px solid ${miBorder}` }}>
+            {imgUrl ? (
+              <img src={imgUrl} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block" }} />
+            ) : (
+              <div style={{ width:"100%", height:"100%", background:`linear-gradient(160deg,${miAccent}33,${miBg})`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <div style={{ fontSize:"28px", opacity:0.35 }}>{catIcon}</div>
+              </div>
+            )}
+            {nameOverlay}
+            <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"2px", background:`linear-gradient(90deg,transparent,${miAccent},transparent)` }} />
           </div>
-          <div style={{ fontSize: fsTiny, color: army.color, letterSpacing: "1.5px", textTransform: "uppercase", flexShrink: 0, marginLeft: "3mm", opacity: 0.85 }}>
-            Special Rule
+
+          {/* Type badge row */}
+          <div style={{
+            padding:"1mm 2.5mm",
+            borderBottom:`1px solid ${miBorder}44`,
+            flexShrink:0, display:"flex", alignItems:"center", justifyContent:"space-between",
+            background:`${miAccent}11`,
+          }}>
+            <div style={{ display:"flex", alignItems:"center", gap:"1.5mm" }}>
+              <div style={{ background:`${miAccent}22`, border:`1px solid ${miAccent}55`, borderRadius:"2px", padding:"0.5mm 2mm", fontSize:cardFs(0.65), color:miAccent, letterSpacing:"1px", textTransform:"uppercase" }}>
+                {catIcon} {mi.category || "Magic Item"}
+              </div>
+            </div>
+            <div style={{ fontSize:cardFs(0.88), fontWeight:700, color:miAccent }}>{mi.cost}pts</div>
+          </div>
+
+          {/* Equip restriction */}
+          <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${miBorder}33`, flexShrink:0 }}>
+            <div style={{ fontSize:cardFs(0.65), color:miMuted, fontStyle:"italic", lineHeight:1.4 }}>
+              📋 {mi.restriction}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
+            <div style={{ fontSize:cardFs(0.78), color:miText, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
+              {mi.desc}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{ borderTop:`1px solid ${miBorder}44`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", alignItems:"center", background:`${miAccent}0a`, flexShrink:0 }}>
+            <div style={{ fontSize:cardFs(0.6), color:miMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Magic Item</div>
+            <div style={{ fontSize:cardFs(0.6), color:miAccent, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Rule description */}
-        <div style={{ flex: 1, padding: "2mm 3mm 1.5mm", overflow: "hidden" }}>
-          <div style={{ fontSize: fsSm, color: cardMuted, lineHeight: 1.6, fontFamily: "Georgia,serif" }}>
+    // ── SPECIAL RULE CARD (army-wide only — unit rules shown on unit card) ────
+  // ── SPECIAL RULE CARD (army-wide only — unit rules shown on unit card) ────
+  function SpecialRuleCard({ rule }) {
+    const imgUrl = (() => {
+      const rn = rule.name.toLowerCase().replace(/\(army rule\)/,'').trim().replace(/\s+/g,'_');
+      const match = Object.entries(IMAGES.units || {}).find(([uid]) => uid.includes(rn));
+      return match ? match[1] : "";
+    })();
+
+    // Name overlay on the image
+    const nameOverlay = (
+      <div style={{
+        position:"absolute", bottom:0, left:0, right:0,
+        background:"linear-gradient(transparent, rgba(0,0,0,0.82))",
+        padding:"6mm 2.5mm 2mm",
+        zIndex:5,
+      }}>
+        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>
+          {rule.name}
+        </div>
+      </div>
+    );
+
+    return (
+      <CardShell imgUrl={imgUrl} imgFallbackIcon="📜" imgOverlay={nameOverlay}>
+        {/* Type label row */}
+        <div style={{
+          padding:"1mm 2.5mm",
+          borderBottom:`1px solid ${divider}`,
+          flexShrink:0, background:`${cardBorder}18`,
+          display:"flex", alignItems:"center",
+        }}>
+          <div style={{ fontSize:cardFs(0.68), color:army.color, textTransform:"uppercase", letterSpacing:"1px" }}>Special Rule</div>
+        </div>
+
+        {/* Description */}
+        <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
+          <div style={{ fontSize:cardFs(0.82), color:cardMuted, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
             {rule.desc}
           </div>
         </div>
 
         {/* Footer */}
         <div style={{
-          borderTop: `1px solid ${divider}`,
-          padding: "1mm 3mm",
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          background: `${cardBorder}14`,
-          flexShrink: 0,
+          borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+          display:"flex", justifyContent:"space-between", alignItems:"center",
+          background:`${cardBorder}12`, flexShrink:0,
         }}>
-          <div style={{ fontSize: fsTiny, color: cardMuted, letterSpacing: "0.5px", textTransform: "uppercase" }}>
-            Warmaster Revolution
-          </div>
-          <div style={{ fontSize: fsTiny, color: army.color, letterSpacing: "0.5px", textTransform: "uppercase", opacity: 0.9 }}>
-            {army.name}
-          </div>
+          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Special Rule</div>
+          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
         </div>
-      </div>
+      </CardShell>
     );
   }
 
 
-  function SpellCard({ spell, index, total }) {
-    const fs = lay.fontSize;
-    const isBloodRite = !!spell.bloodRite;
+  // ── SPELL CARD ────────────────────────────────────────────────────────────
+  function SpellCard({ spell }) {
+    const isBloodRite   = !!spell.bloodRite;
     const isInstability = !!spell.instability;
-    return (
+    const sKey   = spellKey(army.key || "", spell.name);
+    const imgUrl = IMAGES.spells?.[sKey] || "";
+    const label  = isBloodRite ? "⚔ Blood Rite" : isInstability ? "☠ Instability" : "✦ Spell";
+
+    // Name overlay on image
+    const nameOverlay = (
       <div style={{
-        width: "63mm", height: scaleH("88mm"),
-        background: cardBg, border: `2px solid ${cardBorder}`, borderRadius:"5px",
-        display:"flex", flexDirection:"column", overflow:"hidden",
-        pageBreakInside:"avoid", breakInside:"avoid", boxSizing:"border-box",
-        fontFamily:"'Cinzel',Georgia,serif",
-        WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
+        position:"absolute", bottom:0, left:0, right:0,
+        background:"linear-gradient(transparent, rgba(0,0,0,0.82))",
+        padding:"6mm 2.5mm 2mm",
+        zIndex:5,
       }}>
-        {/* Spell image strip */}
-        {(() => {
-          const sKey = spellKey(army.key || "", spell.name);
-          const spellImgUrl = IMAGES.spells[sKey] || "";
-          return spellImgUrl ? (
-            <div style={{ width:"100%", height:"28mm", flexShrink:0, overflow:"hidden", borderBottom:`1px solid ${divider}` }}>
-              <img src={spellImgUrl} alt={spell.name}
-                style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block" }} />
-            </div>
-          ) : null;
-        })()}
+        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>
+          {spell.name || spell.result}
+        </div>
+      </div>
+    );
 
-        {/* Header */}
-        <div style={{ background: cardBorder+"30", borderBottom:`1px solid ${divider}`, padding:"2mm 3mm", flexShrink:0 }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:"1.5mm" }}>
-
-              <div style={{ fontSize:`calc(${fs} * 0.75)`, fontWeight:700, color: cardText }}>
-                {isBloodRite ? "⚔ BLOOD RITE" : isInstability ? "☠ INSTABILITY" : "✦ SPELL"}
-              </div>
-            </div>
-            <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted }}>{index}/{total}</div>
-          </div>
-          <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted, letterSpacing:"1px" }}>{army.name.toUpperCase()}</div>
+    return (
+      <CardShell imgUrl={imgUrl} imgFallbackIcon="✨" accentColor={army.color} imgOverlay={nameOverlay}>
+        {/* Type label row */}
+        <div style={{
+          padding:"1mm 2.5mm",
+          borderBottom:`1px solid ${divider}`,
+          flexShrink:0, background:`${cardBorder}18`,
+          display:"flex", alignItems:"center",
+        }}>
+          <div style={{ fontSize:cardFs(0.68), color:army.color, textTransform:"uppercase", letterSpacing:"1px" }}>{label}</div>
         </div>
 
-        {/* Spell name */}
-        <div style={{ padding:"2mm 3mm 1mm", borderBottom:`1px solid ${divider}`, flexShrink:0 }}>
-          <div style={{ fontSize:`calc(${fs} * 1.05)`, fontWeight:700, color: cardText, lineHeight:1.2 }}>
-            {spell.name || spell.result}
+        {/* Cast / Range / Roll badges */}
+        {(spell.cast || spell.range || spell.roll) && (
+          <div style={{ display:"flex", gap:"1.5mm", padding:"1mm 2.5mm", borderBottom:`1px solid ${divider}`, flexShrink:0 }}>
+            {spell.cast  && <StatBox label="CAST"  value={spell.cast}  style={{ flex:1, padding:"1mm" }} />}
+            {spell.range && <StatBox label="RANGE" value={spell.range} style={{ flex:1, padding:"1mm" }} />}
+            {spell.roll  && <StatBox label="ROLL"  value={spell.roll}  style={{ flex:1, padding:"1mm" }} />}
           </div>
-          {/* Cast value + range for real spells */}
-          {spell.cast && (
-            <div style={{ display:"flex", gap:"3mm", marginTop:"1.5mm" }}>
-              <div style={{ textAlign:"center", background: statBg, border:`1px solid ${statBorder}`, borderRadius:"2px", padding:"1mm 3mm" }}>
-                <div style={{ fontSize:`calc(${fs} * 0.55)`, color: cardMuted }}>CAST</div>
-                <div style={{ fontSize:`calc(${fs} * 0.9)`, fontWeight:700, color: cardText }}>{spell.cast}</div>
-              </div>
-              {spell.range && (
-                <div style={{ textAlign:"center", background: statBg, border:`1px solid ${statBorder}`, borderRadius:"2px", padding:"1mm 3mm" }}>
-                  <div style={{ fontSize:`calc(${fs} * 0.55)`, color: cardMuted }}>RANGE</div>
-                  <div style={{ fontSize:`calc(${fs} * 0.9)`, fontWeight:700, color: cardText }}>{spell.range}</div>
-                </div>
-              )}
-              {/* Roll for instability tables */}
-              {spell.roll && (
-                <div style={{ textAlign:"center", background: statBg, border:`1px solid ${statBorder}`, borderRadius:"2px", padding:"1mm 3mm" }}>
-                  <div style={{ fontSize:`calc(${fs} * 0.55)`, color: cardMuted }}>ROLL</div>
-                  <div style={{ fontSize:`calc(${fs} * 0.9)`, fontWeight:700, color: cardText }}>{spell.roll}</div>
-                </div>
-              )}
-            </div>
-          )}
-          {spell.roll && !spell.cast && (
-            <div style={{ display:"flex", gap:"3mm", marginTop:"1.5mm" }}>
-              <div style={{ textAlign:"center", background: statBg, border:`1px solid ${statBorder}`, borderRadius:"2px", padding:"1mm 3mm" }}>
-                <div style={{ fontSize:`calc(${fs} * 0.55)`, color: cardMuted }}>ROLL</div>
-                <div style={{ fontSize:`calc(${fs} * 0.9)`, fontWeight:700, color: cardText }}>{spell.roll}</div>
-              </div>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Description */}
-        <div style={{ flex:1, padding:"2mm 3mm", fontSize:`calc(${fs} * 0.82)`, color: cardMuted, lineHeight:1.55, overflowY:"hidden" }}>
-          {spell.desc || spell.effect}
+        <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
+          <div style={{ fontSize:cardFs(0.82), color:cardMuted, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
+            {spell.desc || spell.effect}
+          </div>
         </div>
 
         {/* Footer */}
-        <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 3mm", display:"flex", justifyContent:"space-between", background: cardBorder+"12", flexShrink:0 }}>
-          <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted }}>WARMASTER REVOLUTION</div>
-          <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted }}>{army.name.toUpperCase()}</div>
+        <div style={{
+          borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+          display:"flex", justifyContent:"space-between", alignItems:"center",
+          background:`${cardBorder}12`, flexShrink:0,
+        }}>
+          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
+          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
         </div>
-      </div>
+      </CardShell>
     );
   }
 
-    function PrintCard({ entry }) {
-    const u = entry.unit;
-    const pts = entryTotal(entry);
-    const isLandscape = printOpts.layout === "landscape";
-    const fs = lay.fontSize; // base font size tied to physical card size
-    const borderUrl = IMAGES.factionBorders[army.key] || "";
-
-    // Stats for main grid: ATK, HITS, ARM only (CMD moves to side column)
-    const mainStats = [
-      { k:"ATK",  v:u.atk    },
-      { k:"HITS", v:u.hits   },
-      { k:"ARM",  v:u.armour },
-    ];
-    // Side column: CMD on top, then SZ, MIN, MAX
-    const sideStats = [
-      { k:"CMD", v:u.cmd === "-" ? "-" : u.cmd },
-      { k:"SZ",  v:u.size },
-      { k:"MIN", v:u.min  },
-      { k:"MAX", v:u.max  },
-    ];
-
-    const statCell = (k, v, extra={}) => (
-      <div key={k} style={{
-        textAlign:"center", background: statBg,
-        border:`1px solid ${statBorder}`, borderRadius:"2px",
-        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-        ...extra,
-      }}>
-        <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted, letterSpacing:"0.3px", lineHeight:1 }}>{k}</div>
-        <div style={{ fontSize:`calc(${fs} * 1.15)`, fontWeight:700, color: cardText, lineHeight:1.1 }}>{String(v ?? "-")}</div>
-      </div>
-    );
-
-    return (
-      <div style={{
-        width: lay.w, height: lay.h,
-        background: cardBg,
-        border: `2px solid ${cardBorder}`,
-        borderRadius: "5px",
-        display: "flex",
-        flexDirection: isLandscape ? "row" : "column",
-        overflow: "hidden",
-        pageBreakInside: "avoid",
-        breakInside: "avoid",
-        boxSizing: "border-box",
-        fontFamily: "'Cinzel', Georgia, serif",
-        fontSize: fs,
-        WebkitPrintColorAdjust: "exact",
-        printColorAdjust: "exact",
-        position: "relative",
-      }}>
-        {/* Faction border frame */}
-        {borderUrl && (
-          <div style={{
-            position:"absolute", inset:0, zIndex:10, pointerEvents:"none",
-            backgroundImage:`url(${borderUrl})`,
-            backgroundSize:"100% 100%",
-            backgroundRepeat:"no-repeat",
-            opacity:0.85,
-          }} />
-        )}
-
-        {/* ══ PORTRAIT / SQUARE ══ */}
-        {!isLandscape && (<>
-
-          {/* Image area */}
-          {printOpts.showImage && lay.imgH !== "0" && (() => {
-            const unitImgUrl = IMAGES.units[u.id] || "";
-            const borderUrl = IMAGES.factionBorders[army.key] || "";
-            return (
-              <div style={{
-                width:"100%", height: lay.imgH,
-                background: unitImgUrl ? "none" : imgBg,
-                borderBottom: `1px solid ${cardBorder}`,
-                display:"flex", flexDirection:"column",
-                alignItems:"center", justifyContent:"center",
-                flexShrink:0, position:"relative", overflow:"hidden",
-              }}>
-                {unitImgUrl ? (
-                  <img src={unitImgUrl} alt={u.name}
-                    style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block" }} />
-                ) : (
-                  <>
-                    <div style={{ fontSize:`calc(${fs} * 2.2)`, opacity:0.3, color: imgTextColor }}>✕</div>
-                    <div style={{ fontSize:`calc(${fs} * 0.7)`, letterSpacing:"2px", color: imgTextColor, opacity:0.4, marginTop:"1mm" }}>IMAGE</div>
-                  </>
-                )}
-              </div>
-            );
-          })()}
-
-          {/* Name + pts bar */}
-          <div style={{
-            padding:"2mm 2.5mm 1.5mm",
-            borderBottom:`1px solid ${divider}`,
-            display:"flex", justifyContent:"space-between", alignItems:"baseline",
-            flexShrink:0, gap:"2mm",
-          }}>
-            <div style={{ overflow:"hidden", display:"flex", alignItems:"center", gap:"1.5mm" }}>
-
-              <div>
-                <div style={{ fontSize:`calc(${fs} * 1.15)`, fontWeight:700, color: cardText, lineHeight:1.2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
-                  {u.name}
-                </div>
-                {entry.mount && (
-                  <div style={{ fontSize:`calc(${fs} * 0.78)`, color: cardMuted, lineHeight:1.1 }}>+ {entry.mount.name}</div>
-                )}
-              </div>
-            </div>
-            <div style={{ fontSize:`calc(${fs} * 1.05)`, fontWeight:700, color: cardText, whiteSpace:"nowrap", flexShrink:0 }}>{pts}pts</div>
-          </div>
-
-          {/* Stats row: [TYPE vertical] [ATK|HITS|ARM grid] [CMD/SZ/MIN/MAX column] */}
-          <div style={{
-            display:"flex", alignItems:"stretch",
-            borderBottom:`1px solid ${divider}`,
-            flexShrink:0, height:"17mm",
-          }}>
-            {/* Rotated type label */}
-            <div style={{
-              writingMode:"vertical-rl", transform:"rotate(180deg)",
-              fontSize:`calc(${fs} * 0.68)`, letterSpacing:"0.8px",
-              color: cardMuted, padding:"1mm 1.5mm",
-              borderRight:`1px solid ${divider}`,
-              background: cardBorder+"18",
-              display:"flex", alignItems:"center", justifyContent:"center",
-              flexShrink:0,
-            }}>{u.type.toUpperCase()}</div>
-
-            {/* ATK / HITS / ARM — 3 equal columns */}
-            <div style={{ flex:1, display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1px", padding:"1.5mm 1mm" }}>
-              {mainStats.map(({k,v}) => statCell(k, v, { height:"100%" }))}
-            </div>
-
-            {/* CMD / SZ / MIN / MAX — right column */}
-            <div style={{
-              width:"11mm", display:"flex", flexDirection:"column",
-              gap:"1px", padding:"1.5mm 1mm",
-              borderLeft:`1px solid ${divider}`,
-            }}>
-              {sideStats.map(({k,v}) => statCell(k, v, { flex:1 }))}
-            </div>
-          </div>
-
-          {/* Rules text */}
-          <div style={{
-            flex:1, padding:"2mm 2.5mm",
-            fontSize:`calc(${fs} * 0.85)`,
-            color: cardMuted, lineHeight:1.55,
-            overflowY:"hidden",
-          }}>
-            {u.special && <div>{u.special}</div>}
-            {entry.magicItem && (
-              <div style={{ marginTop:"1mm", color: mode==="white" ? "#553300" : "#d4b060" }}>
-                <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
-              </div>
-            )}
-            {entry.mount?.special && (
-              <div style={{ marginTop:"1mm" }}>
-                <strong>{entry.mount.name}:</strong> {entry.mount.special}
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div style={{
-            borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
-            display:"flex", justifyContent:"space-between", alignItems:"center",
-            background: cardBorder+"12", flexShrink:0,
-          }}>
-            <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted, letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</div>
-            <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted }}>{army.name.toUpperCase()}</div>
-          </div>
-        </>)}
-
-        {/* ══ LANDSCAPE ══ */}
-        {isLandscape && (<>
-          {/* Left stat column */}
-          <div style={{
-            width:"18mm", background: cardBorder+"20",
-            borderRight:`1px solid ${divider}`,
-            display:"flex", flexDirection:"column",
-            padding:"2mm 1.5mm", gap:"1px", flexShrink:0,
-          }}>
-            {/* Rotated type at top of column */}
-            <div style={{
-              writingMode:"vertical-rl", transform:"rotate(180deg)",
-              fontSize:`calc(${fs} * 0.65)`, color: cardMuted, letterSpacing:"0.8px",
-              textAlign:"center", marginBottom:"1mm", height:"14mm",
-              display:"flex", alignItems:"center", justifyContent:"center",
-            }}>{u.type.toUpperCase()}</div>
-            {[...mainStats, ...sideStats].map(({k,v}) => statCell(k, v, { padding:"1px 0", marginBottom:"1px" }))}
-          </div>
-
-          {/* Right content */}
-          <div style={{ flex:1, display:"flex", flexDirection:"column", padding:"2mm 2.5mm", overflow:"hidden" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", borderBottom:`1px solid ${divider}`, paddingBottom:"1mm", marginBottom:"1.5mm" }}>
-              <div style={{ fontSize:`calc(${fs} * 1.1)`, fontWeight:700, color: cardText }}>
-                {u.name}
-                {entry.mount && <span style={{ fontSize:`calc(${fs} * 0.75)`, color: cardMuted, display:"block" }}>+ {entry.mount.name}</span>}
-              </div>
-              <div style={{ fontSize:`calc(${fs} * 1)`, fontWeight:700, color: cardText, whiteSpace:"nowrap" }}>{pts}pts</div>
-            </div>
-            <div style={{ flex:1, fontSize:`calc(${fs} * 0.88)`, color: cardMuted, lineHeight:1.5, overflowY:"hidden" }}>
-              {u.special && <div>{u.special}</div>}
-              {entry.magicItem && (
-                <div style={{ marginTop:"1mm", color: mode==="white" ? "#553300" : "#d4b060" }}>
-                  <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
-                </div>
-              )}
-            </div>
-            <div style={{ borderTop:`1px solid ${divider}`, paddingTop:"1mm", fontSize:`calc(${fs} * 0.62)`, color: cardMuted, display:"flex", justifyContent:"space-between" }}>
-              <span>WARMASTER REVOLUTION</span><span>{army.name.toUpperCase()}</span>
-            </div>
-          </div>
-        </>)}
-      </div>
-    );
-  }
-
-    // Options modal
-  function OptionsModal() {
-    const [local, setLocal] = useState({...printOpts});
-    return (
-      <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
-        <div style={{ background:"#0d0b08", border:`2px solid ${army.color}60`, borderRadius:10, padding:24, width:"100%", maxWidth:380, color:"#d4c8a8" }}>
-          <div style={{ fontFamily:"'Cinzel',serif", fontSize:"1.1rem", color: army.accent, marginBottom:18, letterSpacing:2 }}>⚙ PRINT OPTIONS</div>
-
-          {/* Card size / layout */}
-          <div style={{ marginBottom:16 }}>
-            <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:8 }}>CARD SIZE</div>
-            <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-              <div style={{
-                  flex:1, padding:"10px 6px", borderRadius:6,
-                  border: `2px solid ${army.color}`,
-                  background: army.color+"25",
-                  color: army.accent,
-                  fontFamily:"'Cinzel',serif",
-                  textAlign:"center",
-                }}>
-                  <div style={{ fontSize:"0.8rem", fontWeight:700 }}>Portrait</div>
-                  <div style={{ fontSize:"0.65rem", marginTop:2, opacity:0.7 }}>2.5 × 3.5"</div>
-                </div>
-            </div>
-          </div>
-
-          {/* Color mode */}
-          <div style={{ marginBottom:16 }}>
-            <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:8 }}>COLOR</div>
-            <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
-              {[
-                { val:"faction",   label:"Dark Faction",  sub:"Full dark theme"       },
-                { val:"cardcolor", label:"Faction Tinted", sub:"Dark + high contrast" },
-                { val:"white",     label:"White / Print",  sub:"Best for printing"    },
-              ].map(opt => (
-                <button key={opt.val} onClick={() => setLocal(l => ({...l, colorMode: opt.val}))}
-                  style={{
-                    flex:1, minWidth:"80px", padding:"10px 6px", borderRadius:6, cursor:"pointer",
-                    border: local.colorMode === opt.val ? `2px solid ${army.color}` : "2px solid #333",
-                    background: local.colorMode === opt.val ? army.color+"25" : "#111",
-                    color: local.colorMode === opt.val ? army.accent : "#888",
-                    fontFamily:"'Cinzel',serif",
-                  }}>
-                  <div style={{ fontSize:"0.8rem", fontWeight:700 }}>{opt.label}</div>
-                  <div style={{ fontSize:"0.62rem", marginTop:2, opacity:0.7 }}>{opt.sub}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Image placeholder toggle */}
-          <div style={{ marginBottom:20 }}>
-            <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:8 }}>IMAGE AREA</div>
-            <div style={{ display:"flex", gap:8 }}>
-              {[
-                { val:true,  label:"Show Image Area", sub:"Empty box for art" },
-                { val:false, label:"No Image Area",   sub:"More text space" },
-              ].map(opt => (
-                <button key={String(opt.val)} onClick={() => setLocal(l => ({...l, showImage: opt.val}))}
-                  style={{
-                    flex:1, padding:"10px 8px", borderRadius:6, cursor:"pointer",
-                    border: local.showImage === opt.val ? `2px solid ${army.color}` : "2px solid #333",
-                    background: local.showImage === opt.val ? army.color+"25" : "#111",
-                    color: local.showImage === opt.val ? army.accent : "#888",
-                    fontFamily:"'Cinzel',serif",
-                  }}>
-                  <div style={{ fontSize:"0.8rem", fontWeight:700 }}>{opt.label}</div>
-                  <div style={{ fontSize:"0.65rem", marginTop:2, opacity:0.7 }}>{opt.sub}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Extra cards */}
-          <div style={{ marginBottom:20 }}>
-            <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1, marginBottom:10 }}>EXTRA REFERENCE CARDS</div>
-            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-              {[
-                { key:"includeArmyRules", label:"Special Rules Cards", sub:"One landscape card per special army rule" },
-                { key:"includeSpells",    label:"Spell List Card",   sub:"Spell cards (only shown if army has spells)"     },
-              ].map(({ key, label, sub }) => (
-                <label key={key}
-                  style={{ display:"flex", alignItems:"center", gap:12, cursor:"pointer", padding:"10px 12px", borderRadius:6, background:"#0a0806", border:`1px solid ${local[key] ? army.color+"60" : "#222"}`, transition:"border 0.15s" }}>
-                  <div
-                    onClick={() => setLocal(l => ({...l, [key]: !l[key]}))}
-                    style={{
-                      width:20, height:20, borderRadius:4, flexShrink:0, cursor:"pointer",
-                      background: local[key] ? army.color : "#111",
-                      border: `2px solid ${local[key] ? army.color : "#444"}`,
-                      display:"flex", alignItems:"center", justifyContent:"center",
-                      transition:"all 0.15s",
-                    }}>
-                    {local[key] && <span style={{ color:"#fff", fontSize:"0.75rem", fontWeight:700, lineHeight:1 }}>✓</span>}
-                  </div>
-                  <div>
-                    <div style={{ fontSize:"0.85rem", color: local[key] ? army.accent : "#666", fontFamily:"'Cinzel',serif", fontWeight:700 }}>{label}</div>
-                    <div style={{ fontSize:"0.65rem", color:"#444", marginTop:2 }}>{sub}</div>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Font size slider */}
-          <div style={{ marginBottom:20 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:8 }}>
-              <div style={{ fontSize:"0.78rem", color:"#888", fontFamily:"'Cinzel',serif", letterSpacing:1 }}>FONT SIZE</div>
-              <div style={{ fontSize:"0.78rem", color: army.accent, fontFamily:"'Cinzel',serif" }}>{Math.round(local.fontScale * 100)}%</div>
-            </div>
-            <input type="range" min="70" max="140" step="5"
-              value={Math.round(local.fontScale * 100)}
-              onChange={e => setLocal(l => ({...l, fontScale: Number(e.target.value) / 100}))}
-              style={{ width:"100%", accentColor: army.color, cursor:"pointer" }}
-            />
-            <div style={{ display:"flex", justifyContent:"space-between", fontSize:"0.62rem", color:"#444", marginTop:3 }}>
-              <span>70% — Tiny</span><span>100% — Normal</span><span>140% — Large</span>
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div style={{ display:"flex", gap:10 }}>
-            <button onClick={() => setShowOptions(false)}
-              style={{ flex:1, padding:"10px", background:"none", border:"1px solid #444", color:"#888", borderRadius:6, cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
-              CANCEL
-            </button>
-            <button onClick={() => { setPrintOpts(local); setShowOptions(false); }}
-              style={{ flex:2, padding:"10px", background:`linear-gradient(135deg,${army.color},${army.color}99)`, border:"none", color:"#111", borderRadius:6, cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:"0.9rem" }}>
-              APPLY & PREVIEW
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div style={{ background: mode==="white" ? "#e8e8e8" : "#111111", minHeight:"100vh" }} id="print-root">
       <GS />
-      {showOptions && <OptionsModal />}
-
       {/* Screen toolbar — hidden when printing */}
       <div className="no-print" style={{
         position:"sticky", top:0, zIndex:200,
@@ -3156,10 +3099,7 @@ function PrintView({ army, roster, onClose }) {
         <div style={{ flex:1, fontFamily:"'Cinzel',serif", color: army.accent, textAlign:"center", letterSpacing:2, fontSize:"0.9rem" }}>
           {army.name.toUpperCase()} — {total}pts — {roster.length} cards
         </div>
-        <button onClick={() => setShowOptions(true)}
-          style={{ background:"none", border:`1px solid ${army.color}60`, color: army.color, borderRadius:5, padding:"7px 12px", fontSize:"0.9rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
-          ⚙ OPTIONS
-        </button>
+
         <button onClick={() => window.print()}
           style={{ background:`linear-gradient(135deg,${army.color},${army.color}99)`, border:"none", color:"#fff", borderRadius:5, padding:"7px 16px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700 }}>
           🖨 PRINT
@@ -3169,44 +3109,51 @@ function PrintView({ army, roster, onClose }) {
       {/* Cards — shown on screen + printed */}
       {(() => {
         const spellItems = [];
-        if (printOpts.includeSpells) {
-          if (army.spells && Array.isArray(army.spells)) army.spells.forEach(s => spellItems.push(s));
-          if (army.instabilityTable && Array.isArray(army.instabilityTable))
-            army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
-        }
+        if (army.spells && Array.isArray(army.spells)) army.spells.forEach(s => spellItems.push(s));
+        if (army.bloodRites && Array.isArray(army.bloodRites)) army.bloodRites.forEach(s => spellItems.push({...s, bloodRite:true}));
+        if (army.instabilityTable && Array.isArray(army.instabilityTable))
+          army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
         return (
           <div className="print-area" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+            {/* Army-wide special rule cards (unit-specific rules show on unit card) */}
             {printOpts.includeArmyRules && army.armyRules && army.armyRules.length > 0 && (() => {
-              // Only show rules relevant to units actually in the roster
               const selectedUnitNames = new Set(roster.map(e => e.unit.name.toLowerCase()));
-              const relevantRules = army.armyRules.filter(rule => {
-                const rNameLower = rule.name.toLowerCase();
-                // Always show army-wide rules (marked with "army rule" in name)
-                if (rNameLower.includes('army rule') || rule.name.toLowerCase().includes('(army rule)')) return true;
-                // Check if the rule name matches any selected unit name
+              const armyWideRules = army.armyRules.filter(rule => {
+                const rn = rule.name.toLowerCase();
+                // Army-wide = explicitly marked OR doesn't match any specific unit name
+                if (rn.includes('army rule') || rn.includes('(army rule)')) return true;
+                // If it matches a selected unit name, it will appear on that unit's card instead
                 for (const unitName of selectedUnitNames) {
-                  // Split rule name on common delimiters and check each part
-                  const ruleParts = rNameLower.split(/[,\/&]/).map(p => p.trim());
-                  for (const part of ruleParts) {
-                    if (unitName.includes(part) || part.includes(unitName)) return true;
-                  }
-                  // Also check if unit name contains any significant word from the rule name
-                  const ruleWords = rNameLower.replace(/[()]/g, '').split(/\s+/).filter(w => w.length > 3);
-                  for (const word of ruleWords) {
-                    if (unitName.includes(word)) return true;
-                  }
+                  const ruleClean = rn.replace(/\(army rule\)/,'').trim();
+                  if (unitName.includes(ruleClean) || ruleClean.includes(unitName)) return false;
+                  const words = ruleClean.split(/\s+/).filter(w => w.length > 3);
+                  if (words.some(w => unitName.includes(w))) return false;
                 }
-                return false;
+                return true;
               });
-              return relevantRules.map((rule, i) => (
-                <SpecialRuleCard key={`rule-${i}`} rule={rule} ruleIndex={i} totalRules={relevantRules.length} />
+              return armyWideRules.map((rule, i) => (
+                <SpecialRuleCard key={`rule-${i}`} rule={rule} />
               ));
             })()}
+
+            {/* Spell cards */}
             {spellItems.map((spell, i) => (
-              <SpellCard key={`spell-${i}`} spell={spell} index={i+1} total={spellItems.length} />
+              <SpellCard key={`spell-${i}`} spell={spell} />
             ))}
+
+            {/* Unit cards */}
             {roster.map((entry, idx) => (
-              <PrintCard key={idx} entry={entry} />
+              <PrintCard key={`unit-${idx}`} entry={entry} />
+            ))}
+
+            {/* Mount cards — one per entry that has a mount */}
+            {roster.filter(e => e.mount).map((entry, idx) => (
+              <MountCard key={`mount-${idx}`} entry={entry} />
+            ))}
+
+            {/* Magic item cards — one per entry that has a magic item */}
+            {roster.filter(e => e.magicItem).map((entry, idx) => (
+              <MagicItemCard key={`mi-${idx}`} mi={entry.magicItem} />
             ))}
           </div>
         );
@@ -3581,6 +3528,118 @@ function SavedLists({ onBack, onLoad, session }) {
 }
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
+// ── MAGIC ITEMS PRINT VIEW ────────────────────────────────────────────────────
+function MagicItemsPrintView({ onClose }) {
+  const allItems = [...MAGIC_STANDARDS, ...MAGIC_WEAPONS, ...DEVICES_OF_POWER];
+  const mode = "faction"; // dark mode for magic items
+
+  return (
+    <div style={{ background:"#111", minHeight:"100vh" }}>
+      <style>{`
+        @media print { .no-print { display:none !important; } * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; } @page { margin:6mm; } }
+        .mi-print-area { display:flex; flex-wrap:wrap; gap:8px; padding:12px; justify-content:flex-start; }
+      `}</style>
+
+      {/* Toolbar */}
+      <div className="no-print" style={{
+        position:"sticky", top:0, zIndex:200,
+        background:"#0d0b08", borderBottom:"2px solid #c8a04060",
+        padding:"10px 14px", display:"flex", alignItems:"center", gap:10,
+      }}>
+        <button onClick={onClose}
+          style={{ background:"none", border:"1px solid #c8a04060", color:"#c8a040", borderRadius:5, padding:"7px 14px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
+          ← BACK
+        </button>
+        <div style={{ flex:1, fontFamily:"'Cinzel',serif", color:"#c8a040", textAlign:"center", letterSpacing:2, fontSize:"0.9rem" }}>
+          ✦ MAGIC ITEMS — {allItems.length} cards
+        </div>
+        <button onClick={() => window.print()}
+          style={{ background:"linear-gradient(135deg,#c8a040,#c8a04099)", border:"none", color:"#111", borderRadius:5, padding:"7px 16px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700 }}>
+          🖨 PRINT
+        </button>
+      </div>
+
+      {/* Cards */}
+      <div className="mi-print-area">
+        {allItems.map((mi, i) => (
+          <MagicItemStandaloneCard key={i} mi={mi} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Standalone version of MagicItemCard that doesn't need PrintView context
+function MagicItemStandaloneCard({ mi }) {
+  const miAccent = "#c8a040";
+  const miBg     = "#1a1508";
+  const miBorder = "#8a6820";
+  const miText   = "#f0d890";
+  const miMuted  = "#b89840";
+  const catIcon  = { Weapon:"⚔", Device:"✦", Banner:"🏳" }[mi.category] || "✦";
+  const imgUrl   = (typeof IMAGES !== "undefined" && IMAGES.magicItems?.[mi.id]) || "";
+  const fs = (m=1) => `${Math.round(11.2 * m * 10)/10}px`;
+
+  return (
+    <div style={{
+      width:"63mm", height:"88mm",
+      background:"#000", borderRadius:"4mm", padding:"3mm",
+      boxSizing:"border-box", pageBreakInside:"avoid", breakInside:"avoid",
+      WebkitPrintColorAdjust:"exact", printColorAdjust:"exact", flexShrink:0,
+    }}>
+      <div style={{
+        width:"100%", height:"100%",
+        background:miBg, borderRadius:"2mm",
+        display:"flex", flexDirection:"column",
+        overflow:"hidden", position:"relative",
+        fontFamily:"'Cinzel',Georgia,serif", boxSizing:"border-box",
+        border:`1px solid ${miBorder}44`,
+      }}>
+        {/* Image + name overlay */}
+        <div style={{ width:"100%", height:"40mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`1.5px solid ${miBorder}` }}>
+          {imgUrl ? (
+            <img src={imgUrl} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
+          ) : (
+            <div style={{ width:"100%", height:"100%", background:`linear-gradient(160deg,${miAccent}33,${miBg})`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <div style={{ fontSize:"28px", opacity:0.35 }}>{catIcon}</div>
+            </div>
+          )}
+          {/* Name gradient overlay */}
+          <div style={{ position:"absolute", bottom:0, left:0, right:0, background:"linear-gradient(transparent,rgba(0,0,0,0.82))", padding:"6mm 2.5mm 2mm", zIndex:5 }}>
+            <div style={{ fontSize:fs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>{mi.name}</div>
+          </div>
+          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"2px", background:`linear-gradient(90deg,transparent,${miAccent},transparent)` }} />
+        </div>
+
+        {/* Category + cost */}
+        <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${miBorder}44`, flexShrink:0, display:"flex", justifyContent:"space-between", alignItems:"center", background:`${miAccent}11` }}>
+          <div style={{ background:`${miAccent}22`, border:`1px solid ${miAccent}55`, borderRadius:"2px", padding:"0.5mm 2mm", fontSize:fs(0.65), color:miAccent, letterSpacing:"1px", textTransform:"uppercase" }}>
+            {catIcon} {mi.category || "Magic Item"}
+          </div>
+          <div style={{ fontSize:fs(0.88), fontWeight:700, color:miAccent }}>{mi.cost}pts</div>
+        </div>
+
+        {/* Restriction */}
+        <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${miBorder}33`, flexShrink:0 }}>
+          <div style={{ fontSize:fs(0.65), color:miMuted, fontStyle:"italic", lineHeight:1.4 }}>📋 {mi.restriction}</div>
+        </div>
+
+        {/* Description */}
+        <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
+          <div style={{ fontSize:fs(0.78), color:miText, lineHeight:1.55, fontFamily:"Georgia,serif" }}>{mi.desc}</div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ borderTop:`1px solid ${miBorder}44`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", background:`${miAccent}0a`, flexShrink:0 }}>
+          <div style={{ fontSize:fs(0.6), color:miMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Magic Item</div>
+          <div style={{ fontSize:fs(0.6), color:miAccent, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function App() {
   const [screen, setScreen] = useState("factions");
   const [selectedArmy, setSelectedArmy] = useState(null);
@@ -3654,7 +3713,10 @@ function App() {
   }
 
   // ── Roster handlers ──
-  function handlePreview(key) { setPreviewArmy(key); }
+  function handlePreview(key) {
+    if (key === "magic_items") { setScreen("magic_items"); return; }
+    setPreviewArmy(key);
+  }
   function handleConfirm() { setSelectedArmy(previewArmy); setRoster([]); setPreviewArmy(null); setScreen("builder"); }
   function handleBack() { setPreviewArmy(null); setScreen("factions"); }
   function handleAddUnit(unit) {
@@ -3718,6 +3780,7 @@ function App() {
     );
   }
   if (screen === "print" && army) return <><GS /><PrintView army={army} roster={roster} onClose={() => setScreen("builder")} /></>;
+  if (screen === "magic_items") return <><GS /><MagicItemsPrintView onClose={() => setScreen("factions")} /></>;
 
   // ── Builder ──
   return (
