@@ -3007,7 +3007,7 @@ function PrintView({ army, roster, onClose }) {
   ];
 
   // ── Special rules text ─────────────────────────────────────────────────
-  const rulesText = (u.special || []).join(" · ");
+  const rulesText = typeof u.special === "string" ? u.special : (u.special || []).join(" · ");
   const hasRules = rulesText.length > 0;
   const upgradeLines = (entry.selectedUpgrades || []).map(upg => `+ ${upg.name}`);
   const mountLine = entry.mount ? `Mount: ${entry.mount.name}` : null;
@@ -3142,7 +3142,7 @@ function PrintView({ army, roster, onClose }) {
           {upgradeLines.length > 0 && (
             <div style={{ fontSize:"0.5rem", color: factionColor, lineHeight:1.3, overflow:"hidden",
               display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
-              {upgradeLines.join("  ·  ")}
+              {(Array.isArray(upgradeLines) ? upgradeLines : []).join("  ·  ")}
             </div>
           )}
           {/* Magic item */}
@@ -3821,7 +3821,7 @@ function App() {
             const unit = army.units.find(u => u.id === entry.id);
             if (!unit) return null;
             const magicItem = entry.mi
-              ? (MAGIC_ITEMS || []).find(m => m.id === entry.mi) || null
+              ? ([...MAGIC_STANDARDS, ...MAGIC_WEAPONS, ...DEVICES_OF_POWER]).find(m => m.id === entry.mi) || null
               : null;
             const mount = entry.mt
               ? (army.units.find(u => u.id === entry.mt) || null)
