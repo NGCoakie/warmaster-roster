@@ -258,7 +258,7 @@ const IMAGES = {
     chaos_boon_of_chaos: "https://cdn.midjourney.com/1393b7a8-0887-4d1e-b232-278182441c63/0_3.png",
     chaos_dwarfs_flaming_hand: "https://cdn.midjourney.com/1b51a00c-8271-40f3-8876-a560012ca0c1/0_2.png",
     chaos_dwarfs_meteor_storm: "https://cdn.midjourney.com/a71e6df4-39bb-465d-9b26-34d8ad0cf1bb/0_2.png",
-    chaos_dwarfs_volcanic_eruption: "https://cdn.midjourney.com/c95dcb70-fc01-4fa1-bb55-c5e8241eb6cahttps://cdn.midjourney.com/7058b92e-f8f6-49fa-813a-b726c68a1ea0/0_3.png/0_3.png",
+    chaos_dwarfs_volcanic_eruption: "https://cdn.midjourney.com/c95dcb70-fc01-4fa1-bb55-c5e8241eb6ca/0_0.png",
     chaos_dwarfs_word_of_fear: "https://cdn.midjourney.com/7058b92e-f8f6-49fa-813a-b726c68a1ea0/0_3.png",
     chaos_rage_of_chaos: "https://cdn.midjourney.com/605d946d-cfc0-4424-9418-25f8dea67894/0_0.png",
     daemons_khorne_blood_for_the_blood_god: "https://cdn.midjourney.com/789a6011-7f0e-4a45-bb01-25a2a6cd39d1/0_3.png",
@@ -455,8 +455,7 @@ const ARMIES = {
     armyRules:[{name:"Goblins", desc:"A Goblin unit can shoot as if it had bows but range is reduced to 15cm."}, {name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (40cm = -2, 60cm = -4). Trolls regenerate: in each combat round after whole stands are removed, Trolls automatically regenerate one outstanding hit. Regenerated hits still count towards the combat result."}, {name:"Ogres", desc:"If an Ogre unit can use initiative to charge an enemy unit of humans at the start of the Command phase it must do so automatically. 'Humans' includes Chaos Warriors and Marauders but not Dwarfs or Elves."}, {name:"Wolf Riders", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies. Still needs Line of Sight from front edge to charge."}, {name:"Giants", desc:"Must always be given a separate order and cannot brigade with other troops (can brigade with other Giants). On a failed order roll on the Giant Goes Wild chart. Giants with 5-7 accumulated hits (while not engaged) become Badly Hurt — Hits and Attacks halved to 4 each. Giants cause terror."}, {name:"Rock Lobber", desc:"Stone Thrower as per Rulebook p.75."},
       {name:"Giant Goes Wild", desc:"D6 — Giant Goes Wild: 1: Stands dopey, neither moves nor fights. 2: Moves toward nearest table edge; charges any unit he contacts, holds ground if victorious. 3: Throws object at closest visible unit within 5xD6cm, inflicting 3 Attacks. 4: Moves straight forward at full pace; charges enemies, walks through friendlies causing Confusion. 5: Moves toward nearest visible enemy as fast as possible, charging if reached; walks through friends causing Confusion. No visible enemy: does nothing. 6: Bellows and charges nearest visible enemy at DOUBLE full pace. If he reaches the enemy, doubles his Attacks in the first round of combat. No visible enemy: does nothing."}],
         spells:[{name:"Foot of Gork", cast:"6+", range:"50cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The unit suffers 6 attacks. Cannot be driven back by the Foot of Gork (it descends from above)."}, {name:"Gotcha!", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Shaman in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Gerroff!!!", cast:"5+", range:"60cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The enemy unit is driven back 1D6×5cm towards its own table edge. Cannot be routed by this drive back. If the unit leaves the table it rolls as normal."},
-      { name:"Waaagh!", cast:"4+", range:"30cm", desc:"The shaman summons the power of the mighty Waaagh! to invigorate the greenskins. Cast on a friendly unit of Orc or Goblins engaged in combat — including Black Orcs, Wolf Riders, Boar Boyz and any type of Orc or Goblin troops, but not Trolls, Ogres, Giants or other non-greenskins. Can be cast regardless of whether the Shaman can see the target or not. The spell lasts for the duration of the following Combat phase. Every stand in the unit, including characters, adds +1 to its Attacks value." }
-    , {name:"WAAAGH!", cast:"4+", range:"30cm", desc:"Cast on a friendly unit of Orcs or Goblins engaged in combat (including Black Orcs, Wolf Riders, Boar Boyz and any Orc/Goblin type) — not Trolls, Ogres, Giants or non-greenskins. No LoS needed. Every stand adds +1 to its Attacks value for the following Combat phase."}],
+      { name:"Waaagh!", cast:"4+", range:"30cm", desc:"The shaman summons the power of the mighty Waaagh! to invigorate the greenskins. Cast on a friendly unit of Orc or Goblins engaged in combat — including Black Orcs, Wolf Riders, Boar Boyz and any type of Orc or Goblin troops, but not Trolls, Ogres, Giants or other non-greenskins. Can be cast regardless of whether the Shaman can see the target or not. The spell lasts for the duration of the following Combat phase. Every stand in the unit, including characters, adds +1 to its Attacks value." }],
     playstyle:"Overwhelming mass of bodies backed by hard-hitting monsters and trolls. Animosity can cause chaos in your own lines \u2014 build brigades to mitigate it. Let the greenskin tide roll forward and drown the enemy.",
     fluff:"The Orc tribes of the Old World need little reason to go to war \u2014 a good scrap is its own reward. When a powerful Warboss emerges to unite the clans under a single Waaagh!, entire regions tremble. Greenskin hordes pour south in an unstoppable tide of violence, noise and barely-contained chaos. Their greatest weakness is themselves.",
     traits:["Massive numbers", "Animosity mechanic", "Varied unit types", "Giants and trolls"],
@@ -799,25 +798,16 @@ const ARMIES = {
     strengths:"Highest combat power of any daemon army; Bloodthirster is game-ending; Flesh Hounds resist magic",
     weaknesses:"Zero magic, zero shooting; must reach combat to do anything; Daemonic Instability punishes losses",
     generalCmd:9,
-    spells: [
-      { name:"Blood for the Blood God", cast:"Passive", range:"Army",
-        desc:"At the start of each Combat phase, every Khorne unit in base contact with an enemy gains +1 Attack. This bonus applies to all stands in the unit and stacks with other modifiers." },
-      { name:"Berserker Charge", cast:"Passive", range:"Unit",
-        desc:"Any Khorne unit that charges in the same turn it receives an order adds +1 Attack in the first round of combat. Units that pursue after breaking an enemy also gain this bonus." },
-      { name:"Rage Beyond Reason", cast:"Passive", range:"Unit",
-        desc:"Khorne units are Unbreakable — they never take break tests from combat losses. Instead, at the start of each Command phase, roll on the Daemonic Instability table for any unit that suffered casualties last turn." },
-      { name:"Skull Throne's Tithe", cast:"Passive", range:"Army",
-        desc:"Whenever a Khorne unit destroys an enemy unit in combat, roll a D6. On a 4+, one stand in the victorious unit recovers 1 hit previously lost in that combat — the Blood God rewards his champions." },
-      { name:"Unstoppable Slaughter", cast:"Passive", range:"Unit",
-        desc:"Khorne units may never be given orders to Halt, Fall Back, or Retreat. They must always advance toward the nearest enemy or pursue broken units. This is a compulsion, not a choice." },
-      { name:"Daemonic Instability (1)", cast:"Roll", range:"Unit",
-        desc:"Roll of 1: Abandoned by Rage — The Blood God turns away. Lose D3 additional stands as daemons dissolve back into the warp screaming." },
-      { name:"Daemonic Instability (2–3)", cast:"Roll", range:"Unit",
-        desc:"Roll of 2–3: Blind Fury — The unit goes berserk. It must make an initiative charge at the nearest enemy unit (friend or foe). If no target in range, the unit is confused this turn." },
-      { name:"Daemonic Instability (4–5)", cast:"Roll", range:"Unit",
-        desc:"Roll of 4–5: Held by Rage — The unit grits through its losses. No additional effect this turn. The blood spilled sustains them." },
-      { name:"Daemonic Instability (6)", cast:"Roll", range:"Unit",
-        desc:"Roll of 6: Khorne's Favour — A mighty daemon answers the call. Recover 1 previously lost stand as a new champion manifests to replace the fallen." },
+    armyRules:[
+      {name:"Daemonic Instability", desc:"At the start of each of your Command phases, any Khorne unit that suffered casualties last turn must roll on the Daemonic Instability table: 1 = Abandoned by Rage (lose D3 stands, no save); 2–3 = Blind Fury (must initiative-charge nearest enemy, friend or foe — if none in range, unit is confused); 4–5 = Held by Rage (no additional effect); 6 = Khorne's Favour (recover 1 previously lost stand)."},
+      {name:"Hell Blades", desc:"Bloodletters add +1 Attack in the first round of any combat (including counter-charge). This represents the supernatural keenness of their daemonic blades."},
+      {name:"Bloodcrushers: Devastating Charge", desc:"Bloodcrushers cause terror. They gain +1 Attack when charging in open ground, in addition to the normal charge bonus."},
+      {name:"Flesh Hounds: Collar of Khorne", desc:"Flesh Hounds are immune to all spell effects. Spells cast upon a unit containing Flesh Hounds have no effect on them."},
+      {name:"Bloodthirster", desc:"The Bloodthirster flies (move 100cm) and causes terror. If reduced to 4–5 hits remaining it is Badly Hurt: halved to 3 Hits and 4 Attacks. It is the most powerful monster stand in the game."},
+    ],
+    spells:[
+      { name:"Blood for the Blood God", cast:"4+", range:"30cm",
+        desc:"The ground shakes as Khorne's power surges through his daemons. Cast on a friendly Khorne unit engaged in combat within 30cm (no LoS needed). Every stand in the unit, including characters, adds +1 to its Attacks value for the duration of the following Combat phase." },
     ],
     units:[
       // ── CHARACTERS ──────────────────────────────────────────────────────
@@ -1239,7 +1229,7 @@ const ARMIES = {
     lore:"A vast all-goblin horde of wolf riders, night goblins, pump wagons and lumbering giants.",
     armyRules:[{name:"Goblins", desc:"A Goblin unit can shoot as if it had bows at 15cm range. Up to two units per 1000pts can be replaced by Squig Herd while still counting for the Goblin min/max value."}, {name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (40cm = -2, 60cm = -4). Trolls regenerate: in each combat round after whole stands are removed, Trolls automatically regenerate one outstanding hit. Regenerated hits still count towards the combat result."}, {name:"Wolf Riders", desc:"15cm shooting range with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Pump Wagon", desc:"Does not move by initiative or orders. Instead it always moves once automatically up to 1D6x10cm during the Command phase (no Command roll required). This can happen at any time during the Command phase but cannot interrupt orders or other movements. In the combat round it charges/pursues/advances, a Pump Wagon receives D6 Attacks in addition to normal extra charge attacks."}, {name:"Giants", desc:"Must be given separate orders; cannot brigade. On failed order roll on Giant Goes Wild chart. With 5-7 accumulated hits while not engaged, becomes Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Causes terror."},
       {name:"Giant Goes Wild", desc:"D6 — Giant Goes Wild: 1: Stands dopey, neither moves nor fights. 2: Moves toward nearest table edge; charges any unit he contacts, holds ground if victorious. 3: Throws object at closest visible unit within 5xD6cm, inflicting 3 Attacks. 4: Moves straight forward at full pace; charges enemies, walks through friendlies causing Confusion. 5: Moves toward nearest visible enemy as fast as possible, charging if reached; walks through friends causing Confusion. No visible enemy: does nothing. 6: Bellows and charges nearest visible enemy at DOUBLE full pace. If he reaches the enemy, doubles his Attacks in the first round of combat. No visible enemy: does nothing."}],
-        spells:[{name:"Mork Save Uz!", cast:"5+", range:"30cm", desc:"Cast on any friendly unit within 30cm. The unit gains a 5+ save (worked out normally) until the beginning of their next turn. If the unit already has a saving roll, choose which to use — may not take both."}, {name:"Gerroff!!!", cast:"5+", range:"60cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The enemy unit is driven back 1D6×5cm towards its own table edge. Cannot be routed by this drive back."}, {name:"Brain Busta", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not in combat. Treated as 3 shooting attacks but armour has no effect. Can cause drive back as normal shooting."}, {name:"Waaagh!", cast:"4+", range:"30cm", desc:"Cast on a friendly unit of Goblins (including Squig Herds, Wolf Riders, Wolf Chariots, Pump Wagons — not Trolls, Giants, or non-greenskins) engaged in combat (no LoS needed). Every stand gains +1 Attack for the following Combat phase."}, {name:"WAAAGH!", cast:"4+", range:"30cm", desc:"Cast on a friendly unit of Goblins engaged in combat (including Squig Herds, Wolf Riders, Wolf Chariots and Pump Wagons) — not Trolls, Giants or other non-greenskins. No LoS needed. Every stand adds +1 to its Attacks value for the following Combat phase."}],
+        spells:[{name:"Mork Save Uz!", cast:"5+", range:"30cm", desc:"Cast on any friendly unit within 30cm. The unit gains a 5+ save (worked out normally) until the beginning of their next turn. If the unit already has a saving roll, choose which to use — may not take both."}, {name:"Gerroff!!!", cast:"5+", range:"60cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The enemy unit is driven back 1D6×5cm towards its own table edge. Cannot be routed by this drive back."}, {name:"Brain Busta", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not in combat. Treated as 3 shooting attacks but armour has no effect. Can cause drive back as normal shooting."}, {name:"Waaagh!", cast:"4+", range:"30cm", desc:"Cast on a friendly unit of Goblins (including Squig Herds, Wolf Riders, Wolf Chariots, Pump Wagons — not Trolls, Giants, or non-greenskins) engaged in combat (no LoS needed). Every stand gains +1 Attack for the following Combat phase."}],
     playstyle:"Masses of cheap goblins backed by hard-hitting Trolls and chaotic Pump Wagons. Win by sheer volume and troll-fuelled brawls in the middle. Pump Wagons are hilarious and occasionally devastating.",
     fluff:"When left entirely to their own devices \u2014 without even Orcs to boss them about \u2014 Goblins organise. Sort of. A Goblin Warboss of sufficient cunning can marshal Wolf Rider hordes, Night Goblin mobs clutching their beloved Squigs, lumbering Trolls and the utterly unpredictable Pump Wagons into a force perfectly capable of burying an enemy in sheer green numbers.",
     traits:["All-goblin force", "Pump Wagons auto-move", "Trolls regenerate", "Low command values"],
@@ -2986,7 +2976,7 @@ function PrintView({ army, roster, onClose }) {
     function PrintCard({ entry }) {
     const u = entry.unit;
     const pts = entryTotal(entry);
-    const crestUrl = IMAGES.factionCrests[army.key] || "";
+    const crestUrl = IMAGES.factionBorders[army.key] || "";
 
     // ── Colour tokens ──────────────────────────────────────────────────────
     const factionColor = army.color || "#8b0000";
@@ -3021,7 +3011,7 @@ function PrintView({ army, roster, onClose }) {
         boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
         fontFamily:"'Georgia','Times New Roman',serif",
         pageBreakInside:"avoid",
-        background: `url(${SCROLL_BG}) center/cover no-repeat`,
+        background: `url(https://cdn.midjourney.com/7921febd-021d-4c05-af66-6a0f8232a944/0_1.png) center/cover no-repeat`,
       }}>
         {/* Dark overlay to soften scroll bg */}
         <div style={{ position:"absolute", inset:0, background:"rgba(15,8,2,0.18)", zIndex:0, borderRadius:"3px" }}/>
