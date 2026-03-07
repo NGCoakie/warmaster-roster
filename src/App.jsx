@@ -2984,195 +2984,195 @@ function PrintView({ army, roster, onClose }) {
     );
   }
 
-    function PrintCard({ entry }) {
-    const u = entry.unit;
-    const pts = entryTotal(entry);
-    const crestUrl = IMAGES.factionCrests[army.key] || "";
+  function PrintCard({ entry }) {
+  const u = entry.unit;
+  const pts = entryTotal(entry);
+  const crestUrl = IMAGES.factionBorders[army.key] || "";
 
-    // ── Colour tokens ──────────────────────────────────────────────────────
-    const factionColor = army.color || "#8b0000";
-    const factionAccent = army.accent || "#c0a030";
-    const inkDark   = "#1a0e05";
-    const parchment = "#f2e8ce";
-    const parchDark = "#e0cfa0";
-    const woodDark  = "#1c1208";
-    const woodMid   = "#2e1e0a";
+  // ── Colour tokens ──────────────────────────────────────────────────────
+  const factionColor = army.color || "#8b0000";
+  const factionAccent = army.accent || "#c0a030";
+  const inkDark   = "#1a0e05";
+  const parchment = "#f2e8ce";
+  const parchDark = "#e0cfa0";
+  const woodDark  = "#1c1208";
+  const woodMid   = "#2e1e0a";
 
-    // ── Stats ──────────────────────────────────────────────────────────────
-    const stats = [
-      { icon:"⚔", k:"ATK",  v: u.atk    },
-      { icon:"◈", k:"HITS", v: u.hits   },
-      { icon:"◇", k:"ARM",  v: u.armour },
-      { icon:"✦", k:"CMD",  v: u.cmd === "-" ? "-" : u.cmd },
-    ];
+  // ── Stats ──────────────────────────────────────────────────────────────
+  const stats = [
+    { icon:"⚔", k:"ATK",  v: u.atk    },
+    { icon:"◈", k:"HITS", v: u.hits   },
+    { icon:"◇", k:"ARM",  v: u.armour },
+    { icon:"✦", k:"CMD",  v: u.cmd === "-" ? "-" : u.cmd },
+  ];
 
-    // ── Special rules text ─────────────────────────────────────────────────
-    const rulesText = (u.special || []).join(" · ");
-    const hasRules = rulesText.length > 0;
-    const upgradeLines = (entry.selectedUpgrades || []).map(upg => `+ ${upg.name}`);
-    const mountLine = entry.mount ? `Mount: ${entry.mount.name}` : null;
+  // ── Special rules text ─────────────────────────────────────────────────
+  const rulesText = (u.special || []).join(" · ");
+  const hasRules = rulesText.length > 0;
+  const upgradeLines = (entry.selectedUpgrades || []).map(upg => `+ ${upg.name}`);
+  const mountLine = entry.mount ? `Mount: ${entry.mount.name}` : null;
 
-    return (
+  return (
+    <div style={{
+      width:"63mm", height:"88mm",
+      position:"relative", overflow:"hidden",
+      boxSizing:"border-box",
+      border:`2px solid ${factionColor}`,
+      borderRadius:"5px",
+      boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
+      fontFamily:"'Georgia','Times New Roman',serif",
+      pageBreakInside:"avoid",
+      background: `url(${SCROLL_BG}) center/cover no-repeat`,
+    }}>
+      {/* Dark overlay to soften scroll bg */}
+      <div style={{ position:"absolute", inset:0, background:"rgba(15,8,2,0.18)", zIndex:0, borderRadius:"3px" }}/>
+
+      {/* ── LEFT STAT BAR (dark wood-grain column) ─────────────────── */}
       <div style={{
-        width:"63mm", height:"88mm",
-        position:"relative", overflow:"hidden",
-        boxSizing:"border-box",
-        border:`2px solid ${factionColor}`,
-        borderRadius:"5px",
-        boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
-        fontFamily:"'Georgia','Times New Roman',serif",
-        pageBreakInside:"avoid",
-        background: `url(${SCROLL_BG}) center/cover no-repeat`,
+        position:"absolute", left:0, top:0, bottom:0, width:"11mm", zIndex:2,
+        background:`linear-gradient(180deg, ${woodDark} 0%, ${woodMid} 40%, ${woodDark} 100%)`,
+        borderRight:`2px solid ${factionColor}80`,
+        display:"flex", flexDirection:"column", alignItems:"center",
+        paddingTop:"2mm",
       }}>
-        {/* Dark overlay to soften scroll bg */}
-        <div style={{ position:"absolute", inset:0, background:"rgba(15,8,2,0.18)", zIndex:0, borderRadius:"3px" }}/>
-
-        {/* ── LEFT STAT BAR (dark wood-grain column) ─────────────────── */}
-        <div style={{
-          position:"absolute", left:0, top:0, bottom:0, width:"11mm", zIndex:2,
-          background:`linear-gradient(180deg, ${woodDark} 0%, ${woodMid} 40%, ${woodDark} 100%)`,
-          borderRight:`2px solid ${factionColor}80`,
-          display:"flex", flexDirection:"column", alignItems:"center",
-          paddingTop:"2mm",
-        }}>
-          {/* Wood grain lines */}
-          {[15,30,45,60,75,85].map(pct => (
-            <div key={pct} style={{
-              position:"absolute", left:"2px", right:"2px", top:`${pct}%`,
-              height:"1px", background:"rgba(255,255,255,0.04)",
-            }}/>
-          ))}
-          {/* Stat rows */}
-          {stats.map(({icon,k,v}) => (
-            <div key={k} style={{
-              width:"100%", display:"flex", flexDirection:"column", alignItems:"center",
-              padding:"2mm 0 1.5mm", borderBottom:`1px solid rgba(255,255,255,0.07)`,
-              flex:"0 0 auto",
-            }}>
-              <div style={{ fontSize:"0.9rem", color: factionAccent, lineHeight:1 }}>{icon}</div>
-              <div style={{ fontSize:"1rem", fontWeight:700, color:"#fff", lineHeight:1, marginTop:"0.5mm", fontFamily:"'Cinzel',serif" }}>
-                {v ?? "-"}
-              </div>
-              <div style={{ fontSize:"0.42rem", color:"#aaa", letterSpacing:"0.5px", marginTop:"0.3mm" }}>{k}</div>
-            </div>
-          ))}
-          {/* Points at bottom */}
-          <div style={{ marginTop:"auto", width:"100%", textAlign:"center", padding:"2mm 0 1.5mm", borderTop:`1px solid ${factionColor}50` }}>
-            <div style={{ fontSize:"0.8rem", fontWeight:700, color: factionAccent, fontFamily:"'Cinzel',serif", lineHeight:1 }}>{pts}</div>
-            <div style={{ fontSize:"0.42rem", color:"#888", letterSpacing:"0.5px" }}>PTS</div>
-          </div>
-        </div>
-
-        {/* ── MAIN CARD AREA (right of stat bar) ────────────────────── */}
-        <div style={{
-          position:"absolute", left:"11mm", top:0, right:0, bottom:0, zIndex:1,
-          display:"flex", flexDirection:"column",
-        }}>
-          {/* ── NAME BANNER ────────────────────────────────────────── */}
-          <div style={{
+        {/* Wood grain lines */}
+        {[15,30,45,60,75,85].map(pct => (
+          <div key={pct} style={{
+            position:"absolute", left:"2px", right:"2px", top:`${pct}%`,
+            height:"1px", background:"rgba(255,255,255,0.04)",
+          }}/>
+        ))}
+        {/* Stat rows */}
+        {stats.map(({icon,k,v}) => (
+          <div key={k} style={{
+            width:"100%", display:"flex", flexDirection:"column", alignItems:"center",
+            padding:"2mm 0 1.5mm", borderBottom:`1px solid rgba(255,255,255,0.07)`,
             flex:"0 0 auto",
-            background:`linear-gradient(90deg, ${factionColor}ee, ${factionColor}99 80%, transparent)`,
-            padding:"1.5mm 2mm 1.5mm 2.5mm",
-            display:"flex", alignItems:"center", justifyContent:"space-between",
-            borderBottom:`1px solid ${factionColor}80`,
-            minHeight:"7mm",
           }}>
-            <div style={{ fontSize:"0.72rem", fontFamily:"'Cinzel',serif", fontWeight:700, color:"#fff", lineHeight:1.1,
-              textShadow:"0 1px 3px rgba(0,0,0,0.9)", flex:1, marginRight:"1mm",
-              overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
-              {u.name}
+            <div style={{ fontSize:"0.9rem", color: factionAccent, lineHeight:1 }}>{icon}</div>
+            <div style={{ fontSize:"1rem", fontWeight:700, color:"#fff", lineHeight:1, marginTop:"0.5mm", fontFamily:"'Cinzel',serif" }}>
+              {v ?? "-"}
             </div>
-            {crestUrl ? (
-              <img src={crestUrl} style={{ width:"7mm", height:"7mm", objectFit:"contain", flexShrink:0, filter:"drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
-            ) : (
-              <div style={{ width:"7mm", height:"7mm", borderRadius:"50%", background:`${factionColor}40`,
-                border:`1px solid ${factionColor}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:"0.5rem", color: factionAccent }}>⚔</div>
-            )}
+            <div style={{ fontSize:"0.42rem", color:"#aaa", letterSpacing:"0.5px", marginTop:"0.3mm" }}>{k}</div>
           </div>
-
-          {/* ── TYPE BADGE ─────────────────────────────────────────── */}
-          <div style={{
-            flex:"0 0 auto", padding:"0.8mm 2.5mm",
-            background:"rgba(0,0,0,0.35)",
-            display:"flex", alignItems:"center", justifyContent:"space-between",
-          }}>
-            <span style={{ fontSize:"0.52rem", color: factionAccent, fontFamily:"'Cinzel',serif", letterSpacing:"0.8px", textTransform:"uppercase" }}>{u.type}</span>
-            <span style={{ fontSize:"0.52rem", color:"#aaa", fontStyle:"italic" }}>{u.size && `${u.min || 1}–${u.max || "∞"} stands`}</span>
-          </div>
-
-          {/* ── IMAGE AREA ─────────────────────────────────────────── */}
-          <div style={{
-            flex:"0 0 28mm", overflow:"hidden", position:"relative",
-            borderBottom:`1px solid ${factionColor}60`,
-          }}>
-            {IMAGES.units[u.id] ? (
-              <img src={IMAGES.units[u.id]} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-            ) : (
-              <div style={{
-                width:"100%", height:"100%",
-                background:`linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%)`,
-                display:"flex", alignItems:"center", justifyContent:"center",
-              }}>
-                <div style={{ textAlign:"center", opacity:0.25 }}>
-                  <div style={{ fontSize:"1.6rem" }}>⚔</div>
-                </div>
-              </div>
-            )}
-            {/* Gradient fade into parchment below */}
-            <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"8px",
-              background:"linear-gradient(transparent, rgba(0,0,0,0.4))" }}/>
-          </div>
-
-          {/* ── RULES / DESCRIPTION AREA (parchment) ──────────────── */}
-          <div style={{
-            flex:1, overflow:"hidden",
-            padding:"1.5mm 2.5mm 1mm",
-            display:"flex", flexDirection:"column", gap:"1mm",
-          }}>
-            {/* Special rules */}
-            {hasRules && (
-              <div style={{ fontSize:"0.52rem", color: inkDark, lineHeight:1.4,
-                overflow:"hidden", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical" }}>
-                <span style={{ fontWeight:700, color: factionColor, fontFamily:"'Cinzel',serif", fontSize:"0.5rem" }}>RULES </span>
-                {rulesText}
-              </div>
-            )}
-            {/* Upgrades */}
-            {upgradeLines.length > 0 && (
-              <div style={{ fontSize:"0.5rem", color: factionColor, lineHeight:1.3, overflow:"hidden",
-                display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
-                {upgradeLines.join("  ·  ")}
-              </div>
-            )}
-            {/* Magic item */}
-            {entry.magicItem && (
-              <div style={{ fontSize:"0.5rem", color: inkDark, lineHeight:1.3, marginTop:"0.5mm",
-                borderTop:`1px solid ${factionColor}30`, paddingTop:"0.8mm",
-                overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
-                <span style={{ color: factionColor, fontWeight:700 }}>✦ {entry.magicItem.name}: </span>
-                {entry.magicItem.desc}
-              </div>
-            )}
-            {/* Mount */}
-            {mountLine && (
-              <div style={{ fontSize:"0.5rem", color:"#555", fontStyle:"italic" }}>{mountLine}</div>
-            )}
-          </div>
-
-          {/* ── FOOTER ─────────────────────────────────────────────── */}
-          <div style={{
-            flex:"0 0 auto", padding:"1mm 2.5mm",
-            background:"rgba(0,0,0,0.3)",
-            borderTop:`1px solid ${factionColor}40`,
-            display:"flex", justifyContent:"space-between", alignItems:"center",
-          }}>
-            <span style={{ fontSize:"0.42rem", color:"#999", letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</span>
-            <span style={{ fontSize:"0.42rem", color: factionAccent, letterSpacing:"0.5px", fontFamily:"'Cinzel',serif" }}>{army.name.toUpperCase()}</span>
-          </div>
+        ))}
+        {/* Points at bottom */}
+        <div style={{ marginTop:"auto", width:"100%", textAlign:"center", padding:"2mm 0 1.5mm", borderTop:`1px solid ${factionColor}50` }}>
+          <div style={{ fontSize:"0.8rem", fontWeight:700, color: factionAccent, fontFamily:"'Cinzel',serif", lineHeight:1 }}>{pts}</div>
+          <div style={{ fontSize:"0.42rem", color:"#888", letterSpacing:"0.5px" }}>PTS</div>
         </div>
       </div>
-    );
+
+      {/* ── MAIN CARD AREA (right of stat bar) ────────────────────── */}
+      <div style={{
+        position:"absolute", left:"11mm", top:0, right:0, bottom:0, zIndex:1,
+        display:"flex", flexDirection:"column",
+      }}>
+        {/* ── NAME BANNER ────────────────────────────────────────── */}
+        <div style={{
+          flex:"0 0 auto",
+          background:`linear-gradient(90deg, ${factionColor}ee, ${factionColor}99 80%, transparent)`,
+          padding:"1.5mm 2mm 1.5mm 2.5mm",
+          display:"flex", alignItems:"center", justifyContent:"space-between",
+          borderBottom:`1px solid ${factionColor}80`,
+          minHeight:"7mm",
+        }}>
+          <div style={{ fontSize:"0.72rem", fontFamily:"'Cinzel',serif", fontWeight:700, color:"#fff", lineHeight:1.1,
+            textShadow:"0 1px 3px rgba(0,0,0,0.9)", flex:1, marginRight:"1mm",
+            overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
+            {u.name}
+          </div>
+          {crestUrl ? (
+            <img src={crestUrl} style={{ width:"7mm", height:"7mm", objectFit:"contain", flexShrink:0, filter:"drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
+          ) : (
+            <div style={{ width:"7mm", height:"7mm", borderRadius:"50%", background:`${factionColor}40`,
+              border:`1px solid ${factionColor}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center",
+              fontSize:"0.5rem", color: factionAccent }}>⚔</div>
+          )}
+        </div>
+
+        {/* ── TYPE BADGE ─────────────────────────────────────────── */}
+        <div style={{
+          flex:"0 0 auto", padding:"0.8mm 2.5mm",
+          background:"rgba(0,0,0,0.35)",
+          display:"flex", alignItems:"center", justifyContent:"space-between",
+        }}>
+          <span style={{ fontSize:"0.52rem", color: factionAccent, fontFamily:"'Cinzel',serif", letterSpacing:"0.8px", textTransform:"uppercase" }}>{u.type}</span>
+          <span style={{ fontSize:"0.52rem", color:"#aaa", fontStyle:"italic" }}>{u.size && `${u.min || 1}–${u.max || "∞"} stands`}</span>
+        </div>
+
+        {/* ── IMAGE AREA ─────────────────────────────────────────── */}
+        <div style={{
+          flex:"0 0 28mm", overflow:"hidden", position:"relative",
+          borderBottom:`1px solid ${factionColor}60`,
+        }}>
+          {IMAGES.units[u.id] ? (
+            <img src={IMAGES.units[u.id]} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          ) : (
+            <div style={{
+              width:"100%", height:"100%",
+              background:`linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%)`,
+              display:"flex", alignItems:"center", justifyContent:"center",
+            }}>
+              <div style={{ textAlign:"center", opacity:0.25 }}>
+                <div style={{ fontSize:"1.6rem" }}>⚔</div>
+              </div>
+            </div>
+          )}
+          {/* Gradient fade into parchment below */}
+          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"8px",
+            background:"linear-gradient(transparent, rgba(0,0,0,0.4))" }}/>
+        </div>
+
+        {/* ── RULES / DESCRIPTION AREA (parchment) ──────────────── */}
+        <div style={{
+          flex:1, overflow:"hidden",
+          padding:"1.5mm 2.5mm 1mm",
+          display:"flex", flexDirection:"column", gap:"1mm",
+        }}>
+          {/* Special rules */}
+          {hasRules && (
+            <div style={{ fontSize:"0.52rem", color: inkDark, lineHeight:1.4,
+              overflow:"hidden", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical" }}>
+              <span style={{ fontWeight:700, color: factionColor, fontFamily:"'Cinzel',serif", fontSize:"0.5rem" }}>RULES </span>
+              {rulesText}
+            </div>
+          )}
+          {/* Upgrades */}
+          {upgradeLines.length > 0 && (
+            <div style={{ fontSize:"0.5rem", color: factionColor, lineHeight:1.3, overflow:"hidden",
+              display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
+              {upgradeLines.join("  ·  ")}
+            </div>
+          )}
+          {/* Magic item */}
+          {entry.magicItem && (
+            <div style={{ fontSize:"0.5rem", color: inkDark, lineHeight:1.3, marginTop:"0.5mm",
+              borderTop:`1px solid ${factionColor}30`, paddingTop:"0.8mm",
+              overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
+              <span style={{ color: factionColor, fontWeight:700 }}>✦ {entry.magicItem.name}: </span>
+              {entry.magicItem.desc}
+            </div>
+          )}
+          {/* Mount */}
+          {mountLine && (
+            <div style={{ fontSize:"0.5rem", color:"#555", fontStyle:"italic" }}>{mountLine}</div>
+          )}
+        </div>
+
+        {/* ── FOOTER ─────────────────────────────────────────────── */}
+        <div style={{
+          flex:"0 0 auto", padding:"1mm 2.5mm",
+          background:"rgba(0,0,0,0.3)",
+          borderTop:`1px solid ${factionColor}40`,
+          display:"flex", justifyContent:"space-between", alignItems:"center",
+        }}>
+          <span style={{ fontSize:"0.42rem", color:"#999", letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</span>
+          <span style={{ fontSize:"0.42rem", color: factionAccent, letterSpacing:"0.5px", fontFamily:"'Cinzel',serif" }}>{army.name.toUpperCase()}</span>
+        </div>
+      </div>
+    </div>
+  );
   }
 
   function OptionsModal() {
