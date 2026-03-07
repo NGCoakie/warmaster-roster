@@ -3138,7 +3138,7 @@ function PrintView({ army, roster, onClose }) {
   }
 
   return (
-    <div style={{ background: mode==="white" ? "#e8e8e8" : "#111111", minHeight:"100vh" }}>
+    <div style={{ background: mode==="white" ? "#e8e8e8" : "#111111", minHeight:"100vh" }} id="print-root">
       <GS />
       {showOptions && <OptionsModal />}
 
@@ -3174,7 +3174,7 @@ function PrintView({ army, roster, onClose }) {
             army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
         }
         return (
-          <div style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+          <div className="print-area" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
             {printOpts.includeArmyRules && army.armyRules && army.armyRules.length > 0 && (() => {
               // Only show rules relevant to units actually in the roster
               const selectedUnitNames = new Set(roster.map(e => e.unit.name.toLowerCase()));
@@ -3215,10 +3215,18 @@ function PrintView({ army, roster, onClose }) {
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .print-area { display: flex !important; flex-wrap: wrap !important; }
+          * { 
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
           body { margin: 0; padding: 0; background: ${mode==="white" ? "#fff" : "#111"} !important; }
-          @page { size: auto; margin: 8mm; }
+          @page { size: auto; margin: 6mm; }
+          html, body { height: auto !important; overflow: visible !important; }
         }
+        /* Always show cards on screen */
+        .print-area { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; justify-content: flex-start; }
       `}</style>
     </div>
   );
@@ -3620,6 +3628,7 @@ function App() {
   }, []);
 
   const army = selectedArmy ? ARMIES[selectedArmy] : null;
+  if (army && !army.key) army.key = selectedArmy;
 
   // ── Auth handlers ──
   function handleAuth(sess) {
