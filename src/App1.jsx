@@ -2213,7 +2213,8 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
               );
             })}
           </div>
-        </div>}{/* /showRoR */}
+          </div>}
+          </div>
         );
       })()}
     </div>
@@ -2835,7 +2836,6 @@ function PrintView({ army, roster, onClose }) {
         boxSizing: "border-box",
         fontFamily: "'Cinzel',Georgia,serif",
         WebkitPrintColorAdjust: "exact", printColorAdjust: "exact",
-        position: "relative",
       }}>
         {/* Faction border overlay */}
         {borderUrl && (
