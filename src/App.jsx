@@ -2216,48 +2216,6 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
         </div>}{/* /showRoR */}
         );
       })()}
-      {/* ── Regiments of Renown ──────────────────────────────────────── */}
-      {army.hireableRoR && army.hireableRoR.length > 0 && (() => {
-        const rorArmy = ARMIES.regiments_of_renown;
-        if (!rorArmy) return null;
-        const availableRoR = rorArmy.units.filter(u => army.hireableRoR.includes(u.id));
-        if (!availableRoR.length) return null;
-        return (
-          <div>
-            <div style={{ padding:"6px 12px", fontSize:"0.88rem", fontFamily:"'Cinzel',serif", color:"#C9A84C", letterSpacing:2, textTransform:"uppercase", borderBottom:"1px solid #2a2210", background:"#0a0805", borderTop:"2px solid #2a1f05", marginTop:8 }}>
-              ⚔ Regiments of Renown
-            </div>
-            <div style={{ padding:"4px 12px 2px", fontSize:"0.78rem", color:"#666", fontStyle:"italic" }}>
-              Max 1 per 1000pts · No magic items · Independent rules apply
-            </div>
-            {availableRoR.map(unit => {
-              const count = roster.filter(r => r.unit.id === unit.id).length;
-              const atMax = count >= 1;
-              return (
-                <div key={unit.id}
-                  style={{ padding:"8px 12px", borderLeft:"3px solid transparent", borderBottom:"1px solid #111", display:"flex", justifyContent:"space-between", alignItems:"center", opacity: atMax ? 0.55 : 1, background: selectedUnit === unit.id ? "#1a1505" : "transparent" }}
-                  onClick={() => !atMax && onSelectUnit(unit)}
-                >
-                  <div style={{ minWidth:0, flex:1 }}>
-                    <div style={{ fontSize:"0.97rem", color:"#C9A84C", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{unit.name}</div>
-                    <div style={{ fontSize:"0.85rem", color:"#666", marginTop:1 }}>
-                      <span>{unit.pts}pts</span>
-                      <span style={{ color:"#444" }}> · </span>
-                      <span>{unit.type}</span>
-                      {atMax && <span style={{ color:"#884422" }}> · Hired</span>}
-                    </div>
-                  </div>
-                  <button
-                    disabled={atMax}
-                    style={{ marginLeft:8, padding:"3px 10px", background: atMax?"#222":"#3a2808", color: atMax?"#555":"#C9A84C", border:"1px solid "+(atMax?"#333":"#C9A84C"), borderRadius:3, cursor: atMax?"not-allowed":"pointer", fontSize:"1rem" }}
-                    onClick={e => { e.stopPropagation(); if(!atMax) onAddUnit(unit); }}
-                  >+</button>
-                </div>
-              );
-            })}
-          </div>
-        );
-      })()}
     </div>
   );
 }
