@@ -2788,6 +2788,7 @@ function PrintView({ army, roster, onClose }) {
     const pts = entryTotal(entry);
     const isLandscape = printOpts.layout === "landscape";
     const fs = lay.fontSize; // base font size tied to physical card size
+    const borderUrl = IMAGES.factionBorders[army.key] || "";
 
     // Stats for main grid: ATK, HITS, ARM only (CMD moves to side column)
     const mainStats = [
