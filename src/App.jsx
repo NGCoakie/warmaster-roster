@@ -799,11 +799,11 @@ const ARMIES = {
     weaknesses:"Zero magic, zero shooting; must reach combat to do anything; Daemonic Instability punishes losses",
     generalCmd:9,
     armyRules:[
-      {name:"Daemonic Instability", desc:"At the start of each of your Command phases, any Khorne unit that suffered casualties last turn must roll on the Daemonic Instability table: 1 = Abandoned by Rage (lose D3 stands, no save); 2–3 = Blind Fury (must initiative-charge nearest enemy, friend or foe — if none in range, unit is confused); 4–5 = Held by Rage (no additional effect); 6 = Khorne's Favour (recover 1 previously lost stand)."},
-      {name:"Hell Blades", desc:"Bloodletters add +1 Attack in the first round of any combat (including counter-charge). This represents the supernatural keenness of their daemonic blades."},
-      {name:"Bloodcrushers: Devastating Charge", desc:"Bloodcrushers cause terror. They gain +1 Attack when charging in open ground, in addition to the normal charge bonus."},
-      {name:"Flesh Hounds: Collar of Khorne", desc:"Flesh Hounds are immune to all spell effects. Spells cast upon a unit containing Flesh Hounds have no effect on them."},
-      {name:"Bloodthirster", desc:"The Bloodthirster flies (move 100cm) and causes terror. If reduced to 4–5 hits remaining it is Badly Hurt: halved to 3 Hits and 4 Attacks. It is the most powerful monster stand in the game."},
+      {name:"Daemonic Instability", desc:"At the start of each of your Command phases, any Khorne unit that suffered casualties last turn must roll D6: 1 = Abandoned by Rage (lose D3 stands, no save); 2–3 = Blind Fury (must initiative-charge nearest enemy, friend or foe — if none in range, unit is confused); 4–5 = Held by Rage (no additional effect); 6 = Khorne's Favour (recover 1 previously lost stand)."},
+      {name:"Hell Blades", desc:"Bloodletters add +1 Attack in the first round of any combat (including counter-charge), representing the supernatural keenness of their daemonic blades."},
+      {name:"Collar of Khorne", desc:"Flesh Hounds are immune to all spell effects — spells cast upon a unit containing Flesh Hounds have no effect on them."},
+      {name:"Bloodcrushers", desc:"Bloodcrushers cause terror. They gain +1 Attack when charging in open ground, in addition to the normal charge bonus."},
+      {name:"Bloodthirster", desc:"Flies (move 100cm). Causes terror. If reduced to 4–5 hits remaining it is Badly Hurt: halved to 3 Hits and 4 Attacks."},
     ],
     spells:[
       { name:"Blood for the Blood God", cast:"4+", range:"30cm",
@@ -2202,8 +2202,8 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
                 </div>
               );
             })}
+          </div>}
           </div>
-        </div>}{/* /showRoR */}
         );
       })()}
     </div>
