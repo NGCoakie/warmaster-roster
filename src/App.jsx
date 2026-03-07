@@ -149,6 +149,7 @@ const IMAGES = {
     kislev: "",
     dark_elves: "",
     daemons: "",
+    daemons_chaos: "",
     daemons_khorne: "",
     daemons_nurgle: "",
     daemons_tzeentch: "",
@@ -352,12 +353,10 @@ function spellKey(armyKey, spellName) {
 const ARMIES = {
 
   empire: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_longdrong","ror_golgfag","ror_voland","ror_tichi","ror_bronzino","ror_asarnil","ror_gotrek","ror_witchhunters"],
     name:"The Empire", color:"#c8940a", bg:"#0f0c02", accent:"#f0c040",
     lore:"The largest human nation of the Old World, fielding disciplined soldiers, battle wizards and fearsome war machines.",
     armyRules:[{name:"Handgunners", desc:"Count enemy Armour values as one worse when shot by a handgun (3+ counts as 4+, 4+ as 5+, 5+ as 6+, 6+ gives no save). One Crossbowmen unit per 1000pts can be replaced by Handgunners at +10pts, still counting for Crossbowmen min/max."}, {name:"Flagellants", desc:"Always use initiative to charge an enemy if possible; cannot be given orders instead. Never evade. Cannot be driven back by shooting and do not roll for drive backs. Must pursue or advance if victorious. Unaffected by terror — no -1 Attack modifier."}, {name:"Skirmishers", desc:"Not deployed independently. Any infantry unit (except Flagellants) may add one Skirmisher stand, making the unit 4 stands total. Skirmishers share the unit Armour value, fight as part of the unit and can be removed as a casualty. Their casualties never count for Command penalties and they never cause Irregular Formation."}, {name:"Pistoliers", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies. Still needs Line of Sight from front edge to charge."}, {name:"Helblaster", desc:"Range 30cm. Attacks vary by range: 01-10cm = 8 attacks, 11-20cm = 4 attacks, 21-30cm = 2 attacks. Targets count Armour one worse than normal. If any 1s are rolled when shooting, count them: 1-2 = Fizzle (resolve attacks normally); 3 = Misfire (no shots this turn); 4+ = Ka-boom! (Helblaster destroyed, no hits struck on enemy)."}, {name:"Steam Tank", desc:"Always counts as defended (5 or 6 to hit). Cannot be driven back or routed by shooting. Cannot brigade. No character may join it. 360 degree vision. Shoots to front, side or rear against closest enemy target (30cm range, counts armour one worse). On a double-6 order, roll Malfunction: 1=Destroyed; 2=Broken Down (cannot move ever again); 3=Stuck (no move/shoot this turn); 4=Commander Slain (-1 Command permanently); 5=Momentary Halt; 6=Steam Overload (cannot move but shoots with 6 Attacks)."}, {name:"Griffon", desc:"Generals, Wizards and Heroes can ride Griffons. Flies (move 100cm), adds +2 Attacks to rider. Unit causes terror. Max 1 per army."}, {name:"War Altar", desc:"Only one War Altar in the entire army regardless of size. Can only be a mount for a Wizard (who becomes the Grand Theogonist). Adds +1 Attack. Once per battle the Grand Theogonist may add +1 to a casting dice result (announce before rolling)."}],
-        spells:[{name:"Ball of Flame", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Wizard in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Voice of Command", cast:"5+", range:"30cm", desc:"Cast on any unengaged friendly unit within range (no LoS needed). The unit can be moved as if it had received an order. Character stands that have joined the unit do not move with it."}, {name:"Weird Enchantment", cast:"4+", range:"30cm", desc:"Cast on any enemy unit (no LoS needed). Lasts until end of opposing player's next turn. The unit moves at half pace in all situations, even when charging. The unit counts all enemies as terrifying (-1 Attack), even if normally immune to terror."},
-      { name:"Teleport", cast:"2+", range:"N/A", desc:"The Wizard vanishes in a swirl of cloak and crack of thunder, reappearing anywhere on the battlefield. Move the Wizard to any new position on the table. He can leave or join a unit, enabling him to move into or out of combat. Once the Wizard has moved he can cast a second spell — but it must be a different spell, not another Teleport. Roll to cast the second spell normally. A Wizard that Teleports can therefore cast two spells that turn." }],
+        spells:[{name:"Ball of Flame", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Wizard in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Voice of Command", cast:"5+", range:"30cm", desc:"Cast on any unengaged friendly unit within range (no LoS needed). The unit can be moved as if it had received an order. Character stands that have joined the unit do not move with it."}, {name:"Weird Enchantment", cast:"4+", range:"30cm", desc:"Cast on any enemy unit (no LoS needed). Lasts until end of opposing player's next turn. The unit moves at half pace in all situations, even when charging. The unit counts all enemies as terrifying (-1 Attack), even if normally immune to terror."}],
     playstyle:"A versatile, well-rounded army. Solid infantry, powerful war machines and support magic make the Empire strong in defence and capable of punishing aggression. Best played with layered brigades.",
     fluff:"The Empire is the mightiest of all human nations, stretching from the Grey Mountains to the Worlds Edge. Divided into rival Elector States yet united under a single Emperor, its armies blend veteran state soldiery, fanatic warrior-priests, thunderous cannons and Colleges of Magic wizards. Where other realms field purer forces, the Empire fields everything \u2014 a grinding, adaptive war machine that has survived every Chaos incursion for two millennia.",
     traits:["Diverse combined arms", "Powerful artillery", "Battle wizards", "State troops backbone"],
@@ -385,7 +384,6 @@ const ARMIES = {
   },
 
   tomb_kings: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_longdrong","ror_golgfag","ror_voland","ror_oglah","ror_tichi","ror_bronzino"],
     name:"Tomb Kings", color:"#c8a44a", bg:"#0a0800", accent:"#f0d060",
     lore:"Ancient undead rulers of the desert, commanding skeletal armies that never tire, never waver, and never retreat.",
     armyRules:[{name:"Undead (Army Rule)", desc:"All Undead units never act on initiative and only move in the Command phase if given orders. They are unaffected by: the -1 Command penalty for enemy within 20cm; the -1 Combat penalty for fighting terrifying troops; and the Confusion rule — they cannot become confused for any reason."}, {name:"Carrion", desc:"Carrion can fly. They can always return to a character by homing back at the start of the Command phase without requiring an order."}, {name:"Bone Giant", desc:"Causes terror. When a Tomb King (not a Liche Priest) issues an order to a Bone Giant or brigade containing one, apply a -1 Command penalty. No penalty when a Liche Priest issues the order."}, {name:"Sphinx", desc:"Causes terror. With 4-5 accumulated hits at end of Shooting or Combat phase (while not engaged) it becomes Badly Hurt — all accumulated hits discounted, Hits and Attacks halved for the rest of battle (3 Hits, 2 Attacks)."}, {name:"Skull Chukka", desc:"Stone Thrower. When a unit is driven back by Skull Chukka hits, any drive-back dice cause Confusion on rolls of 4, 5 or 6 (rather than 6 as normal). Roll the Skull Chukka dice separately if other hits were also inflicted."}, {name:"Tomb King", desc:"Once per battle, the Tomb King can use his burial magic to give all stands in one unit within 20cm a +1 Combat Attack bonus for the duration of one Combat phase."}],
@@ -415,12 +413,10 @@ const ARMIES = {
   },
 
   chaos: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah"],
     name:"Chaos", color:"#a01010", bg:"#080202", accent:"#e03030",
     lore:"Bloodthirsty northern tribes devoted to the Dark Gods, bringing destruction to the civilised world.",
     armyRules:[{name:"Ogres", desc:"If an Ogre unit can use initiative to charge an enemy unit of humans at the start of the Command phase it must do so automatically — commanders cannot prevent it. 'Humans' includes Chaos Warriors and Marauders but not Dwarfs or Elves."}, {name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (40cm = -2, 60cm = -4, etc.). Trolls regenerate wounds: in each combat round after whole stands are removed, Trolls automatically regenerate one outstanding hit. Regenerated hits still count towards the combat result."}, {name:"Harpies", desc:"Harpies are based facing the long edge of the base like infantry. They can fly. A unit of Harpies cannot be joined by a character."}, {name:"Dragon Ogres", desc:"Dragon Ogres are immune to terror."}, {name:"Chaos Spawn", desc:"Spawn have -1 Command penalty unless in a brigade with more non-Spawn than Spawn units. Up to two Spawn can be in any brigade without counting towards maximum brigade size. Spawn cause terror in combat. Cannot be driven back by shooting. Must pursue or advance if victorious. 15cm shooting range and 360 degree vision."}, {name:"Chaos Dragon", desc:"Generals, Wizards and Heroes can ride a Chaos Dragon. Flies (move 100cm), adds +3 Attacks to rider. Dragon breathes fire at 20cm range with 3 Attacks. Unit causes terror. Dragon with 4-5 hits becomes Badly Hurt — Hits and Attacks halved."}],
-        spells:[{name:"Boon of Chaos", cast:"4+", range:"N/A", desc:"The Sorcerer must have joined a unit in combat. Every stand in that unit, including the Sorcerer and any other characters, adds +1 to its Attacks value for the duration of the following Combat phase."}, {name:"Anger of the Gods", cast:"4+", range:"30cm", desc:"Cast on the Sorcerer himself. Affects all enemy units within 30cm. Lasts until end of the opposing player's following turn. All affected enemy units suffer a -1 Command penalty when orders are issued to them."}, {name:"Rage of Chaos", cast:"5+", range:"30cm", desc:"Cast on a friendly unit engaged in combat and within range (no LoS needed). Lasts for the following Combat phase. The unit gains bonus Rage attacks — roll D6 repeatedly (up to 1 per stand), adding results. Stop at any time, but if a repeat value is rolled all attacks hit the Chaos unit instead."},
-      { name:"Curse of Chaos", cast:"5+", range:"30cm", desc:"An arc of pure energy strikes the foe, wreaking monstrous changes, melting flesh and twisting bones. Cast on an enemy unit the Sorcerer can see; cannot be directed at a unit engaged in combat. The Curse of Chaos is treated like three ordinary shooting attacks except that armour has no effect (all targets count as having no armour). A unit can be driven back by a Curse of Chaos as with ordinary shooting." }],
+        spells:[{name:"Boon of Chaos", cast:"4+", range:"N/A", desc:"The Sorcerer must have joined a unit in combat. Every stand in that unit, including the Sorcerer and any other characters, adds +1 to its Attacks value for the duration of the following Combat phase."}, {name:"Anger of the Gods", cast:"4+", range:"30cm", desc:"Cast on the Sorcerer himself. Affects all enemy units within 30cm. Lasts until end of the opposing player's following turn. All affected enemy units suffer a -1 Command penalty when orders are issued to them."}, {name:"Rage of Chaos", cast:"5+", range:"30cm", desc:"Cast on a friendly unit engaged in combat and within range (no LoS needed). Lasts for the following Combat phase. The unit gains bonus Rage attacks — roll D6 repeatedly (up to 1 per stand), adding results. Stop at any time, but if a repeat value is rolled all attacks hit the Chaos unit instead."}],
     playstyle:"A small, elite army. Every unit hits hard \u2014 Chaos Warriors and Knights are among the best in the game. You will be outnumbered. Win by smashing enemy lines in decisive charges before attrition kills you.",
     fluff:"From the frozen wastes beyond Kislev they come \u2014 the Chaos Warriors, men so consumed by devotion to the Dark Gods that they have become something other than human. Alongside hordes of Marauder tribesmen, terrifying Chaos Knights, spell-hurling Sorcerers and abominations like Dragon Ogres and Chaos Spawn, they represent an existential threat to every civilised nation. When the Chaos tide rises, the world trembles.",
     traits:["Elite heavy warriors", "Devastating cavalry", "Powerful monsters", "High points cost"],
@@ -449,14 +445,10 @@ const ARMIES = {
   },
 
   orcs: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah","ror_bronzino"],
     name:"Orcs & Goblins", color:"#2a7a10", bg:"#040a02", accent:"#60c020",
     lore:"A vast greenskin horde driven by the Waaagh! — terrifying in numbers but plagued by animosity and infighting.",
-    armyRules:[{name:"Goblins", desc:"A Goblin unit can shoot as if it had bows but range is reduced to 15cm."}, {name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (40cm = -2, 60cm = -4). Trolls regenerate: in each combat round after whole stands are removed, Trolls automatically regenerate one outstanding hit. Regenerated hits still count towards the combat result."}, {name:"Ogres", desc:"If an Ogre unit can use initiative to charge an enemy unit of humans at the start of the Command phase it must do so automatically. 'Humans' includes Chaos Warriors and Marauders but not Dwarfs or Elves."}, {name:"Wolf Riders", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies. Still needs Line of Sight from front edge to charge."}, {name:"Giants", desc:"Must always be given a separate order and cannot brigade with other troops (can brigade with other Giants). On a failed order roll on the Giant Goes Wild chart. Giants with 5-7 accumulated hits (while not engaged) become Badly Hurt — Hits and Attacks halved to 4 each. Giants cause terror."}, {name:"Rock Lobber", desc:"Stone Thrower as per Rulebook p.75."},
-      {name:"Giant Goes Wild", desc:"D6 — Giant Goes Wild: 1: Stands dopey, neither moves nor fights. 2: Moves toward nearest table edge; charges any unit he contacts, holds ground if victorious. 3: Throws object at closest visible unit within 5xD6cm, inflicting 3 Attacks. 4: Moves straight forward at full pace; charges enemies, walks through friendlies causing Confusion. 5: Moves toward nearest visible enemy as fast as possible, charging if reached; walks through friends causing Confusion. No visible enemy: does nothing. 6: Bellows and charges nearest visible enemy at DOUBLE full pace. If he reaches the enemy, doubles his Attacks in the first round of combat. No visible enemy: does nothing."}],
-        spells:[{name:"Foot of Gork", cast:"6+", range:"50cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The unit suffers 6 attacks. Cannot be driven back by the Foot of Gork (it descends from above)."}, {name:"Gotcha!", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Shaman in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Gerroff!!!", cast:"5+", range:"60cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The enemy unit is driven back 1D6×5cm towards its own table edge. Cannot be routed by this drive back. If the unit leaves the table it rolls as normal."},
-      { name:"Waaagh!", cast:"4+", range:"30cm", desc:"The shaman summons the power of the mighty Waaagh! to invigorate the greenskins. Cast on a friendly unit of Orc or Goblins engaged in combat — including Black Orcs, Wolf Riders, Boar Boyz and any type of Orc or Goblin troops, but not Trolls, Ogres, Giants or other non-greenskins. Can be cast regardless of whether the Shaman can see the target or not. The spell lasts for the duration of the following Combat phase. Every stand in the unit, including characters, adds +1 to its Attacks value." }
-    , {name:"WAAAGH!", cast:"4+", range:"30cm", desc:"Cast on a friendly unit of Orcs or Goblins engaged in combat (including Black Orcs, Wolf Riders, Boar Boyz and any Orc/Goblin type) — not Trolls, Ogres, Giants or non-greenskins. No LoS needed. Every stand adds +1 to its Attacks value for the following Combat phase."}],
+    armyRules:[{name:"Goblins", desc:"A Goblin unit can shoot as if it had bows but range is reduced to 15cm."}, {name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (40cm = -2, 60cm = -4). Trolls regenerate: in each combat round after whole stands are removed, Trolls automatically regenerate one outstanding hit. Regenerated hits still count towards the combat result."}, {name:"Ogres", desc:"If an Ogre unit can use initiative to charge an enemy unit of humans at the start of the Command phase it must do so automatically. 'Humans' includes Chaos Warriors and Marauders but not Dwarfs or Elves."}, {name:"Wolf Riders", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies. Still needs Line of Sight from front edge to charge."}, {name:"Giants", desc:"Must always be given a separate order and cannot brigade with other troops (can brigade with other Giants). On a failed order roll on the Giant Goes Wild chart. Giants with 5-7 accumulated hits (while not engaged) become Badly Hurt — Hits and Attacks halved to 4 each. Giants cause terror."}, {name:"Rock Lobber", desc:"Stone Thrower as per Rulebook p.75."}],
+        spells:[{name:"Foot of Gork", cast:"6+", range:"50cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The unit suffers 6 attacks. Cannot be driven back by the Foot of Gork (it descends from above)."}, {name:"Gotcha!", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Shaman in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Gerroff!!!", cast:"5+", range:"60cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The enemy unit is driven back 1D6×5cm towards its own table edge. Cannot be routed by this drive back. If the unit leaves the table it rolls as normal."}],
     playstyle:"Overwhelming mass of bodies backed by hard-hitting monsters and trolls. Animosity can cause chaos in your own lines \u2014 build brigades to mitigate it. Let the greenskin tide roll forward and drown the enemy.",
     fluff:"The Orc tribes of the Old World need little reason to go to war \u2014 a good scrap is its own reward. When a powerful Warboss emerges to unite the clans under a single Waaagh!, entire regions tremble. Greenskin hordes pour south in an unstoppable tide of violence, noise and barely-contained chaos. Their greatest weakness is themselves.",
     traits:["Massive numbers", "Animosity mechanic", "Varied unit types", "Giants and trolls"],
@@ -486,7 +478,6 @@ const ARMIES = {
   },
 
   high_elves: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_anakonda","ror_voland","ror_almuktar","ror_tichi","ror_birdmen","ror_asarnil","ror_witchhunters"],
     name:"High Elves", color:"#1060c0", bg:"#010510", accent:"#50a0ff",
     lore:"Ancient guardians of Ulthuan and the world's greatest bulwark against Chaos, fielding disciplined warriors and mighty dragons.",
     armyRules:[{name:"Archers", desc:"High Elf Archers add +1 to their dice roll when making Shooting attacks. They score a hit against targets in the open on 3+, defended on 4+, and fortified on 5+."}, {name:"Giant Eagles", desc:"Giant Eagles can fly."}, {name:"Dragons", desc:"Fly (move 100cm). Dragon Rider units and units with a Dragon-riding character cause terror. Dragon breathes fire: 20cm range, 3 Attacks at 4+. Generals, Wizards and Heroes can ride Dragons (+3 Attacks). Dragon Riders with 4-5 hits become Badly Hurt — Hits and Attacks halved (3 Hits, 3/2 Attacks). A Dragon ridden by a lone character (not in a unit) cannot breathe fire."}, {name:"High Elf Wizard", desc:"High Elf Mages can re-roll a failed spell on any dice result except a 1. If a spell is failed because a 1 is rolled, no re-roll is permitted."}],
@@ -517,7 +508,6 @@ const ARMIES = {
   },
 
   dwarfs: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_anakonda","ror_bearmen","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_tichi","ror_bronzino","ror_gotrek","ror_witchhunters"],
     name:"Dwarfs", color:"#8b4513", bg:"#050202", accent:"#cd7f32",
     lore:"Stubborn mountain folk with the finest artillery in the world and warriors who hold grudges for generations.",
     armyRules:[{name:"Handgunners", desc:"Count enemy Armour values as one worse when shot by a handgun. One Handgunner unit per 1000pts can replace a Warrior unit while still counting for Warriors min/max value."}, {name:"Rangers", desc:"One unit of Rangers per 1000pts may infiltrate instead of deploying normally. Issue an infiltration order from any character (ignoring dense terrain penalties and Command range limits) to a point in dense terrain or on any table edge except the enemy's. On success the unit appears there, using that as their first order. Rangers can pursue any type of retreating enemy despite being infantry."}, {name:"Troll Slayers", desc:"Always charge on initiative; cannot be given orders instead. Never evade. Cannot be driven back by shooting. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier. Add +1 Attack when fighting Monster stands. Victory points are scored differently: if any stands remain at end of battle the full points value goes to the opponent; if all stands are destroyed the Slayers earn their points value for themselves."}, {name:"Gyrocopter", desc:"Can fly. Acts like artillery in most respects but is a flying machine. Has its own special rules for movement."}, {name:"Hero (Oathstone)", desc:"A Hero may carry an Oathstone (+15pts). Once per battle, invoke it: all stands of the joined unit (except Troll Slayers) gain +1 Attack and are Immune to Terror until the end of that Combat phase."}, {name:"Runesmith (Anti-Magic)", desc:"If an enemy Wizard within 50cm casts a spell, the Runesmith can attempt to dispel it on a D6 roll of 4+. Only one attempt per spell. A Runesmith with the Anvil of Doom may add +1 to this roll once per battle and can strike the Anvil to grant units within 20cm Terror Immunity."}],
@@ -544,12 +534,10 @@ const ARMIES = {
   },
 
   skaven: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah","ror_bronzino"],
     name:"Skaven", color:"#6b8e23", bg:"#030402", accent:"#9acd32",
     lore:"Devious ratmen swarming from underground warrens, wielding deadly warp-powered war machines and overwhelming numbers.",
-    armyRules:[{name:"Strength in Numbers (Army Rule)", desc:"The Flame Cannon shoots 2D6 Attacks. If a double is rolled it has misfired: Double 1: Explodes, destroyed, no attacks. Double 2: 4+2D6 attacks on target then explodes and destroys itself. Double 3: Worrying wheeze — 6 attacks this turn, all further shooting reduced from 2D6 to 1D6. Double 4: Boiler goes out; does not shoot this turn, otherwise unaffected. Double 5: Chuffs soot and coals — 10 attacks this turn, otherwise unaffected. Double 6: Lurches and heaves enormous flame — 12+D6 attacks on target, otherwise unaffected. Can shoot at charging enemies normally."}, {name:"Vermintide (Army Rule)", desc:"Skaven units that win a round of combat can choose to pursue retreating enemy regardless of troop type. Any Skaven unit (including artillery) can pursue any enemy (including flyers, cavalry and chariots). Normal terrain and fortified status restrictions still apply."}, {name:"Under the Lash (Army Rule)", desc:"All Skaven characters — General, Heroes and Wizards alike — have a Command range of only 20cm. Even the General's range is reduced to 20cm."}, {name:"Jezzails", desc:"Count enemy armour values as one worse than normal (3+ becomes 4+, 5+ becomes 6+, 6+ gives no save)."}, {name:"Plague Monks", desc:"Always charge on initiative; cannot be given orders instead. Never evade. Cannot be driven back by shooting. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier."}, {name:"Rat Swarms", desc:"Cannot be driven back by shooting and do not roll for drive backs. Can only be supported by other Rat Swarm stands (not other infantry), though they can support other infantry as normal. Cannot be given magic items."}, {name:"Gutter Runners", desc:"Shoot with throwing stars/darts at 15cm range with 360 degree vision. May infiltrate: issue an infiltration order to a point in dense terrain or on any table edge except the enemy's. On success the unit appears there. Infiltrators can attempt infiltration again on subsequent turns if they fail."}, {name:"Screaming Bell", desc:"The Screaming Bell is a Machine (not a mount). A unit with the Screaming Bell is unaffected by the -1 Command penalty from enemy within 20cm."}],
-        spells:[{name:"Wither", cast:"4+", range:"30cm", desc:"Cast on an enemy unit engaged in combat and within range (no LoS needed). Lasts for the following Combat phase. Every stand in the unit, including characters, deducts -1 from its Attacks value."}, {name:"Warp Lightning", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not engaged in combat. Treated as 3 shooting attacks but armour has no effect — all targets count as having no armour. The unit can be driven back as with ordinary shooting."}, {name:"Death Frenzy", cast:"5+", range:"30cm", desc:"Cast on a friendly unit engaged in combat (no LoS needed). Roll D6s one at a time (up to 1 per stand), adding results as bonus attacks. Stop at any time — but if a repeat value is rolled, those total attacks hit the Skaven unit instead."},
-      { name:"Plague", cast:"6+", range:"30cm", desc:"A swirling cloud of virulence envelopes the enemy troops, causing their bodies to erupt in pustules, their skins to split apart with running sores, their joints to swell with buboes and their hair to crawl with lice and fleas. Cast on any unengaged enemy unit within range regardless of whether the Wizard can see it or not. Cannot be cast on a unit engaged in combat. The unit suffers six attacks worked out in the usual way. A unit cannot be driven back by Plague — the vile Plague erupts from within!" }],
+    armyRules:[{name:"Strength in Numbers (Army Rule)", desc:"Brigades may be of any size and are not restricted to the normal four unit maximum."}, {name:"Vermintide (Army Rule)", desc:"Skaven units that win a round of combat can choose to pursue retreating enemy regardless of troop type. Any Skaven unit (including artillery) can pursue any enemy (including flyers, cavalry and chariots). Normal terrain and fortified status restrictions still apply."}, {name:"Under the Lash (Army Rule)", desc:"All Skaven characters — General, Heroes and Wizards alike — have a Command range of only 20cm. Even the General's range is reduced to 20cm."}, {name:"Jezzails", desc:"Count enemy armour values as one worse than normal (3+ becomes 4+, 5+ becomes 6+, 6+ gives no save)."}, {name:"Plague Monks", desc:"Always charge on initiative; cannot be given orders instead. Never evade. Cannot be driven back by shooting. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier."}, {name:"Rat Swarms", desc:"Cannot be driven back by shooting and do not roll for drive backs. Can only be supported by other Rat Swarm stands (not other infantry), though they can support other infantry as normal. Cannot be given magic items."}, {name:"Gutter Runners", desc:"Shoot with throwing stars/darts at 15cm range with 360 degree vision. May infiltrate: issue an infiltration order to a point in dense terrain or on any table edge except the enemy's. On success the unit appears there. Infiltrators can attempt infiltration again on subsequent turns if they fail."}, {name:"Screaming Bell", desc:"The Screaming Bell is a Machine (not a mount). A unit with the Screaming Bell is unaffected by the -1 Command penalty from enemy within 20cm."}],
+        spells:[{name:"Wither", cast:"4+", range:"30cm", desc:"Cast on an enemy unit engaged in combat and within range (no LoS needed). Lasts for the following Combat phase. Every stand in the unit, including characters, deducts -1 from its Attacks value."}, {name:"Warp Lightning", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not engaged in combat. Treated as 3 shooting attacks but armour has no effect — all targets count as having no armour. The unit can be driven back as with ordinary shooting."}, {name:"Death Frenzy", cast:"5+", range:"30cm", desc:"Cast on a friendly unit engaged in combat (no LoS needed). Roll D6s one at a time (up to 1 per stand), adding results as bonus attacks. Stop at any time — but if a repeat value is rolled, those total attacks hit the Skaven unit instead."}],
     playstyle:"A horde army with a crucial limitation \u2014 characters can only issue orders within 20cm. Brigades must stay tight. Overwhelm with numbers, flank with Gutter Runners, and let the Doomwheel run amok.",
     fluff:"Beneath every city in the Old World runs a network of tunnels teeming with the Skaven \u2014 a vast, paranoid civilisation of ratmen devoted to the Horned Rat. Their armies swarm with Clanrats, elite Stormvermin, plague monks and exotic warp-powered machines. What they lack in discipline they compensate for with sheer numbers and the most volatile technology in the world.",
     traits:["Swarm tactics", "20cm command range only", "Warp-powered machines", "Strength in numbers"],
@@ -576,7 +564,6 @@ const ARMIES = {
   },
 
   lizardmen: {
-    hireableRoR:["ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_tichi","ror_witchhunters"],
     name:"Lizardmen", color:"#1a7a3a", bg:"#010502", accent:"#30d060",
     lore:"Ancient servants of the Old Ones, guided by the mighty Slann Mage-Priests and cold-blooded Saurus warriors.",
     armyRules:[{name:"Born in Jungle (Army Rule)", desc:"No command penalty is applied to any units in the Lizardmen army on account of dense terrain. The Lizardmen are used to communicating through thick jungle by instinct and subsonic noises inaudible to other races."}, {name:"Skinks", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Reptilian", desc:"Reptilian troops (Saurus, Temple Guard, Kroxigor, Cold One Riders) can only be issued an order by a character within 20cm. If Reptilian units are in a brigade, all Reptilian units must be within 20cm of the character issuing the order."}, {name:"Salamanders", desc:"Salamander stands are not deployed independently — any Skink infantry unit may add one Salamander stand (making 4 stands total). Salamanders share unit Armour, fight as part of the unit, and casualties never count for Command penalties. The whole unit (including Salamander) gains Salamander Venom: enemy Armour saves suffer -1 penalty (e.g. 5+ requires a 6)."}, {name:"Stegadon", desc:"Uses a 40x60mm base. Causes terror. Can only brigade with Skink units (not Skinks with Salamanders, not other units, not other Stegadons). The crew has 15cm shooting range and 360 degree vision."}, {name:"Slann Mage Palanquin", desc:"The Slann General has no personal Command value (Command 0) but grants all characters in the army +1 to their Command value. The Slann is a powerful spellcaster and casts spells as a Wizard."}],
@@ -607,7 +594,6 @@ const ARMIES = {
   },
 
   bretonnia: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_anakonda","ror_voland","ror_almuktar","ror_birdmen","ror_bronzino","ror_gotrek","ror_witchhunters"],
     name:"Bretonnia", color:"#1a4a8a", bg:"#010308", accent:"#3070d0",
     lore:"A feudal kingdom of honourable knights blessed by the Lady of the Lake, backed by masses of expendable peasantry.",
     armyRules:[{name:"Feudal Society (Army Rule)", desc:"Calculate army withdrawal differently: only count Knights, Grail Knights and Pegasus Knights at the start of the game. Once half or more of these units are lost, the army must withdraw. Peasants and other infantry do not count."}, {name:"Peasants", desc:"Peasants suffer an additional -1 Command penalty when ordered. This penalty is waived if the Peasant unit is in a brigade with at least one non-Peasant unit. Cannot use initiative to charge (but can evade as usual). Capable of supporting charges. When they charge, they receive no bonus attack modifier."}, {name:"Knights", desc:"Always use initiative to charge an enemy if possible; cannot be given orders instead. Never evade. Immune to terror — no -1 Attack modifier."}, {name:"Grail Knights", desc:"In addition to Knight rules, if charging an enemy in the open they receive an additional +1 Attack modifier (same as chariots and monsters)."}, {name:"Trebuchet", desc:"Uses a 40x60mm base. Can move but cannot shoot in the same turn it moves. Destroyed if driven back more than 10cm by shooting or if forced to retreat from combat. Range 80cm. Fortified counts as defended, defended counts as open. No armour rolls allowed. Cannot shoot at charging enemies. Can shoot over the heads of friendly troops on lower ground."}, {name:"Hippogriff Mount", desc:"Only the General can ride a Hippogriff. Flies (move 100cm), adds +2 Attacks. Unit causes terror."}],
@@ -639,7 +625,6 @@ const ARMIES = {
   },
 
   kislev: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_tichi","ror_bronzino","ror_gotrek","ror_witchhunters"],
     name:"Kislev", color:"#1080a0", bg:"#010508", accent:"#30b0d0",
     lore:"Hardy northern warriors of the steppes, masters of mounted combat and fierce defenders against Chaos.",
     armyRules:[{name:"Winged Lancers", desc:"Receive +1 Attack in the first round of every combat when fighting to the front. Immune to Terror."}, {name:"Horse Archers and Cossacks", desc:"Kislevite Horsemen have 15cm shooting range and 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Bowmen", desc:"One unit of Bowmen per 1000pts can replace a unit of Axemen while still counting for Axemen min/max value."}, {name:"Red Guard", desc:"Armed with handguns in addition to long axes. Count enemy Armour values as one worse when shot (3+ = 4+, 4+ = 5+, 5+ = 6+, 6+ = no save)."}, {name:"Bears", desc:"Defined as infantry for movement purposes but add +1 Attack when charging an enemy in the open (like monsters and chariots). Can only give and receive support from other Bear units. Must pursue retreating enemies where possible. Never count as defended outside dense terrain."}, {name:"War Wagon", desc:"Cannot charge and moves 20cm at full pace. Moving up to 5cm can end in laager formation (360 degree fire, 4+ Armour). Moving more than 5cm must end in column formation. Either stand can be removed as casualty; can only move while the team stand remains. 30cm range, counts enemy Armour one worse. Can shoot over lower friendly troops. Cannot pursue but is not destroyed if forced to retreat."}, {name:"Tzarina Upgrade", desc:"The General may be upgraded to the Tzarina (+25pts, max 1 per army). She casts spells as a Wizard and may carry a Wizard magic item. Once per battle she may add +1 to a casting dice result (announce before rolling)."}],
@@ -670,7 +655,6 @@ const ARMIES = {
   },
 
   dark_elves: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_voland","ror_almuktar","ror_oglah"],
     name:"Dark Elves", color:"#6010a0", bg:"#040008", accent:"#9020e0",
     lore:"Bitter exiles of Naggaroth devoted to Khaine, fielding merciless warriors and monstrous beasts.",
     armyRules:[{name:"Crossbowmen and Dark Riders", desc:"These units have repeating crossbows. They shoot twice (2 attacks per stand) at targets within 15cm, and once (1 per stand) at 16-30cm range. Against charging enemies they shoot once per stand regardless of range."}, {name:"Witch Elves", desc:"Always charge on initiative; cannot be given orders instead. Never evade. Cannot be driven back by shooting. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier."}, {name:"Cold One Knights", desc:"Add +1 Attack in the first round of each combat when fighting to the front (front edge or frontal corners contact). Cannot form brigades except with other Cold One Knight units."}, {name:"War Hydra", desc:"Cannot brigade even with other War Hydras. Causes terror. Breathes fire: 20cm range, 2 Attacks. After all hits are struck in a round (if not slain), the Hydra automatically regenerates 1 hit suffered that round. Regenerated hits still count towards the combat result."}, {name:"Dark Elf General", desc:"If a Hero or Sorceress rolls a double 6 when issuing orders, the General must either lose 1 Command value (e.g. 10 becomes 9) or execute the failed underling — the character is removed as a casualty but does not count for enemy victory points. If the General rolls a double 6 (blunder), the General automatically loses 1 Command value regardless."}],
@@ -706,7 +690,6 @@ const ARMIES = {
   // ══════════════════════════════════════════════════════════════════════════
 
   daemons: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah"],
     name:"Daemons", color:"#7a3a8a", bg:"#08010a", accent:"#cc88ff",
     lore:"The daemon armies of Chaos constantly reshape and reform from mankind's ever shifting fears, servants of the four great gods erupting from the Realm of Chaos to destroy the mortal world.",
     armyRules:[{name:"Ignore Terror", desc:"All units ignore the -1 Attack penalty in combat for fighting terrifying troops."}, {name:"Daemonic Instability", desc:"At the start of the Command phase, all Daemon units with casualties roll D6 (−1 if 1 stand remains and >20cm from a Wizard). 0–1: stand destroyed; 2–3: confused; 4–5: no effect/clears confusion; 6: regain one stand."}],
@@ -789,8 +772,89 @@ const ARMIES = {
     },
   },
 
+  daemons_chaos: {
+    name:"Daemons", color:"#7a3a8a", bg:"#08010a", accent:"#cc88ff",
+    lore:"The daemon armies of Chaos constantly reshape and reform. Most of all men dread the elemental horrors of life, represented by the four great gods: Khorne, Tzeentch, Nurgle and Slaanesh.",
+    armyRules:[{name:"Ignore Terror", desc:"All Daemon units ignore the -1 Attack penalty in combat for fighting terrifying troops — they cannot be frightened."}, {name:"Daemonic Instability", desc:"At the start of the Command phase, all Daemon units with at least 1 casualty must test. Roll D6 (−1 if 1 stand remains and >20cm from a friendly Wizard). 0-1: remove a stand; 2-3: confused; 4-5: no effect or clears confusion; 6: regain one stand."}],
+    playstyle:"A flexible mixed-daemon force. Daemon Hordes are your reliable elite infantry, Daemon Cavalry are powerful and fast, Greater Daemons anchor the line with terror and raw hitting power. Daemon Sorcerers provide spell support to summon reinforcements and buff your troops. Daemonic Instability means you need to keep casualties low — get Wizards near damaged units to reduce instability risk.",
+    fluff:"The dark dimension is home to things of an altogether different order to mortal creatures — not living flesh but a network of ethereal forces whose consciousnesses flow and interchange. From the terror of mankind itself they are self-created: gods, daemons and spirits made manifest in the stuff of the warp. Reshaped by Khorne, Tzeentch, Nurgle and Slaanesh, these daemon armies pour forth to reshape reality in the image of Chaos.",
+    traits:["Ignore Terror","Daemonic Instability","Summon reinforcements","Flying Greater Daemons"],
+    strengths:"High attack infantry and cavalry; Greater Daemon is a terror-causing flying monster; spells can restore lost stands",
+    weaknesses:"Daemonic Instability can destroy damaged units; expensive points costs; no shooting",
+    generalCmd:9,
+    spells:[
+      { name:"Summon Daemons", cast:"4+", range:"60cm",
+        desc:"Fresh Daemons emerge from the warp to reinforce their beleaguered kindred. Cast on any friendly Daemon unit of three stands that has lost one or two stands. The unit regains one stand, placed directly behind, in front or beside another stand facing the same direction. If the unit is in combat, the stand can be placed touching the enemy and counts as charging." },
+      { name:"Daemonic Rage", cast:"5+", range:"30cm",
+        desc:"A keening cry of pure power rises upon daemonic lips as magical energy surges through their eldritch bodies. Affects every friendly unit within range. Lasts during the following Combat phase. Every unit gains a bonus +1 attack that can be allocated to any stand in the unit." },
+      { name:"Sorcerous Blast", cast:"5+", range:"30cm",
+        desc:"A bolt of black lightning leaps from fingertip to foe, searing the enemy with a blast of dark power. Cast on an enemy unit the Wizard can see that is not engaged in combat. Treated as three ordinary shooting attacks except armour has no effect — all targets count as having no armour. A unit can be driven back as with ordinary shooting." },
+      { name:"Frenzy of Chaos", cast:"6+", range:"30cm",
+        desc:"Rumbling thunderous power surges through the daemonic ranks driving all into a frenzied thirst for blood. Cast on a friendly unit engaged in combat within range — the Wizard does not need to see the target. Lasts until end of the following Combat phase. The unit can re-roll any failed attacks in combat: take any dice that failed to score hits and roll them again once." },
+    ],
+    instabilityTable:[
+      { roll:"0–1", result:"Stand Destroyed", effect:"One stand is destroyed — the daemons fade away and are absorbed back into the Realm of Chaos. Remove one stand. If a character is with the unit and the last stand is removed the character is destroyed too." },
+      { roll:"2–3", result:"Confused",        effect:"The unit becomes confused (if not already) as it is torn between this world and the next." },
+      { roll:"4–5", result:"No Effect",       effect:"No effect — unless the unit is confused, in which case it ceases to be confused as it is favoured with the invigorating power of Chaos." },
+      { roll:"6",   result:"Regain Stand",    effect:"The unit regains one stand. Place it directly behind, in front or beside another stand facing the same direction. If impossible to position, the stand cannot be added." },
+    ],
+    units:[
+      // ── CHARACTERS ──────────────────────────────────────────────────────
+      { id:"dc_overlord", name:"Daemon Overlord", type:"General",
+        atk:"+2", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1,
+        special:"Command range covers entire battlefield. May be given the powers of a Wizard for +25pts — if so can be given a magic item restricted to either a General or a Wizard. May be given Daemonic Wings (+10pts) to fly. May be given Favour of the Gods (+50pts) for +1 Attack and causes Terror.",
+        upgrades:["daemonicWings","favourOfGods"], magic:["devices"] },
+      { id:"dc_lord", name:"Daemon Lord", type:"Hero",
+        atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1,
+        special:"Command range 60cm. May be given Daemonic Wings (+10pts) to fly. May be given Favour of the Gods (+50pts) for +1 Attack and causes Terror.",
+        upgrades:["daemonicWings","favourOfGods"], magic:[] },
+      { id:"dc_sorcerer", name:"Daemon Sorcerer", type:"Wizard",
+        atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1,
+        special:"Command range 20cm. Casts spells. May be given Daemonic Wings (+10pts) to fly. May be given Favour of the Gods (+50pts) for +1 Attack and causes Terror.",
+        upgrades:["daemonicWings","favourOfGods"], magic:["arcane"] },
+      // ── INFANTRY ────────────────────────────────────────────────────────
+      { id:"dc_daemon_horde", name:"Daemon Horde", type:"Infantry",
+        atk:4, hits:3, armour:"5+", cmd:"-", size:3, pts:75, min:3, max:"-",
+        special:"Daemonic Instability: at the start of your Command phase, any unit that has lost at least 1 stand must roll a D6 (subtract 1 if reduced to 1 stand and more than 20cm from a friendly Daemon Wizard). See Instability table.",
+        upgrades:[], magic:["standards","weapons"] },
+      { id:"dc_daemon_swarm", name:"Daemon Swarm", type:"Infantry",
+        atk:2, hits:4, armour:"0", cmd:"-", size:3, pts:45, min:"-", max:4,
+        special:"Cannot be driven back by shooting and does not roll for drive backs. Cannot be given a magic item. Daemonic Instability.",
+        upgrades:[], magic:[] },
+      // ── CAVALRY ────────────────────────────────────────────────────────
+      { id:"dc_daemon_cavalry", name:"Daemon Cavalry", type:"Cavalry",
+        atk:4, hits:3, armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3,
+        special:"Daemonic Instability.",
+        upgrades:[], magic:["standards","weapons"] },
+      { id:"dc_daemon_hounds", name:"Daemon Hounds", type:"Cavalry",
+        atk:3, hits:3, armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:2,
+        special:"Daemonic Instability.",
+        upgrades:[], magic:["standards","weapons"] },
+      // ── CHARIOTS ───────────────────────────────────────────────────────
+      { id:"dc_daemon_chariots", name:"Daemon Chariots", type:"Chariot",
+        atk:3, hits:3, armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:3,
+        special:"Daemonic Instability.",
+        upgrades:[], magic:["standards","weapons"] },
+      // ── MONSTERS ───────────────────────────────────────────────────────
+      { id:"dc_daemon_beasts", name:"Daemon Beasts", type:"Monster",
+        atk:5, hits:4, armour:"5+", cmd:"-", size:3, pts:200, min:"-", max:1,
+        special:"Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_daemon_flyers", name:"Daemon Flyers", type:"Monster",
+        atk:2, hits:3, armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:1,
+        special:"Flies. Based facing the long edge of the stand (same as infantry). Daemonic Instability.",
+        upgrades:[], magic:[] },
+      { id:"dc_greater_daemon", name:"Greater Daemon", type:"Monster",
+        atk:8, hits:6, armour:"4+", cmd:"-", size:1, pts:280, min:"-", max:1,
+        special:"Flies (regardless of whether the model has wings). Causes Terror. If the Greater Daemon accumulates 4–5 hits at the end of the Shooting or Combat phase while not engaged in combat, it is badly hurt: hits are discounted and its Hits and Attacks are halved for the rest of the battle (3 Hits, 4 Attacks). Daemonic Instability.",
+        upgrades:[], magic:[] },
+    ],
+    upgradeRules:{
+      daemonicWings: { name:"Daemonic Wings", pts:10, desc:"Character gains the ability to fly (move up to 100cm, ignore terrain)." },
+      favourOfGods:  { name:"Favour of the Gods", pts:50, desc:"Character gains +1 Attack and causes Terror in enemies." },
+    },
+  },
   daemons_khorne: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah"],
     name:"Daemons of Khorne", wip:true, color:"#8b0000", bg:"#060000", accent:"#ff2200",
     lore:"Blood for the Blood God. Skulls for the Skull Throne. The daemons of Khorne know only one purpose: slaughter.",
     playstyle:"Pure close-combat aggression with zero magic — Khorne despises sorcery. Bloodletters are elite infantry with Hell Blades that shred armour on the charge. Flesh Hounds are fast, magic-resistant cavalry. Bloodcrushers are the most powerful cavalry stand in the game, causing terror and dealing devastating charges. The Bloodthirster is the strongest Greater Daemon of any army. You have NO spells and NO shooting — get into combat as fast as possible and never stop.",
@@ -866,7 +930,6 @@ const ARMIES = {
   // Slowest but toughest. Regeneration. Diseased touch debuffs enemies.
   // ══════════════════════════════════════════════════════════════════════════
   daemons_nurgle: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah"],
     name:"Daemons of Nurgle", wip:true, color:"#4a6e1a", bg:"#020400", accent:"#88cc22",
     lore:"In the Garden of Nurgle, all things fester and bloom. His daemons are the most resilient in existence — death itself cannot stop them.",
     playstyle:"The toughest daemon army. Plaguebearers are a wall of rot — their diseased touch forces enemies to fight at -1 Attack every round. Nurglings cannot be driven back and annoy enemy command. Plague Drones are flying cavalry that cause terror. Beasts of Nurgle regenerate hits in combat. The Great Unclean One is a vast, terrifying, regenerating monster-general. Your spells slow, weaken and disease the enemy. March forward, absorb punishment, and grind the foe into the mud.",
@@ -937,7 +1000,6 @@ const ARMIES = {
   // Most powerful magic. Horrors split on death. Flamers shoot AND move.
   // ══════════════════════════════════════════════════════════════════════════
   daemons_tzeentch: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah"],
     name:"Daemons of Tzeentch", wip:true, color:"#1055b0", bg:"#000308", accent:"#40a0ff",
     lore:"In the Realm of Chaos, Tzeentch laughs at all certainties. His daemons embody mutation, sorcery and the ever-shifting web of fate.",
     playstyle:"The magic-heavy daemon army with the strongest spell list in the game. Pink Horrors are peculiar infantry — when a stand is destroyed, place a Blue Horror stand in its place for free, making them extremely hard to eliminate. Flamers bounce around the battlefield shooting armour-piercing warpfire in 360° arcs. Screamers fly over enemy units and slash them for free automatic hits. The Lord of Change is both your General and your most powerful Wizard simultaneously. Wear the enemy down with spells and Flamer fire before finishing in combat.",
@@ -1075,11 +1137,10 @@ const ARMIES = {
   },
 
   vampire_counts: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah"],
     name:"Vampire Counts", color:"#6a0a6a", bg:"#050005", accent:"#b020b0",
     lore:"Ancient vampires commanding legions of undead in an eternal crusade to devour the living.",
     armyRules:[{name:"Undead (Army Rule)", desc:"All units except Ghouls: never act on initiative; only move in the Command phase if ordered (Fell Bats may home back). Unaffected by: the -1 Command penalty for enemy within 20cm; the -1 Combat penalty for fighting terrifying troops; the Confusion rule. Undead units cannot make a supporting charge for a unit of Ghouls charging on initiative."}, {name:"Ethereal Host", desc:"Attacks always inflict a hit on 4+ regardless of enemy status (open, defended or fortified). Cannot be driven back by shooting. Cause terror. Cannot have magic items."}, {name:"Dire Wolves", desc:"If charging an enemy in the open, receive +1 Attack modifier (like chariots and monsters). Cannot have magic items."}, {name:"Fell Bats", desc:"Can fly. Can home back without requiring an order. Based along the long base edge like infantry (not the short edge like most monsters)."}, {name:"Vampire Lord", desc:"A powerful sorcerer as well as General. Can cast spells as a Wizard and may be given magic items restricted to either Generals or Wizards. Command range still extends over the whole battlefield."}],
-        spells:[{name:"Raise Dead", cast:"5+", range:"30cm", desc:"Cast on a combat engagement within 30cm (no LoS needed). Creates a 3-stand Skeleton unit placed in contact with the engagement. If stands cannot be legally placed the spell fails. Raised dead do not count as charging and are ignored for breakpoint and victory points."}, {name:"Vanhel's Danse Macabre", cast:"5+", range:"40cm", desc:"Cast on any friendly unit except Ghouls within range (no LoS needed). Affects a single unit only — no brigade. The unit moves as if it had received an order. Characters that have joined do not move."}, {name:"Death Bolt", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not engaged in combat. Treated as 3 shooting attacks with no armour saves. The unit can be driven back as with ordinary shooting."}, { name:"Curse of Years", cast:"6+", range:"N/A", desc:"The Wizard's enemies crumble to dust as he smites them with the corrupting Curse of Years. The Wizard can cast this spell if he has joined a unit in combat. The spell can be cast on any single enemy unit touching the unit the Wizard has joined. The target unit takes six attacks worked out in the usual way. Any hits scored are carried over into the first round of combat and count as having been struck in the first round for purposes of working out combat results." }],
+        spells:[{name:"Raise Dead", cast:"5+", range:"30cm", desc:"Cast on a combat engagement within 30cm (no LoS needed). Creates a 3-stand Skeleton unit placed in contact with the engagement. If stands cannot be legally placed the spell fails. Raised dead do not count as charging and are ignored for breakpoint and victory points."}, {name:"Vanhel's Danse Macabre", cast:"5+", range:"40cm", desc:"Cast on any friendly unit except Ghouls within range (no LoS needed). Affects a single unit only — no brigade. The unit moves as if it had received an order. Characters that have joined do not move."}, {name:"Death Bolt", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not engaged in combat. Treated as 3 shooting attacks with no armour saves. The unit can be driven back as with ordinary shooting."}, {name:"Vile Curse", cast:"4+", range:"30cm", desc:"Cast on a visible enemy unit not engaged in combat within range. The unit suffers -1 to its Command value until the end of the opposing player's following turn."}],
     playstyle:"Undead immunity makes this army psychologically unbreakable. The Vampire Lord doubles as a Wizard. Ethereal Hosts ignore armour entirely. Build a solid infantry core and use Dire Wolves and Fell Bats to threaten flanks.",
     fluff:"In the cursed lands of Sylvania dwell the Vampire Counts \u2014 ancient undead nobles who rule over legions of risen dead. Driven by insatiable hunger and iron will, they marshal skeletal warriors, shambling Zombies, spectral Wraith-hosts and galloping Black Knights in a relentless crusade against the living. At their head stands the Vampire Lord \u2014 warrior, sorcerer and monster in one immortal form.",
     traits:["Undead immunity", "Vampire Lord also a Wizard", "Black Knights cavalry", "Ethereal Host ignores armour"],
@@ -1105,11 +1166,10 @@ const ARMIES = {
   },
 
   araby: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_tichi","ror_birdmen","ror_asarnil","ror_gotrek","ror_witchhunters"],
     name:"Araby", color:"#c07010", bg:"#080500", accent:"#e0a020",
     lore:"Proud desert warriors of the Southern lands, commanding war elephants, magic carpet riders and powerful djinn.",
     armyRules:[{name:"Guards", desc:"The Sultan Guards obey the first order each turn on a Command roll of 10 or less when ordered by the General, with no penalties applied. Further orders use normal Command and penalties. Applies only to Guards, not brigades containing Guards."}, {name:"Desert Riders", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Camel Riders", desc:"Ignore distance modifiers when receiving orders (applies to Camel Riders only, not brigades containing them). However, all orders to Camel Riders or brigades containing them suffer a -1 Command penalty due to the camels' intractable nature."}, {name:"Magic Carpets", desc:"Fly. Rated as aerial cavalry. Because they are awkward flyers, they can be pursued by any troop type. Have 15cm shooting range and 360 degree vision."}, {name:"Elephants", desc:"Cause terror. Cannot brigade with cavalry (but can brigade with other troop types including other Elephants). If they would become Confused, they Stampede instead (no normal confusion rules apply). Stampeding Elephants: cannot be given orders or use initiative; roll D6 at start of Command phase to determine movement direction. Cease stampeding at end of their own Command phase."}],
-        spells:[{name:"Sand Storm", cast:"4+", range:"30cm", desc:"Cast on the Sorcerer himself. Lasts until end of opposing player's following turn. All enemy units within 30cm of the Sorcerer suffer -1 Command penalty when orders are issued to them."}, {name:"Mirage", cast:"4+", range:"60cm", desc:"Place an illusionary unit (chosen from the Araby list) within 60cm of the Sorcerer and more than 20cm from any enemy. The illusion cannot move or fight but is treated as real by the enemy until contacted. While the Mirage is on the table the Wizard cannot cast any other spells."}, {name:"Sunstrike", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Wizard in any direction. Each unit under the line takes 3 shooting attacks (all modifiers apply). Unengaged units can be driven back; engaged units carry over hits."}, { name:"Curse of the Djinn", cast:"6+", range:"30cm", desc:"The Sorcerer channels the immense power of the Djinn and lays a terrible curse upon his foes. Cast on an enemy unit within range. The target unit must re-roll all successful armour saves for the duration of the following close combat phase. If the Sorcerer has a Djinn he adds +1 to his dice roll when casting this spell (casts on 5+)." }],
+        spells:[{name:"Sand Storm", cast:"4+", range:"30cm", desc:"Cast on the Sorcerer himself. Lasts until end of opposing player's following turn. All enemy units within 30cm of the Sorcerer suffer -1 Command penalty when orders are issued to them."}, {name:"Mirage", cast:"4+", range:"60cm", desc:"Place an illusionary unit (chosen from the Araby list) within 60cm of the Sorcerer and more than 20cm from any enemy. The illusion cannot move or fight but is treated as real by the enemy until contacted. While the Mirage is on the table the Wizard cannot cast any other spells."}, {name:"Sunstrike", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Wizard in any direction. Each unit under the line takes 3 shooting attacks (all modifiers apply). Unengaged units can be driven back; engaged units carry over hits."}, {name:"Djinn Summons", cast:"5+", range:"N/A", desc:"The Wizard must have joined a unit in combat. All stands in the unit, including characters, gain +1 Attack for the duration of the following Combat phase."}],
     playstyle:"An exotic, fast-moving army with unique options. Djinn-mounted wizards can shoot and fight. Magic Carpet cavalry fly. Elephants cause terror but can stampede. Blend missile cavalry harassment with elephant charges.",
     fluff:"South of the Old World lie the golden desert kingdoms of Araby \u2014 a land of ancient learning, extravagant wealth and powerful magic. Their armies march behind banners of silk, mounted on swift desert horses or lumbering War Elephants, their sorcerers carried aloft on Flying Carpets or bound Djinn. To face Araby is to face mystery.",
     traits:["Flying Carpets", "War Elephants", "Djinn sorcery", "Good cavalry mix"],
@@ -1136,12 +1196,10 @@ const ARMIES = {
   },
 
   dogs_of_war: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_oglah","ror_tichi","ror_birdmen","ror_bronzino","ror_asarnil","ror_gotrek","ror_witchhunters"],
     name:"Dogs of War", color:"#808020", bg:"#050500", accent:"#c0c030",
     lore:"Mercenary companies from across the Old World, hiring out to the highest bidder with diverse troops and tactics.",
     armyRules:[{name:"Pikemen", desc:"Never benefit from defended or fortified status in dense terrain or on fortress walls. Count as defended against cavalry or chariots charging their front (first combat round only). Based as cavalry but move as infantry. Can only give/receive support from infantry or other Pikemen stands facing the same direction, touching flank with whole flank. No support from behind or in front."}, {name:"Handgunners", desc:"Count enemy Armour values as one worse when shot by a handgun. One Crossbowmen unit per 1000pts can be replaced by Handgunners at +10pts, still counting for Crossbowmen min/max."}, {name:"Ogres", desc:"Must use initiative to charge enemy human units within 20cm at start of Command phase. Automatic — commanders cannot prevent it. 'Humans' includes most men but not Dwarfs or Elves."}, {name:"Light Cavalry", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Giants", desc:"Must be given separate orders; cannot brigade with other troops. On a failed order, roll on the Giant Goes Wild chart. Giants with 5-7 hits while not engaged become Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Giants cause terror."}, {name:"Paymaster", desc:"Only one Paymaster per army. Once per game using the Pay Wagon, the Paymaster may add +1 to all his Command checks for a single turn (announce before rolling)."}],
-        spells:[{name:"Ball of Flame", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Wizard in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Voice of Command", cast:"5+", range:"30cm", desc:"Cast on any unengaged friendly unit within range (no LoS needed). The unit moves as if it had received an order. Character stands that have joined do not move with it."}, {name:"Weird Enchantment", cast:"4+", range:"30cm", desc:"Cast on any enemy unit (no LoS needed). Lasts until end of opposing player's following turn. The unit moves at half pace in all situations. Counts all enemies as terrifying (-1 Attack), even if normally immune — unless the target is Undead or Daemon."},
-      { name:"Teleport", cast:"2+", range:"N/A", desc:"The Wizard vanishes in a swirl of cloak and crack of thunder, reappearing anywhere on the battlefield. Move the Wizard to any new position on the table. He can leave or join a unit, enabling him to move into or out of combat. Once the Wizard has moved he can cast a second spell — but it must be a different spell, not another Teleport. Roll to cast the second spell normally. A Wizard that Teleports can therefore cast two spells that turn." }],
+        spells:[{name:"Ball of Flame", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Wizard in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits into combat."}, {name:"Voice of Command", cast:"5+", range:"30cm", desc:"Cast on any unengaged friendly unit within range (no LoS needed). The unit moves as if it had received an order. Character stands that have joined do not move with it."}, {name:"Weird Enchantment", cast:"4+", range:"30cm", desc:"Cast on any enemy unit (no LoS needed). Lasts until end of opposing player's following turn. The unit moves at half pace in all situations. Counts all enemies as terrifying (-1 Attack), even if normally immune — unless the target is Undead or Daemon."}],
     playstyle:"The most diverse army in the game. You can field Dwarfs, Ogres, Birdmen, Giants and Knights together. The Paymaster's Pay Wagon provides morale bonuses. Build a balanced force exploiting the best of every culture.",
     fluff:"Coin is the language that all people speak. The Dogs of War are mercenary companies from every corner of the Old World, selling their blades to whoever can afford them. Tilean pike blocks march beside Norse Marauders; Dwarf engineers maintain the Galloper Guns; even Ogres hire out for plunder. Led by their Paymaster, these disparate warriors fight with surprising cohesion when the gold is good.",
     traits:["Mixed races in one army", "Dwarfs and Ogres available", "Pikemen formation bonus", "Paymaster morale rules"],
@@ -1172,7 +1230,6 @@ const ARMIES = {
   },
 
   ogre_kingdoms: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_oglah","ror_tichi","ror_bronzino"],
     name:"Ogre Kingdoms", color:"#a05020", bg:"#060300", accent:"#e07030",
     lore:"Massive, brutal warriors from the mountains who eat everything and fear nothing.",
     armyRules:[{name:"Bull Ogres / Ogre infantry", desc:"If any Ogre infantry unit can use initiative to charge an enemy human unit within 20cm at start of Command phase, it must do so automatically. 'Humans' includes Chaos Warriors and Marauders but not Dwarfs or Elves."}, {name:"Leadbelchers", desc:"15cm shooting range, 2 shooting attacks per unit. Shooting attacks impose a -1 penalty to armour rolls."}, {name:"Yhetees", desc:"Add +1 Attack when charging in the open (like monsters and chariots). Can only give/receive support from other Yhetee stands. Must pursue retreating enemies where possible and must advance into combat if able."}, {name:"Gnoblars", desc:"Shoot as if with bows at 15cm range. Cannot be supported by non-Gnoblar infantry (can support others as normal). Cannot have magic items. Characters cannot join Gnoblar units."}, {name:"Gorgers", desc:"Always -1 Command penalty when ordered due to beastly nature. Always ignore distance Command modifiers when receiving orders. Can pursue any retreating enemy type. May infiltrate onto the battlefield instead of deploying normally."}, {name:"Slave Giant", desc:"Must be given separate orders; cannot brigade. On failed order roll on Giant Goes Wild chart. With 5-7 accumulated hits while not engaged, becomes Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Causes terror."}],
@@ -1203,7 +1260,6 @@ const ARMIES = {
   },
 
   albion: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_tichi","ror_gotrek","ror_witchhunters"],
     name:"Albion", color:"#507030", bg:"#030502", accent:"#80b040",
     lore:"Mist-shrouded isle of fierce barbarian chieftains, druids, giants and great wolfhounds.",
     armyRules:[{name:"Ogres", desc:"If an Ogre unit can use initiative to charge an enemy human unit within 20cm at start of Command phase, it must do so automatically. 'Humans' includes Chaos Warriors and Marauders but not Dwarfs or Elves."}, {name:"Giant", desc:"Must be given separate orders; cannot brigade with other troops. On failed order roll on Giant Goes Wild chart. With 5-7 accumulated hits while not engaged, becomes Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Causes terror."}, {name:"Fenbeast", desc:"Cannot be deployed normally. A Druid may summon Fenbeasts using the Summon Fenbeast spell. Fenbeasts can only be ordered by Druids and cannot brigade with any other unit type. The army cannot have more Fenbeasts on the table at any time than it has Druids. Fenbeasts are not counted towards break point or victory points."}],
@@ -1234,12 +1290,10 @@ const ARMIES = {
   },
 
   goblin_army: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah","ror_bronzino"],
     name:"Goblin Army", color:"#1a6010", bg:"#010400", accent:"#50b020",
     lore:"A vast all-goblin horde of wolf riders, night goblins, pump wagons and lumbering giants.",
-    armyRules:[{name:"Goblins", desc:"A Goblin unit can shoot as if it had bows at 15cm range. Up to two units per 1000pts can be replaced by Squig Herd while still counting for the Goblin min/max value."}, {name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (40cm = -2, 60cm = -4). Trolls regenerate: in each combat round after whole stands are removed, Trolls automatically regenerate one outstanding hit. Regenerated hits still count towards the combat result."}, {name:"Wolf Riders", desc:"15cm shooting range with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Pump Wagon", desc:"Does not move by initiative or orders. Instead it always moves once automatically up to 1D6x10cm during the Command phase (no Command roll required). This can happen at any time during the Command phase but cannot interrupt orders or other movements. In the combat round it charges/pursues/advances, a Pump Wagon receives D6 Attacks in addition to normal extra charge attacks."}, {name:"Giants", desc:"Must be given separate orders; cannot brigade. On failed order roll on Giant Goes Wild chart. With 5-7 accumulated hits while not engaged, becomes Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Causes terror."},
-      {name:"Giant Goes Wild", desc:"D6 — Giant Goes Wild: 1: Stands dopey, neither moves nor fights. 2: Moves toward nearest table edge; charges any unit he contacts, holds ground if victorious. 3: Throws object at closest visible unit within 5xD6cm, inflicting 3 Attacks. 4: Moves straight forward at full pace; charges enemies, walks through friendlies causing Confusion. 5: Moves toward nearest visible enemy as fast as possible, charging if reached; walks through friends causing Confusion. No visible enemy: does nothing. 6: Bellows and charges nearest visible enemy at DOUBLE full pace. If he reaches the enemy, doubles his Attacks in the first round of combat. No visible enemy: does nothing."}],
-        spells:[{name:"Mork Save Uz!", cast:"5+", range:"30cm", desc:"Cast on any friendly unit within 30cm. The unit gains a 5+ save (worked out normally) until the beginning of their next turn. If the unit already has a saving roll, choose which to use — may not take both."}, {name:"Gerroff!!!", cast:"5+", range:"60cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The enemy unit is driven back 1D6×5cm towards its own table edge. Cannot be routed by this drive back."}, {name:"Brain Busta", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not in combat. Treated as 3 shooting attacks but armour has no effect. Can cause drive back as normal shooting."}, {name:"Waaagh!", cast:"4+", range:"30cm", desc:"Cast on a friendly unit of Goblins (including Squig Herds, Wolf Riders, Wolf Chariots, Pump Wagons — not Trolls, Giants, or non-greenskins) engaged in combat (no LoS needed). Every stand gains +1 Attack for the following Combat phase."}, {name:"WAAAGH!", cast:"4+", range:"30cm", desc:"Cast on a friendly unit of Goblins engaged in combat (including Squig Herds, Wolf Riders, Wolf Chariots and Pump Wagons) — not Trolls, Giants or other non-greenskins. No LoS needed. Every stand adds +1 to its Attacks value for the following Combat phase."}],
+    armyRules:[{name:"Goblins", desc:"A Goblin unit can shoot as if it had bows at 15cm range. Up to two units per 1000pts can be replaced by Squig Herd while still counting for the Goblin min/max value."}, {name:"Trolls", desc:"Distance Command penalties to Trolls are always doubled (40cm = -2, 60cm = -4). Trolls regenerate: in each combat round after whole stands are removed, Trolls automatically regenerate one outstanding hit. Regenerated hits still count towards the combat result."}, {name:"Wolf Riders", desc:"15cm shooting range with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Pump Wagon", desc:"Does not move by initiative or orders. Instead it always moves once automatically up to 1D6x10cm during the Command phase (no Command roll required). This can happen at any time during the Command phase but cannot interrupt orders or other movements. In the combat round it charges/pursues/advances, a Pump Wagon receives D6 Attacks in addition to normal extra charge attacks."}, {name:"Giants", desc:"Must be given separate orders; cannot brigade. On failed order roll on Giant Goes Wild chart. With 5-7 accumulated hits while not engaged, becomes Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Causes terror."}],
+        spells:[{name:"Mork Save Uz!", cast:"5+", range:"30cm", desc:"Cast on any friendly unit within 30cm. The unit gains a 5+ save (worked out normally) until the beginning of their next turn. If the unit already has a saving roll, choose which to use — may not take both."}, {name:"Gerroff!!!", cast:"5+", range:"60cm", desc:"Cast on any unengaged enemy unit within range (no LoS needed). The enemy unit is driven back 1D6×5cm towards its own table edge. Cannot be routed by this drive back."}, {name:"Brain Busta", cast:"5+", range:"30cm", desc:"Cast on a visible enemy unit not in combat. Treated as 3 shooting attacks but armour has no effect. Can cause drive back as normal shooting."}, {name:"Waaagh!", cast:"4+", range:"30cm", desc:"Cast on a friendly unit of Goblins (including Squig Herds, Wolf Riders, Wolf Chariots, Pump Wagons — not Trolls, Giants, or non-greenskins) engaged in combat (no LoS needed). Every stand gains +1 Attack for the following Combat phase."}],
     playstyle:"Masses of cheap goblins backed by hard-hitting Trolls and chaotic Pump Wagons. Win by sheer volume and troll-fuelled brawls in the middle. Pump Wagons are hilarious and occasionally devastating.",
     fluff:"When left entirely to their own devices \u2014 without even Orcs to boss them about \u2014 Goblins organise. Sort of. A Goblin Warboss of sufficient cunning can marshal Wolf Rider hordes, Night Goblin mobs clutching their beloved Squigs, lumbering Trolls and the utterly unpredictable Pump Wagons into a force perfectly capable of burying an enemy in sheer green numbers.",
     traits:["All-goblin force", "Pump Wagons auto-move", "Trolls regenerate", "Low command values"],
@@ -1266,7 +1320,6 @@ const ARMIES = {
   },
 
   witch_hunters: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_anakonda","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_tichi","ror_bronzino","ror_gotrek","ror_witchhunters"],
     name:"Witch Hunters", color:"#505050", bg:"#030303", accent:"#909090",
     lore:"Fanatical warriors of righteousness hunting Chaos and Undead with purging fire and righteous steel.",
     armyRules:[{name:"Chaos and Undead Definitions (Army Rule)", desc:"'Chaos' means Chaos, Daemons, Beastmen, Chaos Dwarf and Skaven armies. 'Undead' means Tomb Kings and Vampire Counts armies (including Ghouls). These definitions apply to all special rules that reference 'Chaos or Undead'."}, {name:"Zealots", desc:"Gain +1 Attack in the first round of combat against Undead or Chaos (regardless of who charged). Always use initiative to charge Undead or Chaos enemies if possible. Must pursue or advance if victorious against Undead or Chaos."}, {name:"Handgunners", desc:"Count enemy Armour values as one worse when shot by a handgun (3+ = 4+, 4+ = 5+, 5+ = 6+, 6+ = no save)."}, {name:"Flagellants", desc:"Always charge on initiative; cannot be given orders instead. Never evade. Cannot be driven back by shooting. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier."}, {name:"Warhounds", desc:"Warhound stands are not deployed independently. Any infantry unit may add one Warhound stand, making the unit 4 stands total. Warhounds share the unit Armour, fight as part of the unit and can be removed as a casualty. Warhound casualties never count for Command penalties and they never cause Irregular Formation."}, {name:"Pistoliers", desc:"Shooting range 15cm with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}],
@@ -1295,7 +1348,6 @@ const ARMIES = {
   },
 
   chaos_dwarfs: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah","ror_bronzino"],
     name:"Chaos Dwarfs", color:"#803010", bg:"#050100", accent:"#c04010",
     lore:"Cruel subjugators of Zharr-Naggrund, commanding enslaved Orcs and Hobgoblins, riding monstrous flying beasts.",
     armyRules:[{name:"Blunderbusses", desc:"15cm shooting range, 2 shooting attacks. Hits impose -1 penalty to armour rolls. One unit per 1000pts can replace a Warrior unit while still counting for Warriors min/max value."}, {name:"Hobgoblins", desc:"15cm shooting range with 360 degree vision. Hobgoblins and Hobgoblin Wolf Riders may not brigade with Black Orcs or Orc Slaves unless a unit of Chaos Dwarfs or Blunderbusses is also in the brigade."}, {name:"Orc Slaves", desc:"Suffer an additional -1 Command penalty when ordered. This penalty is waived if brigaded with Black Orcs, Chaos Dwarfs or Blunderbusses."}, {name:"Earthshaker Cannon", desc:"Acts as a Stone Thrower. Drive-back from Earthshaker shots causes Confusion on rolls of 4+ (instead of the normal 6+). Units in base contact with the target unit also risk Confusion on a roll of 6 (roll for each such unit). Cannot fire if enemy is within 30cm."}, {name:"Death Rocket", desc:"Fires a 1D6 Attacks stone-thrower style shot. Area of effect may vary."}, {name:"Sorcerer Lord Upgrade", desc:"One Sorcerer per army can be upgraded to Sorcerer Lord (+25pts, max 1). The Sorcerer Lord gains enhanced spellcasting abilities."}],
@@ -1327,7 +1379,6 @@ const ARMIES = {
   },
 
   wood_elves: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_anakonda","ror_golgfag","ror_voland","ror_almuktar","ror_tichi","ror_asarnil","ror_witchhunters"],
     name:"Wood Elves", color:"#2a6020", bg:"#020501", accent:"#40a030",
     lore:"Guardians of the enchanted forest of Loren, masters of ambush and the bow, aided by the forest's living denizens.",
     armyRules:[{name:"Woodland Folk (Army Rule)", desc:"All Wood Elf infantry does not suffer the usual -1 Command penalty when within woodland."}, {name:"Glade Guard", desc:"Add +1 to shooting dice rolls (hit on 3+ in open, 4+ defended, 5+ fortified)."}, {name:"Wardancers", desc:"Not deployed independently. Any Glade Guard or Eternal Guard unit may add one Wardancer stand (making 4 stands total). Wardancers share the unit Armour, fight as part of the unit and can be removed as a casualty. Their casualties never count for Command penalties and they never cause Irregular Formation."}, {name:"Waywatchers", desc:"Add +1 to shooting dice rolls AND resolve attacks at -1 to enemy Armour value. May also infiltrate: issue an infiltration order to a point in dense terrain or any table edge except the enemy's. On success the unit appears there."}, {name:"Dryads, Treekin, Wild Riders, Treeman", desc:"Wood Elf nature spirits. These units do not suffer the -1 Command penalty in dense terrain. Treeman with 4-5 hits while not engaged becomes Badly Hurt — Hits and Attacks halved. The Treeman Ancient and Branchwraith are Hero characters, not Wizard or General types."}],
@@ -1363,7 +1414,6 @@ const ARMIES = {
   },
 
   beastmen: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_cursed","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_golgfag","ror_voland","ror_almuktar","ror_oglah"],
     name:"Beastmen", color:"#6b4010", bg:"#040200", accent:"#a06020",
     lore:"Savage half-beasts of the forest, devoted to Chaos, ambushing from the dark woods.",
     armyRules:[{name:"The Things in the Woods (Army Rule)", desc:"Beastmen infantry do not suffer the usual -1 Command penalty when within woodland."}, {name:"Gor and Ungor Ambushers", desc:"Up to half the Gor units (rounded down) and half the Ungor units (rounded down) may be designated Ambushers. Ambushers are deployed during any Command phase rather than at the start. Issue an Ambush order to a point in dense terrain or on any table edge except the enemy's (ignoring Command range limits but applying distance and enemy proximity penalties). On success, place one stand at the point and deploy the rest in formation around it. The Ambush order counts as their first order. Ungor have 15cm shooting range."}, {name:"Minotaurs (Bloodlust)", desc:"Minotaurs always use initiative to charge if possible and cannot be given orders instead. Never use initiative to evade. Must pursue or advance if victorious. Bloodlust: when they charge and the unit they are charging is destroyed before combat is resolved (by other charging units), Minotaurs move towards the nearest enemy unit."}, {name:"Chaos Spawn", desc:"Spawn have -1 Command penalty unless in a brigade with more non-Spawn than Spawn units. Up to two Spawn per brigade without counting towards brigade maximum. Cause terror in combat. Cannot be driven back by shooting. Must pursue or advance if victorious. 15cm shooting range and 360 degree vision."}, {name:"Dragon Ogres", desc:"Dragon Ogres are immune to terror."}],
@@ -1395,12 +1445,10 @@ const ARMIES = {
   },
 
   norse: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_anakonda","ror_golgfag","ror_voland","ror_almuktar","ror_birdmen"],
     name:"Norse", color:"#406080", bg:"#010305", accent:"#6090c0",
     lore:"Fearless raiders from the frozen north, with berserkers, mammoths and the Valkyries of the gods.",
     armyRules:[{name:"Berserkers", desc:"Always use initiative to charge an enemy if possible; cannot be given orders instead. Never evade. Cannot be driven back by shooting and do not roll for drive backs. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier."}, {name:"Ulfwerener", desc:"Based facing the short edge like cavalry. Receive +1 Attack when charging in the open (like monsters and chariots). Can pursue cavalry and chariots. Cannot support or be supported. Cannot take magic items. Only characters with the Were Kin upgrade may join them."}, {name:"Storm Giant", desc:"Must be given separate orders; cannot brigade. On failed order roll on Giant Goes Wild chart. With 5-7 accumulated hits while not engaged, becomes Badly Hurt — Hits and Attacks halved (4 Hits, 4 Attacks). Causes terror."}, {name:"War Mammoth", desc:"Uses a 40x60mm base. Causes terror. Can attack troops on ramparts with its trunk (like a Giant) or batter wall sections. If it would become Confused it Stampedes instead — moving automatically each turn until the end of its own Command phase. Uses special Stampede movement rules."}],
-        spells:[{name:"Aspect of Wulfen", cast:"4+", range:"30cm", desc:"Cast on any friendly unit within range (no LoS needed). The unit counts as causing terror for the duration of the Combat phase."}, {name:"Thunder of Fo'Wor", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Shaman in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits."}, {name:"Eye of the Raven", cast:"5+", range:"N/A", desc:"The Norse player may re-roll a single D6 at any time during the rest of his turn, through the opponent's turn, or in his following turn (until end of next Command phase). Cannot be used on blunder Command rolls, but can re-roll the blunder chart result."},
-      { name:"Spite of Low'Key", cast:"5+", range:"30cm", desc:"The Shaman makes a weird enchantment calling the gods to curse the enemy with bad luck and failure. All enemy characters within 30cm that roll a double have those orders count as blunders — from double 1 through double 5. As a result all doubles rolled not only blunder but count as failed orders. The only exception is the enemy general, who cannot blunder. The spell lasts until the end of the enemy Command phase." }],
+        spells:[{name:"Aspect of Wulfen", cast:"4+", range:"30cm", desc:"Cast on any friendly unit within range (no LoS needed). The unit counts as causing terror for the duration of the Combat phase."}, {name:"Thunder of Fo'Wor", cast:"5+", range:"30cm", desc:"Draw a 30cm line from the Shaman in any direction (stops at blocking terrain). Each unit under the line takes 3 shooting attacks. Unengaged units can be driven back; engaged units carry over hits."}, {name:"Eye of the Raven", cast:"5+", range:"N/A", desc:"The Norse player may re-roll a single D6 at any time during the rest of his turn, through the opponent's turn, or in his following turn (until end of next Command phase). Cannot be used on blunder Command rolls, but can re-roll the blunder chart result."}],
     playstyle:"An aggressive hard-hitting infantry army with monster support. Huscarls are excellent heavy infantry. Berserkers always charge and cannot evade. The War Mammoth is devastating in open battles and can batter fortress walls.",
     fluff:"In the frozen seas north of the Empire, Viking warriors launch their longships toward warmer shores. The Norse are fearless raiders who worship gods of war, storm and death. Their Berserkers fight in a trance-like fury; and when they march overland, War Mammoths break walls and trample armies flat. They come for glory, for plunder, and for the joy of battle.",
     traits:["Huscarls elite infantry", "Berserkers frenzy", "War Mammoth siege capability", "Valkyries fly"],
@@ -1427,7 +1475,6 @@ const ARMIES = {
   },
 
   cathay: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_mengil","ror_anakonda","ror_bearmen","ror_ruglud","ror_longdrong","ror_golgfag","ror_voland","ror_almuktar","ror_oglah","ror_tichi","ror_bronzino","ror_gotrek"],
     name:"Cathay", color:"#c01010", bg:"#080000", accent:"#e83030",
     lore:"The disciplined armies of a vast eastern empire, combining advanced weapons with ancient magical traditions.",
     armyRules:[{name:"Structure and Discipline (Army Rule)", desc:"Cathay commanders may issue orders to brigades of up to 6 units (instead of the usual 4). However, the 6-unit brigade must include at least 2 units of Bannermen. The 6-unit brigade cannot include chariots, cavalry or Terracotta Warriors."}, {name:"Handguns", desc:"Any or all Crossbow units can be replaced by Handgun units while still counting for Crossbow min/max. Handgun hits impose -1 penalty to armour rolls."}, {name:"Terracotta Warriors", desc:"Undead: cannot act on initiative; unaffected by terror or enemy within 20cm; cannot be confused. Can only brigade with other Terracotta Warriors and can only give/receive support from other Terracotta Warriors. Can only be ordered by Sorcerers, who gain +1 Command when doing so."}, {name:"Hu Cavalry", desc:"15cm shooting range with 360 degree vision — stands draw line of sight from all edges for evading and shooting, including at charging enemies."}, {name:"Rocket Launcher", desc:"Treated as a Stone Thrower except it shoots 1D6 times per phase. Hits have -1 armour save modifier (as handguns). If the shot roll comes up a 1, the Rocket Launcher has misfired — roll on the Rocket Launcher Misfire Chart."}, {name:"Celestial Dragon Upgrade", desc:"One Sorcerer per army can be upgraded to a Celestial Dragon (a form of dragon that flies, gives orders, casts spells and causes terror). The Dragon cannot give orders to Terracotta Warriors. Max 1 per army."}],
@@ -1461,7 +1508,6 @@ const ARMIES = {
   },
 
   nippon: {
-    hireableRoR:["ror_pirazzo","ror_alcatani","ror_ricco","ror_leopold","ror_marksmen","ror_braganza","ror_lumpin","ror_vespero","ror_anakonda","ror_golgfag","ror_voland","ror_almuktar","ror_birdmen"],
     name:"Nippon", color:"#c01818", bg:"#080000", accent:"#ff4040",
     lore:"Stoic samurai warriors from the eastern islands, bolstered by bound spirit creatures from their temple shrines.",
     armyRules:[{name:"Honour and Duty (Army Rule)", desc:"A Nippon army adds 1 to the number of units that must be lost before the army will withdraw. For example an army of 16 units will normally withdraw once 8 are destroyed — with this rule, it will not withdraw until 9 are destroyed."}, {name:"Ashigaru Tepo (Handguns)", desc:"Ashigaru Tepo use black powder handguns. Units hit by Ashigaru Tepo suffer -1 penalty to their armour rolls (armour piercing)."}, {name:"Bushido (Samurai)", desc:"Samurai live by a strict code of honour. They cannot use initiative to evade and roll 1 fewer die for drive backs."}, {name:"Mikata", desc:"Mikata always use initiative to charge if possible; cannot be given orders instead. Never evade. Cannot be driven back by shooting and do not roll for drive backs. Must pursue or advance if victorious. Unaffected by terror — no -1 Attack modifier."}, {name:"Ninja", desc:"15cm shooting range with 360 degree vision. May infiltrate: issue an infiltration order to a point in dense terrain or on any table edge except the enemy's (Command range extends over entire table for infiltration). On success the unit appears there."}, {name:"Shugenja", desc:"If an enemy Wizard within 50cm casts a spell, the Shugenja can attempt to dispel it on a D6 roll of 4+. Only one attempt per spell. Also adds +1 to Daemonic Instability table rolls for friendly Daemon units within 20cm. Shugenjas may take a Dispel Scroll."}],
@@ -1492,50 +1538,7 @@ const ARMIES = {
     upgradeRules:{}
   },
 
-  regiments_of_renown: {
-    name:"Regiments of Renown", color:"#C9A84C", bg:"#0c0a06", accent:"#e8c86a",
-    lore:"Mercenary units available for hire across the Old World. Each army may include maximum 1 Regiment of Renown per 1000 points following the Allies Table. RoR units stay independent of army racial special rules — neither bonuses nor drawbacks apply.",
-    armyRules:[
-      {name:"For Hire", desc:"Each army may hire maximum 1 Regiments of Renown unit per full 1000 points, following the Allies Table. Hired units count toward the maximum allowance of the indicated unit type."},
-      {name:"Led by the Hero", desc:"RoR units (including artillery and hero-type) cost 10 points more than equivalents in other armies. They receive +1 bonus to the melee Attack value of ONE stand total (not +1 per stand)."},
-      {name:"Independent and Exclusive", desc:"Hired units can be ordered and brigaded without penalties. In case of a blunder make separate Blunder rolls for RoR units if brigaded with other troops. They cannot be targeted by friendly spellcaster spells and do not receive any benefit from own spells or area effects."},
-      {name:"No Magic Items", desc:"No magic item may be given to hired RoR units or their heroes."},
-      {name:"One Each", desc:"Your army may contain only one of each unique listed RoR unit. If your opponent hired the same regiment, roll a dice to decide who has the authentic one (for fun only — no game impact)."}
-    ],
-    playstyle:"Specialist mercenaries who bring unique capabilities to any army. Each regiment has its own fighting style and special rules inherited from its original faction.",
-    units:[
-      {id:"ror_pirazzo", name:"Pirazzo's Lost Legion", type:"Infantry", atk:"3/1", hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:85, special:"Count as highest point value limited infantry type. Not available with Tichi-Huichi's Raiders."},
-      {id:"ror_alcatani", name:"Alcatani Fellowship", type:"Infantry", atk:3, hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:60, special:"Count as highest point value limited infantry type."},
-      {id:"ror_ricco", name:"Ricco's Republican Guard", type:"Infantry", atk:3, hits:3, armour:"5+", cmd:"-", size:3, min:"-", max:1, pts:75, special:"Count as highest point value limited infantry type."},
-      {id:"ror_leopold", name:"Leopold's Leopard Company", type:"Infantry", atk:3, hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:60, special:"Count as highest point value limited infantry type."},
-      {id:"ror_marksmen", name:"Marksmen of Miragliano", type:"Infantry", atk:"3/1", hits:3, armour:0, cmd:"-", size:3, min:"-", max:1, pts:65, special:"Count as highest point value limited shooting infantry type."},
-      {id:"ror_braganza", name:"Braganza's Besiegers", type:"Infantry", atk:"3/1", hits:3, armour:"5+", cmd:"-", size:3, min:"-", max:1, pts:90, special:"Count as highest point value limited infantry type."},
-      {id:"ror_lumpin", name:"Lumpin Croop's Fighting Cocks", type:"Infantry", atk:"3/1", hits:3, armour:0, cmd:"-", size:3, min:"-", max:1, pts:70, special:"Count as highest point value limited shooting infantry type."},
-      {id:"ror_vespero", name:"Vespero's Vendetta", type:"Infantry", atk:"3/1", hits:3, armour:0, cmd:"-", size:3, min:"-", max:1, pts:60, special:"Hiring does not restrict other units."},
-      {id:"ror_cursed", name:"The Cursed Company", type:"Infantry", atk:3, hits:3, armour:"5+", cmd:"-", size:3, min:"-", max:1, pts:70, special:"Cannot be hired with The Witch Hunters."},
-      {id:"ror_mengil", name:"Mengil Manhide's Manflyers", type:"Infantry", atk:"3/2", hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:85, special:"Manflyers can fly."},
-      {id:"ror_anakonda", name:"Anakonda's Amazons", type:"Infantry", atk:"3/1", hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:75, special:"Hiring does not restrict other units."},
-      {id:"ror_bearmen", name:"Bearmen of Urslo", type:"Infantry", atk:3, hits:3, armour:"5+", cmd:"-", size:3, min:"-", max:1, pts:70, special:"Hiring does not restrict other units."},
-      {id:"ror_ruglud", name:"Ruglud's Armoured Orcs", type:"Infantry", atk:"3/1", hits:3, armour:"5+", cmd:"-", size:3, min:"-", max:1, pts:90, special:"Count as highest point value limited infantry type."},
-      {id:"ror_longdrong", name:"Long Drong's Slayer Pirates", type:"Infantry", atk:"3/1", hits:4, armour:"5+", cmd:"-", size:3, min:"-", max:1, pts:120, special:"Slayers add +1 Attack vs Monster stands. Cannot be driven back by shooting."},
-      {id:"ror_golgfag", name:"Golgfag's Mercenary Ogres", type:"Infantry", atk:4, hits:4, armour:"5+", cmd:"-", size:3, min:"-", max:1, pts:115, special:"Count as highest point value limited infantry type."},
-      {id:"ror_voland", name:"Voland's Venators", type:"Cavalry", atk:3, hits:3, armour:"4+", cmd:"-", size:3, min:"-", max:1, pts:120, special:"Count as highest point value limited cavalry type."},
-      {id:"ror_almuktar", name:"Al Muktar's Desert Dogs", type:"Cavalry", atk:"3/1", hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:85, special:"360° vision for shooting and evading."},
-      {id:"ror_oglah", name:"Oglah Khan's Wolfboyz", type:"Cavalry", atk:"2/1", hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:70, special:"360° vision for shooting and evading."},
-      {id:"ror_tichi", name:"Tichi-Huichi's Raiders", type:"Cavalry", atk:"3/1", hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:85, special:"Not available with Pirazzo's Lost Legion."},
-      {id:"ror_birdmen", name:"The Birdmen of Catrazza", type:"Infantry", atk:"2/1", hits:3, armour:"6+", cmd:"-", size:3, min:"-", max:1, pts:95, special:"Birdmen can fly."},
-      {id:"ror_bronzino", name:"Bronzino's Galloper Guns", type:"Artillery", atk:"1/2+bounce", hits:2, armour:0, cmd:"-", size:2, min:"-", max:1, pts:95, special:"Bounce shot: first unit takes 2 attacks, unit directly behind it takes 1 attack."},
-      {id:"ror_asarnil", name:"Asarnil The Dragonlord", type:"Hero", atk:"+4", hits:"-", armour:"-", cmd:8, size:1, min:"-", max:1, pts:190, special:"Riding a Dragon: can fly, causes terror. +2 Attacks to rider when dragon fights."},
-      {id:"ror_gotrek", name:"Gotrek and Felix", type:"Hero", atk:"+2", hits:"-", armour:"-", cmd:8, size:1, min:"-", max:1, pts:100, special:"If Gotrek is killed in combat roll D6: on 4+ he is not killed but Slain count +1 (max 3 Slains). Available to all factions."},
-      {id:"ror_witchhunters", name:"The Witch Hunters", type:"Hero", atk:"+1", hits:"-", armour:"-", cmd:8, size:1, min:"-", max:1, pts:90, special:"Cannot be hired with The Cursed Company. See Witch Hunter rules."}
-    ],
-    spells:[],
-    magic:[]
-  },
 };
-
-const ROR_ALLIES = {"empire": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1], "tomb_kings": [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0], "chaos": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], "orcs": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0], "high_elves": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1], "dwarfs": [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1], "skaven": [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0], "lizardmen": [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1], "bretonnia": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1], "kislev": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1], "dark_elves": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], "daemons": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], "vampire_counts": [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], "araby": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1], "dogs_of_war": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], "ogre_kingdoms": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], "albion": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1], "goblin_army": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0], "witch_hunters": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1], "chaos_dwarfs": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0], "wood_elves": [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1], "beastmen": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], "norse": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0], "cathay": [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0], "nippon": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0], "daemons_khorne": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], "daemons_nurgle": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], "daemons_tzeentch": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], "daemons_slaanesh": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]};
-const ROR_NAMES = ["Pirazzo's Lost Legion", "Alcatani Fellowship", "Ricco's Republican Guard", "Leopold's Leopard Company", "Marksmen of Miragliano", "Braganza's Besiegers", "Lumpin Croop's Fighting Cocks", "Vespero's Vendetta", "The Cursed Company", "Mengil Manhide's Manflyers", "Anakonda's Amazons", "Bearmen of Urslo", "Ruglud's Armoured Orcs", "Long Drong's Slayer Pirates", "Golgfag's Mercenary Ogres", "Voland's Venators", "Al Muktar's Desert Dogs", "Oglah Khan's Wolfboyz", "Tichi-Huichi's Raiders", "Birdmen of Catrazza", "Bronzino's Galloper Guns", "Asarnil The Dragonlord", "Gotrek and Felix", "The Witch Hunters"];
 
 // ── HELPER FUNCTIONS ──────────────────────────────────────────────────────────
 function calcUnitCost(unit, selectedUpgrades, selectedMagic) {
@@ -1827,9 +1830,7 @@ function HowToPlay({ onBack }) {
 
 // ── FACTION SELECTOR ──────────────────────────────────────────────────────────
 function FactionSelector({ onPreview, onHowToPlay, onSavedLists, session, onLogout, isGuest }) {
-  const factions = Object.entries(ARMIES).filter(([k]) => k !== "regiments_of_renown");
-  // Group daemon variants
-  const DAEMON_VARIANTS = ["daemons_khorne","daemons_nurgle","daemons_tzeentch","daemons_slaanesh"];
+  const factions = Object.entries(ARMIES);
   return (
     <div style={{ minHeight:"100vh", background:"#0a0806", padding:"16px" }}>
       <GS />
@@ -2106,7 +2107,6 @@ function validateRoster(roster, army, totalPts) {
 }
 
 function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit }) {
-  const [showRoR, setShowRoR] = React.useState(false);
   // Mount types are handled via character upgrade dropdowns, not as standalone units
   // Exception: units explicitly marked as purchasable (isUnit:true) still show
   const mountTypes = ["Monstrous Mount","Chariot Mount","Special Mount"];
@@ -2164,60 +2164,6 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
           })}
         </div>
       ))}
-
-      {/* ── Regiments of Renown toggle + section ─────────────── */}
-      {(army.hireableRoR || []).length > 0 && (() => {
-        const rorArmy = ARMIES.regiments_of_renown;
-        if (!rorArmy) return null;
-        const hireableUnits = (rorArmy.units || []).filter(u => (army.hireableRoR||[]).includes(u.id));
-        if (hireableUnits.length === 0) return null;
-        const alreadyHired = roster.filter(r => (army.hireableRoR||[]).includes(r.unit.id)).length;
-        return (
-          <div>
-            {/* Checkbox toggle */}
-            <label style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 12px", cursor:"pointer", background:"#0e0c04", borderBottom:"1px solid #2a2010", userSelect:"none" }}>
-              <input type="checkbox" checked={showRoR} onChange={e => setShowRoR(e.target.checked)}
-                style={{ accentColor:"#b8860b", width:14, height:14, cursor:"pointer" }} />
-              <span style={{ fontSize:"0.82rem", fontFamily:"'Cinzel',serif", color:"#b8860b", letterSpacing:2, textTransform:"uppercase" }}>
-                Regiments of Renown
-              </span>
-              <span style={{ marginLeft:"auto", fontSize:"0.72rem", color:"#555" }}>
-                {hireableUnits.length} available
-              </span>
-            </label>
-            {showRoR ? (
-              <div>
-                <div style={{ padding:"4px 12px", fontSize:"0.78rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:1, background:"#0e0c04", borderBottom:"1px solid #1a1800" }}>
-                  Max 1 Regiment per 1000pts · Counts as allied unit
-                </div>
-                {hireableUnits.map(unit => {
-                  const count = roster.filter(r => r.unit.id === unit.id).length;
-                  const atMax = alreadyHired >= 1 && count === 0;
-                  return (
-                    <div key={unit.id}
-                      style={{ padding:"8px 12px", background:"transparent", borderLeft:"3px solid transparent", borderBottom:"1px solid #111", display:"flex", justifyContent:"space-between", alignItems:"center", opacity: atMax ? 0.45 : 1 }}
-                    >
-                      <div style={{ minWidth:0, flex:1 }}>
-                        <div style={{ fontSize:"0.9rem", color:"#d4b060", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{unit.name}</div>
-                        <div style={{ fontSize:"0.78rem", color:"#666", marginTop:1 }}>
-                          {unit.pts}pts · {unit.type}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => { if (!atMax) onAddUnit({ unit: {...unit, _isRoR: true}, mount:null, magicItem:null }); }}
-                        disabled={atMax}
-                        style={{ marginLeft:8, padding:"3px 10px", background: atMax ? "#1a1a1a" : "#2a1f0a", border:"1px solid #b8860b", borderRadius:3, color: atMax ? "#444" : "#d4b060", cursor: atMax ? "default" : "pointer", fontSize:"0.8rem", flexShrink:0 }}
-                      >
-                        {count > 0 ? `×${count}` : "Hire"}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
-          </div>
-        );
-      })()}
     </div>
   );
 }
@@ -2603,7 +2549,6 @@ function PrintView({ army, roster, onClose }) {
     includeArmyRules: true,
     includeSpells: true,
     fontScale: 1.0,          // 0.7 – 1.4 multiplier on all card text
-    includeMagicItems: true,
   });
 
   const entryTotal = (entry) => {
@@ -2665,153 +2610,6 @@ function PrintView({ army, roster, onClose }) {
   const imgTextColor = mode==="white" ? "#aaaaaa" : army.accent;
 
   // ── ARMY RULES CARD ──────────────────────────────────────────────────────
-  // ── Magic Item Card ───────────────────────────────────────────────────────
-  function MagicItemCard({ item }) {
-    const cardW = "63mm";
-    const cardH = scaleH("88mm");
-    const parchment = "#f4e8c1";
-    const parchmentDark = "#e8d4a0";
-    const inkColor = "#2a1a08";
-    const borderColor = "#8b6914";
-    const accentColor = army.color || "#8b6914";
-
-    // Determine item category label
-    const catLabel = item.restriction === "General only" ? "General"
-      : item.restriction === "Wizard only" ? "Wizard"
-      : item.restriction === "Wizard or Dwarf Runesmith only" ? "Wizard/Runesmith"
-      : item.restriction === "Wizard or Dwarf runesmith only" ? "Wizard/Runesmith"
-      : item.category === "weapon" ? "Magic Weapon"
-      : item.category === "device" ? "Device of Power"
-      : item.category === "banner" ? "Magic Standard"
-      : "Magic Item";
-
-    return (
-      <div style={{
-        width: cardW, height: cardH,
-        background: `url(https://cdn.midjourney.com/7921febd-021d-4c05-af66-6a0f8232a944/0_1.png) center/cover no-repeat`,
-        border: `3px solid ${borderColor}`,
-        borderRadius: "6px",
-        boxSizing: "border-box",
-        position: "relative",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: "'Crimson Text', 'Georgia', serif",
-        boxShadow: "inset 0 0 30px rgba(139,105,20,0.15)",
-        pageBreakInside: "avoid",
-      }}>
-        {/* Scroll texture overlay */}
-        <div style={{
-          position:"absolute", inset:0, pointerEvents:"none", zIndex:1,
-          background: "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(139,105,20,0.04) 28px, rgba(139,105,20,0.04) 29px)",
-        }}/>
-        {/* Corner ornaments */}
-        {["0px 0px","0px auto","auto 0px","auto auto"].map((pos,i) => (
-          <div key={i} style={{
-            position:"absolute",
-            top: i<2 ? "4px" : "auto", bottom: i>=2 ? "4px" : "auto",
-            left: i%2===0 ? "4px" : "auto", right: i%2===1 ? "4px" : "auto",
-            width:"14px", height:"14px", zIndex:2,
-            background: `radial-gradient(circle, ${borderColor} 2px, transparent 2px), 
-                         linear-gradient(${i%2===0?45:-45}deg, ${borderColor} 0px, ${borderColor} 1px, transparent 1px)`,
-            opacity:0.6,
-          }}/>
-        ))}
-
-        {/* Name banner at top — dark ribbon */}
-        <div style={{
-          position:"relative", zIndex:3,
-          background: `linear-gradient(90deg, ${accentColor}dd, ${accentColor}99, ${accentColor}dd)`,
-          padding:"5px 8px 4px",
-          textAlign:"center",
-          borderBottom: `2px solid ${borderColor}`,
-          clipPath: "polygon(0 0, 100% 0, 96% 100%, 4% 100%)",
-        }}>
-          <div style={{ fontSize:"0.78rem", fontFamily:"'Cinzel',serif", color:"#fff", fontWeight:700, letterSpacing:"0.5px", textShadow:"0 1px 3px rgba(0,0,0,0.8)", lineHeight:1.2 }}>
-            {item.name}
-          </div>
-        </div>
-
-        {/* Category + Cost row */}
-        <div style={{
-          position:"relative", zIndex:3,
-          display:"flex", justifyContent:"space-between", alignItems:"center",
-          padding:"3px 10px",
-          borderBottom:`1px solid ${borderColor}60`,
-          background: "rgba(139,105,20,0.08)",
-        }}>
-          <span style={{ fontSize:"0.62rem", color: inkColor, fontStyle:"italic", opacity:0.8 }}>{catLabel}</span>
-          <span style={{ fontSize:"0.72rem", fontFamily:"'Cinzel',serif", color: accentColor, fontWeight:700 }}>{item.cost} pts</span>
-        </div>
-
-        {/* Image area */}
-        <div style={{
-          position:"relative", zIndex:3,
-          flex:"0 0 auto",
-          height:"28mm",
-          background: item.imageUrl
-            ? `url(${item.imageUrl}) center/cover no-repeat`
-            : `linear-gradient(135deg, ${parchmentDark} 0%, #d4b870 50%, ${parchmentDark} 100%)`,
-          borderBottom: `2px solid ${borderColor}80`,
-          display: item.imageUrl ? "block" : "flex",
-          alignItems:"center", justifyContent:"center",
-          overflow:"hidden",
-        }}>
-          {!item.imageUrl && (
-            <div style={{ textAlign:"center", opacity:0.4 }}>
-              <div style={{ fontSize:"1.8rem" }}>⚔</div>
-              <div style={{ fontSize:"0.55rem", color:inkColor, fontFamily:"'Cinzel',serif", letterSpacing:1 }}>IMAGE</div>
-            </div>
-          )}
-          {/* Decorative scroll curl at bottom of image */}
-          <div style={{
-            position:"absolute", bottom:0, left:0, right:0, height:"6px",
-            background: `linear-gradient(180deg, transparent, ${borderColor}40)`,
-          }}/>
-        </div>
-
-        {/* Description text area */}
-        <div style={{
-          position:"relative", zIndex:3,
-          flex:1, overflow:"hidden",
-          padding:"5px 8px 4px",
-          display:"flex", flexDirection:"column",
-        }}>
-          {/* Restriction note if any */}
-          {item.restriction && (
-            <div style={{ fontSize:"0.58rem", color:accentColor, fontStyle:"italic", marginBottom:"3px", fontWeight:600 }}>
-              {item.restriction}
-            </div>
-          )}
-          <div style={{
-            fontSize:"0.62rem", color: inkColor, lineHeight:1.45,
-            overflow:"hidden",
-            display:"-webkit-box", WebkitLineClamp:10, WebkitBoxOrient:"vertical",
-          }}>
-            {item.desc}
-          </div>
-        </div>
-
-        {/* Bottom scroll curl decoration */}
-        <div style={{
-          position:"relative", zIndex:3,
-          height:"8px",
-          background: `linear-gradient(180deg, transparent, ${borderColor}30)`,
-          borderTop:`1px solid ${borderColor}40`,
-        }}/>
-
-        {/* Army crest watermark */}
-        <div style={{
-          position:"absolute", bottom:"12px", right:"8px", zIndex:2,
-          fontSize:"0.55rem", color: borderColor, opacity:0.3,
-          fontFamily:"'Cinzel',serif", letterSpacing:1,
-        }}>
-          {army.name}
-        </div>
-      </div>
-    );
-  }
-
   function SpecialRuleCard({ rule, ruleIndex, totalRules }) {
     // Special rule cards are ALWAYS portrait 63x88mm
     const CARD_W = "63mm";
@@ -2827,7 +2625,7 @@ function PrintView({ army, roster, onClose }) {
     return (
       <div style={{
         width: CARD_W, height: CARD_H,
-        background: `url(https://cdn.midjourney.com/7921febd-021d-4c05-af66-6a0f8232a944/0_1.png) center/cover no-repeat`,
+        background: cardBg,
         border: `2px solid ${cardBorder}`,
         borderRadius: "4px",
         position: "relative",
@@ -2837,6 +2635,7 @@ function PrintView({ army, roster, onClose }) {
         boxSizing: "border-box",
         fontFamily: "'Cinzel',Georgia,serif",
         WebkitPrintColorAdjust: "exact", printColorAdjust: "exact",
+        position: "relative",
       }}>
         {/* Faction border overlay */}
         {borderUrl && (
@@ -2901,7 +2700,7 @@ function PrintView({ army, roster, onClose }) {
     return (
       <div style={{
         width: "63mm", height: scaleH("88mm"),
-        background: `url(https://cdn.midjourney.com/7921febd-021d-4c05-af66-6a0f8232a944/0_1.png) center/cover no-repeat`, border: `2px solid ${cardBorder}`, borderRadius:"5px",
+        background: cardBg, border: `2px solid ${cardBorder}`, borderRadius:"5px",
         display:"flex", flexDirection:"column", overflow:"hidden",
         pageBreakInside:"avoid", breakInside:"avoid", boxSizing:"border-box",
         fontFamily:"'Cinzel',Georgia,serif",
@@ -2984,197 +2783,226 @@ function PrintView({ army, roster, onClose }) {
     );
   }
 
-  function PrintCard({ entry }) {
-  const u = entry.unit;
-  const pts = entryTotal(entry);
-  const crestUrl = IMAGES.factionBorders[army.key] || "";
+    function PrintCard({ entry }) {
+    const u = entry.unit;
+    const pts = entryTotal(entry);
+    const isLandscape = printOpts.layout === "landscape";
+    const fs = lay.fontSize; // base font size tied to physical card size
 
-  // ── Colour tokens ──────────────────────────────────────────────────────
-  const factionColor = army.color || "#8b0000";
-  const factionAccent = army.accent || "#c0a030";
-  const inkDark   = "#1a0e05";
-  const parchment = "#f2e8ce";
-  const parchDark = "#e0cfa0";
-  const woodDark  = "#1c1208";
-  const woodMid   = "#2e1e0a";
+    // Stats for main grid: ATK, HITS, ARM only (CMD moves to side column)
+    const mainStats = [
+      { k:"ATK",  v:u.atk    },
+      { k:"HITS", v:u.hits   },
+      { k:"ARM",  v:u.armour },
+    ];
+    // Side column: CMD on top, then SZ, MIN, MAX
+    const sideStats = [
+      { k:"CMD", v:u.cmd === "-" ? "-" : u.cmd },
+      { k:"SZ",  v:u.size },
+      { k:"MIN", v:u.min  },
+      { k:"MAX", v:u.max  },
+    ];
 
-  // ── Stats ──────────────────────────────────────────────────────────────
-  const stats = [
-    { icon:"⚔", k:"ATK",  v: u.atk    },
-    { icon:"◈", k:"HITS", v: u.hits   },
-    { icon:"◇", k:"ARM",  v: u.armour },
-    { icon:"✦", k:"CMD",  v: u.cmd === "-" ? "-" : u.cmd },
-  ];
-
-  // ── Special rules text ─────────────────────────────────────────────────
-  const rulesText = typeof u.special === "string" ? u.special : (u.special || []).join(" · ");
-  const hasRules = rulesText.length > 0;
-  const upgradeLines = (entry.selectedUpgrades || []).map(upg => `+ ${upg.name}`);
-  const mountLine = entry.mount ? `Mount: ${entry.mount.name}` : null;
-
-  return (
-    <div style={{
-      width:"63mm", height:"88mm",
-      position:"relative", overflow:"hidden",
-      boxSizing:"border-box",
-      border:`2px solid ${factionColor}`,
-      borderRadius:"5px",
-      boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
-      fontFamily:"'Georgia','Times New Roman',serif",
-      pageBreakInside:"avoid",
-      background: `url(${SCROLL_BG}) center/cover no-repeat`,
-    }}>
-      {/* Dark overlay to soften scroll bg */}
-      <div style={{ position:"absolute", inset:0, background:"rgba(15,8,2,0.18)", zIndex:0, borderRadius:"3px" }}/>
-
-      {/* ── LEFT STAT BAR (dark wood-grain column) ─────────────────── */}
-      <div style={{
-        position:"absolute", left:0, top:0, bottom:0, width:"11mm", zIndex:2,
-        background:`linear-gradient(180deg, ${woodDark} 0%, ${woodMid} 40%, ${woodDark} 100%)`,
-        borderRight:`2px solid ${factionColor}80`,
-        display:"flex", flexDirection:"column", alignItems:"center",
-        paddingTop:"2mm",
+    const statCell = (k, v, extra={}) => (
+      <div key={k} style={{
+        textAlign:"center", background: statBg,
+        border:`1px solid ${statBorder}`, borderRadius:"2px",
+        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+        ...extra,
       }}>
-        {/* Wood grain lines */}
-        {[15,30,45,60,75,85].map(pct => (
-          <div key={pct} style={{
-            position:"absolute", left:"2px", right:"2px", top:`${pct}%`,
-            height:"1px", background:"rgba(255,255,255,0.04)",
-          }}/>
-        ))}
-        {/* Stat rows */}
-        {stats.map(({icon,k,v}) => (
-          <div key={k} style={{
-            width:"100%", display:"flex", flexDirection:"column", alignItems:"center",
-            padding:"2mm 0 1.5mm", borderBottom:`1px solid rgba(255,255,255,0.07)`,
-            flex:"0 0 auto",
-          }}>
-            <div style={{ fontSize:"0.9rem", color: factionAccent, lineHeight:1 }}>{icon}</div>
-            <div style={{ fontSize:"1rem", fontWeight:700, color:"#fff", lineHeight:1, marginTop:"0.5mm", fontFamily:"'Cinzel',serif" }}>
-              {v ?? "-"}
-            </div>
-            <div style={{ fontSize:"0.42rem", color:"#aaa", letterSpacing:"0.5px", marginTop:"0.3mm" }}>{k}</div>
-          </div>
-        ))}
-        {/* Points at bottom */}
-        <div style={{ marginTop:"auto", width:"100%", textAlign:"center", padding:"2mm 0 1.5mm", borderTop:`1px solid ${factionColor}50` }}>
-          <div style={{ fontSize:"0.8rem", fontWeight:700, color: factionAccent, fontFamily:"'Cinzel',serif", lineHeight:1 }}>{pts}</div>
-          <div style={{ fontSize:"0.42rem", color:"#888", letterSpacing:"0.5px" }}>PTS</div>
-        </div>
+        <div style={{ fontSize:`calc(${fs} * 0.62)`, color: cardMuted, letterSpacing:"0.3px", lineHeight:1 }}>{k}</div>
+        <div style={{ fontSize:`calc(${fs} * 1.15)`, fontWeight:700, color: cardText, lineHeight:1.1 }}>{String(v ?? "-")}</div>
       </div>
+    );
 
-      {/* ── MAIN CARD AREA (right of stat bar) ────────────────────── */}
+    return (
       <div style={{
-        position:"absolute", left:"11mm", top:0, right:0, bottom:0, zIndex:1,
-        display:"flex", flexDirection:"column",
+        width: lay.w, height: lay.h,
+        background: cardBg,
+        border: `2px solid ${cardBorder}`,
+        borderRadius: "5px",
+        display: "flex",
+        flexDirection: isLandscape ? "row" : "column",
+        overflow: "hidden",
+        pageBreakInside: "avoid",
+        breakInside: "avoid",
+        boxSizing: "border-box",
+        fontFamily: "'Cinzel', Georgia, serif",
+        fontSize: fs,
+        WebkitPrintColorAdjust: "exact",
+        printColorAdjust: "exact",
+        position: "relative",
       }}>
-        {/* ── NAME BANNER ────────────────────────────────────────── */}
-        <div style={{
-          flex:"0 0 auto",
-          background:`linear-gradient(90deg, ${factionColor}ee, ${factionColor}99 80%, transparent)`,
-          padding:"1.5mm 2mm 1.5mm 2.5mm",
-          display:"flex", alignItems:"center", justifyContent:"space-between",
-          borderBottom:`1px solid ${factionColor}80`,
-          minHeight:"7mm",
-        }}>
-          <div style={{ fontSize:"0.72rem", fontFamily:"'Cinzel',serif", fontWeight:700, color:"#fff", lineHeight:1.1,
-            textShadow:"0 1px 3px rgba(0,0,0,0.9)", flex:1, marginRight:"1mm",
-            overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
-            {u.name}
-          </div>
-          {crestUrl ? (
-            <img src={crestUrl} style={{ width:"7mm", height:"7mm", objectFit:"contain", flexShrink:0, filter:"drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
-          ) : (
-            <div style={{ width:"7mm", height:"7mm", borderRadius:"50%", background:`${factionColor}40`,
-              border:`1px solid ${factionColor}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center",
-              fontSize:"0.5rem", color: factionAccent }}>⚔</div>
-          )}
-        </div>
+        {/* Faction border frame */}
+        {borderUrl && (
+          <div style={{
+            position:"absolute", inset:0, zIndex:10, pointerEvents:"none",
+            backgroundImage:`url(${borderUrl})`,
+            backgroundSize:"100% 100%",
+            backgroundRepeat:"no-repeat",
+            opacity:0.85,
+          }} />
+        )}
 
-        {/* ── TYPE BADGE ─────────────────────────────────────────── */}
-        <div style={{
-          flex:"0 0 auto", padding:"0.8mm 2.5mm",
-          background:"rgba(0,0,0,0.35)",
-          display:"flex", alignItems:"center", justifyContent:"space-between",
-        }}>
-          <span style={{ fontSize:"0.52rem", color: factionAccent, fontFamily:"'Cinzel',serif", letterSpacing:"0.8px", textTransform:"uppercase" }}>{u.type}</span>
-          <span style={{ fontSize:"0.52rem", color:"#aaa", fontStyle:"italic" }}>{u.size && `${u.min || 1}–${u.max || "∞"} stands`}</span>
-        </div>
+        {/* ══ PORTRAIT / SQUARE ══ */}
+        {!isLandscape && (<>
 
-        {/* ── IMAGE AREA ─────────────────────────────────────────── */}
-        <div style={{
-          flex:"0 0 28mm", overflow:"hidden", position:"relative",
-          borderBottom:`1px solid ${factionColor}60`,
-        }}>
-          {IMAGES.units[u.id] ? (
-            <img src={IMAGES.units[u.id]} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-          ) : (
-            <div style={{
-              width:"100%", height:"100%",
-              background:`linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%)`,
-              display:"flex", alignItems:"center", justifyContent:"center",
-            }}>
-              <div style={{ textAlign:"center", opacity:0.25 }}>
-                <div style={{ fontSize:"1.6rem" }}>⚔</div>
+          {/* Image area */}
+          {printOpts.showImage && lay.imgH !== "0" && (() => {
+            const unitImgUrl = IMAGES.units[u.id] || "";
+            const borderUrl = IMAGES.factionBorders[army.key] || "";
+            return (
+              <div style={{
+                width:"100%", height: lay.imgH,
+                background: unitImgUrl ? "none" : imgBg,
+                borderBottom: `1px solid ${cardBorder}`,
+                display:"flex", flexDirection:"column",
+                alignItems:"center", justifyContent:"center",
+                flexShrink:0, position:"relative", overflow:"hidden",
+              }}>
+                {unitImgUrl ? (
+                  <img src={unitImgUrl} alt={u.name}
+                    style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block" }} />
+                ) : (
+                  <>
+                    <div style={{ fontSize:`calc(${fs} * 2.2)`, opacity:0.3, color: imgTextColor }}>✕</div>
+                    <div style={{ fontSize:`calc(${fs} * 0.7)`, letterSpacing:"2px", color: imgTextColor, opacity:0.4, marginTop:"1mm" }}>IMAGE</div>
+                  </>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Name + pts bar */}
+          <div style={{
+            padding:"2mm 2.5mm 1.5mm",
+            borderBottom:`1px solid ${divider}`,
+            display:"flex", justifyContent:"space-between", alignItems:"baseline",
+            flexShrink:0, gap:"2mm",
+          }}>
+            <div style={{ overflow:"hidden", display:"flex", alignItems:"center", gap:"1.5mm" }}>
+
+              <div>
+                <div style={{ fontSize:`calc(${fs} * 1.15)`, fontWeight:700, color: cardText, lineHeight:1.2, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+                  {u.name}
+                </div>
+                {entry.mount && (
+                  <div style={{ fontSize:`calc(${fs} * 0.78)`, color: cardMuted, lineHeight:1.1 }}>+ {entry.mount.name}</div>
+                )}
               </div>
             </div>
-          )}
-          {/* Gradient fade into parchment below */}
-          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"8px",
-            background:"linear-gradient(transparent, rgba(0,0,0,0.4))" }}/>
-        </div>
+            <div style={{ fontSize:`calc(${fs} * 1.05)`, fontWeight:700, color: cardText, whiteSpace:"nowrap", flexShrink:0 }}>{pts}pts</div>
+          </div>
 
-        {/* ── RULES / DESCRIPTION AREA (parchment) ──────────────── */}
-        <div style={{
-          flex:1, overflow:"hidden",
-          padding:"1.5mm 2.5mm 1mm",
-          display:"flex", flexDirection:"column", gap:"1mm",
-        }}>
-          {/* Special rules */}
-          {hasRules && (
-            <div style={{ fontSize:"0.52rem", color: inkDark, lineHeight:1.4,
-              overflow:"hidden", display:"-webkit-box", WebkitLineClamp:3, WebkitBoxOrient:"vertical" }}>
-              <span style={{ fontWeight:700, color: factionColor, fontFamily:"'Cinzel',serif", fontSize:"0.5rem" }}>RULES </span>
-              {rulesText}
-            </div>
-          )}
-          {/* Upgrades */}
-          {upgradeLines.length > 0 && (
-            <div style={{ fontSize:"0.5rem", color: factionColor, lineHeight:1.3, overflow:"hidden",
-              display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
-              {(Array.isArray(upgradeLines) ? upgradeLines : []).join("  ·  ")}
-            </div>
-          )}
-          {/* Magic item */}
-          {entry.magicItem && (
-            <div style={{ fontSize:"0.5rem", color: inkDark, lineHeight:1.3, marginTop:"0.5mm",
-              borderTop:`1px solid ${factionColor}30`, paddingTop:"0.8mm",
-              overflow:"hidden", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
-              <span style={{ color: factionColor, fontWeight:700 }}>✦ {entry.magicItem.name}: </span>
-              {entry.magicItem.desc}
-            </div>
-          )}
-          {/* Mount */}
-          {mountLine && (
-            <div style={{ fontSize:"0.5rem", color:"#555", fontStyle:"italic" }}>{mountLine}</div>
-          )}
-        </div>
+          {/* Stats row: [TYPE vertical] [ATK|HITS|ARM grid] [CMD/SZ/MIN/MAX column] */}
+          <div style={{
+            display:"flex", alignItems:"stretch",
+            borderBottom:`1px solid ${divider}`,
+            flexShrink:0, height:"17mm",
+          }}>
+            {/* Rotated type label */}
+            <div style={{
+              writingMode:"vertical-rl", transform:"rotate(180deg)",
+              fontSize:`calc(${fs} * 0.68)`, letterSpacing:"0.8px",
+              color: cardMuted, padding:"1mm 1.5mm",
+              borderRight:`1px solid ${divider}`,
+              background: cardBorder+"18",
+              display:"flex", alignItems:"center", justifyContent:"center",
+              flexShrink:0,
+            }}>{u.type.toUpperCase()}</div>
 
-        {/* ── FOOTER ─────────────────────────────────────────────── */}
-        <div style={{
-          flex:"0 0 auto", padding:"1mm 2.5mm",
-          background:"rgba(0,0,0,0.3)",
-          borderTop:`1px solid ${factionColor}40`,
-          display:"flex", justifyContent:"space-between", alignItems:"center",
-        }}>
-          <span style={{ fontSize:"0.42rem", color:"#999", letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</span>
-          <span style={{ fontSize:"0.42rem", color: factionAccent, letterSpacing:"0.5px", fontFamily:"'Cinzel',serif" }}>{army.name.toUpperCase()}</span>
-        </div>
+            {/* ATK / HITS / ARM — 3 equal columns */}
+            <div style={{ flex:1, display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"1px", padding:"1.5mm 1mm" }}>
+              {mainStats.map(({k,v}) => statCell(k, v, { height:"100%" }))}
+            </div>
+
+            {/* CMD / SZ / MIN / MAX — right column */}
+            <div style={{
+              width:"11mm", display:"flex", flexDirection:"column",
+              gap:"1px", padding:"1.5mm 1mm",
+              borderLeft:`1px solid ${divider}`,
+            }}>
+              {sideStats.map(({k,v}) => statCell(k, v, { flex:1 }))}
+            </div>
+          </div>
+
+          {/* Rules text */}
+          <div style={{
+            flex:1, padding:"2mm 2.5mm",
+            fontSize:`calc(${fs} * 0.85)`,
+            color: cardMuted, lineHeight:1.55,
+            overflowY:"hidden",
+          }}>
+            {u.special && <div>{u.special}</div>}
+            {entry.magicItem && (
+              <div style={{ marginTop:"1mm", color: mode==="white" ? "#553300" : "#d4b060" }}>
+                <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
+              </div>
+            )}
+            {entry.mount?.special && (
+              <div style={{ marginTop:"1mm" }}>
+                <strong>{entry.mount.name}:</strong> {entry.mount.special}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div style={{
+            borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+            display:"flex", justifyContent:"space-between", alignItems:"center",
+            background: cardBorder+"12", flexShrink:0,
+          }}>
+            <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted, letterSpacing:"0.5px" }}>WARMASTER REVOLUTION</div>
+            <div style={{ fontSize:`calc(${fs} * 0.65)`, color: cardMuted }}>{army.name.toUpperCase()}</div>
+          </div>
+        </>)}
+
+        {/* ══ LANDSCAPE ══ */}
+        {isLandscape && (<>
+          {/* Left stat column */}
+          <div style={{
+            width:"18mm", background: cardBorder+"20",
+            borderRight:`1px solid ${divider}`,
+            display:"flex", flexDirection:"column",
+            padding:"2mm 1.5mm", gap:"1px", flexShrink:0,
+          }}>
+            {/* Rotated type at top of column */}
+            <div style={{
+              writingMode:"vertical-rl", transform:"rotate(180deg)",
+              fontSize:`calc(${fs} * 0.65)`, color: cardMuted, letterSpacing:"0.8px",
+              textAlign:"center", marginBottom:"1mm", height:"14mm",
+              display:"flex", alignItems:"center", justifyContent:"center",
+            }}>{u.type.toUpperCase()}</div>
+            {[...mainStats, ...sideStats].map(({k,v}) => statCell(k, v, { padding:"1px 0", marginBottom:"1px" }))}
+          </div>
+
+          {/* Right content */}
+          <div style={{ flex:1, display:"flex", flexDirection:"column", padding:"2mm 2.5mm", overflow:"hidden" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", borderBottom:`1px solid ${divider}`, paddingBottom:"1mm", marginBottom:"1.5mm" }}>
+              <div style={{ fontSize:`calc(${fs} * 1.1)`, fontWeight:700, color: cardText }}>
+                {u.name}
+                {entry.mount && <span style={{ fontSize:`calc(${fs} * 0.75)`, color: cardMuted, display:"block" }}>+ {entry.mount.name}</span>}
+              </div>
+              <div style={{ fontSize:`calc(${fs} * 1)`, fontWeight:700, color: cardText, whiteSpace:"nowrap" }}>{pts}pts</div>
+            </div>
+            <div style={{ flex:1, fontSize:`calc(${fs} * 0.88)`, color: cardMuted, lineHeight:1.5, overflowY:"hidden" }}>
+              {u.special && <div>{u.special}</div>}
+              {entry.magicItem && (
+                <div style={{ marginTop:"1mm", color: mode==="white" ? "#553300" : "#d4b060" }}>
+                  <strong>✦ {entry.magicItem.name}:</strong> {entry.magicItem.desc}
+                </div>
+              )}
+            </div>
+            <div style={{ borderTop:`1px solid ${divider}`, paddingTop:"1mm", fontSize:`calc(${fs} * 0.62)`, color: cardMuted, display:"flex", justifyContent:"space-between" }}>
+              <span>WARMASTER REVOLUTION</span><span>{army.name.toUpperCase()}</span>
+            </div>
+          </div>
+        </>)}
       </div>
-    </div>
-  );
+    );
   }
 
+    // Options modal
   function OptionsModal() {
     const [local, setLocal] = useState({...printOpts});
     return (
@@ -3254,7 +3082,6 @@ function PrintView({ army, roster, onClose }) {
               {[
                 { key:"includeArmyRules", label:"Special Rules Cards", sub:"One landscape card per special army rule" },
                 { key:"includeSpells",    label:"Spell List Card",   sub:"Spell cards (only shown if army has spells)"     },
-                { key:"includeMagicItems", label:"Magic Item Cards",  sub:"Parchment cards for each magic item in your roster" },
               ].map(({ key, label, sub }) => (
                 <label key={key}
                   style={{ display:"flex", alignItems:"center", gap:12, cursor:"pointer", padding:"10px 12px", borderRadius:6, background:"#0a0806", border:`1px solid ${local[key] ? army.color+"60" : "#222"}`, transition:"border 0.15s" }}>
@@ -3342,11 +3169,9 @@ function PrintView({ army, roster, onClose }) {
       {(() => {
         const spellItems = [];
         if (printOpts.includeSpells) {
-          const seenSpells = new Set();
-          const addSpell = (s) => { if (!seenSpells.has(s.name)) { seenSpells.add(s.name); spellItems.push(s); } };
-          if (army.spells && Array.isArray(army.spells)) army.spells.forEach(addSpell);
+          if (army.spells && Array.isArray(army.spells)) army.spells.forEach(s => spellItems.push(s));
           if (army.instabilityTable && Array.isArray(army.instabilityTable))
-            army.instabilityTable.forEach(s => addSpell({...s, instability:true}));
+            army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
         }
         return (
           <div style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
@@ -3379,53 +3204,6 @@ function PrintView({ army, roster, onClose }) {
             {spellItems.map((spell, i) => (
               <SpellCard key={`spell-${i}`} spell={spell} index={i+1} total={spellItems.length} />
             ))}
-            {/* ── Magic Item Cards ── */}
-            {printOpts.includeMagicItems !== false && (() => {
-              // Collect all magic items from the roster (deduplicated by name)
-              const seen = new Set();
-              const items = [];
-              // Army-wide magic items list
-              const allMagicItems = [
-                // Weapons
-                {name:"Sword of Destruction", cost:10, category:"weapon", restriction:"Infantry, Cavalry or Chariot unit or character", desc:"Enemy unit touching this unit must re-roll one successful Armour save each round of combat. Only one enemy unit can be affected."},
-                {name:"Sword of Fate", cost:5, category:"weapon", restriction:"Infantry, Cavalry or Chariot unit or character", desc:"In the first round of the unit's first combat, adds +1 Attack bonus to one stand (like a character Attack bonus). Only works once per game."},
-                {name:"Sword of Cleaving", cost:10, category:"weapon", restriction:"Infantry, Cavalry or Chariot unit or character", desc:"The unit may re-roll one unsuccessful Attack dice each round of combat."},
-                {name:"Sword of Might", cost:10, category:"weapon", restriction:"Infantry, Cavalry or Chariot unit or character", desc:"Adds +1 Attack to one stand in the unit. Gives +1 Attack in total, not +1 to each stand."},
-                // Devices
-                {name:"Crown of Command", cost:70, category:"device", restriction:"General only", desc:"The General may issue his first order each turn as if his Command value were 10, with no penalties. Subsequent orders use normal Command. If the General fails his first order (rolling 11 or 12), the Crown ceases to work."},
-                {name:"Helm of Dominion", cost:40, category:"device", restriction:"General only", desc:"The General's Command value is increased by +1 up to maximum 10. Works for one turn only during the entire battle — declare at start of that turn."},
-                {name:"Orb of Majesty", cost:30, category:"device", restriction:"General only", desc:"Once per game, disregard a single failed Command test and re-roll it as if Command value were 8 (normal adjustments apply). If the re-roll succeeds, the General can continue issuing orders normally."},
-                {name:"Sceptre of Sovereignty", cost:30, category:"device", restriction:"General only", desc:"Once per game, ignore one blundered double-6 roll by the General or any other character. You may roll to see what the blunder is before deciding. If ignored, the Command test is passed and the character continues normally."},
-                {name:"Ring of Magic", cost:30, category:"device", restriction:"Wizard only", desc:"The Wizard may cast one spell without making the usual dice roll. Works only once per game."},
-                {name:"Staff of Spellbinding", cost:30, category:"device", restriction:"Wizard or Dwarf Runesmith only", desc:"If an enemy Wizard fails to cast a spell, spellbind them on a D6 roll of 4+. A spellbound Wizard suffers -1 to all casting rolls. Ceases to work once used successfully. Only one enemy Wizard can be spellbound."},
-                {name:"Scroll of Dispelling", cost:20, category:"device", restriction:"Wizard or Dwarf Runesmith only", desc:"Automatically causes one enemy spell to fail. Can only be used once. For a Runesmith, can be used after a normal anti-magic roll has failed."},
-                {name:"Wand of Power", cost:10, category:"device", restriction:"Wizard only", desc:"Once per game, add +1 to the chance of a spell working. Must be declared before rolling. A roll of 1 always fails even with the Wand."},
-                {name:"Rod of Repetition", cost:10, category:"device", restriction:"Wizard only", desc:"Once per game, if a spell is successfully cast, the Wizard may cast a second spell. It can be the same or a different spell, cast normally. Combine with Teleport for up to 3 spells in one turn."},
-                // Banners
-                {name:"Banner of Fortune", cost:20, category:"banner", restriction:"Infantry, Cavalry or Chariot unit only", desc:"Once per game, the unit may re-roll all its dice in one round of combat."},
-                {name:"Banner of Steadfastness", cost:20, category:"banner", restriction:"Infantry, Cavalry or Chariot unit only", desc:"The unit never becomes confused as a result of a drive back from shooting."},
-                {name:"Banner of Shielding", cost:20, category:"banner", restriction:"Infantry unit only", desc:"The unit gains a 6+ Armour save if it has none, or improves its existing save by 1 (e.g. 5+ becomes 4+). This bonus applies only in combat, not shooting."},
-                {name:"Banner of Courage", cost:30, category:"banner", restriction:"Infantry, Cavalry or Chariot unit only", desc:"The unit is unaffected by the -1 Attack penalty for fighting terrifying troops. It still cannot cause terror itself unless it normally does so."},
-              ];
-              
-              roster.forEach(entry => {
-                if (entry.magicItem && entry.magicItem.name && !seen.has(entry.magicItem.name)) {
-                  seen.add(entry.magicItem.name);
-                  // Find full details from allMagicItems
-                  const detail = allMagicItems.find(m => m.name === entry.magicItem.name);
-                  items.push(detail || {
-                    name: entry.magicItem.name,
-                    cost: entry.magicItem.cost || 0,
-                    category: "magic",
-                    desc: entry.magicItem.desc || "See rulebook for details.",
-                  });
-                }
-              });
-              if (items.length === 0) return null;
-              return items.map((item, i) => (
-                <MagicItemCard key={`magic-${i}`} item={item} />
-              ));
-            })()}
             {roster.map((entry, idx) => (
               <PrintCard key={idx} entry={entry} />
             ))}
@@ -3821,7 +3599,7 @@ function App() {
             const unit = army.units.find(u => u.id === entry.id);
             if (!unit) return null;
             const magicItem = entry.mi
-              ? ([...MAGIC_STANDARDS, ...MAGIC_WEAPONS, ...DEVICES_OF_POWER]).find(m => m.id === entry.mi) || null
+              ? (MAGIC_ITEMS || []).find(m => m.id === entry.mi) || null
               : null;
             const mount = entry.mt
               ? (army.units.find(u => u.id === entry.mt) || null)
@@ -3842,8 +3620,6 @@ function App() {
   }, []);
 
   const army = selectedArmy ? ARMIES[selectedArmy] : null;
-  // Attach key to army object for convenient access in sub-components (PrintView, etc.)
-  if (army && !army.key) army.key = selectedArmy;
 
   // ── Auth handlers ──
   function handleAuth(sess) {
