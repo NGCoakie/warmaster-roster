@@ -2825,7 +2825,6 @@ function PrintView({ army, roster, onClose }) {
         boxSizing: "border-box",
         fontFamily: "'Cinzel',Georgia,serif",
         WebkitPrintColorAdjust: "exact", printColorAdjust: "exact",
-        position: "relative",
       }}>
         {/* Faction border overlay */}
         {borderUrl && (
