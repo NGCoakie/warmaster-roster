@@ -2185,35 +2185,36 @@ function UnitList({ army, armyKey, selectedUnit, onSelectUnit, roster, onAddUnit
                 {hireableUnits.length} available
               </span>
             </label>
-            {showRoR && <div>
-            <div style={{ padding:"4px 12px", fontSize:"0.78rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:1, background:"#0e0c04", borderBottom:"1px solid #1a1800" }}>
-              Max 1 Regiment per 1000pts · Counts as allied unit
-            </div>
-            {hireableUnits.map(unit => {
-              const count = roster.filter(r => r.unit.id === unit.id).length;
-              const atMax = alreadyHired >= 1 && count === 0;
-              return (
-                <div key={unit.id}
-                  style={{ padding:"8px 12px", background:"transparent", borderLeft:"3px solid transparent", borderBottom:"1px solid #111", display:"flex", justifyContent:"space-between", alignItems:"center", opacity: atMax ? 0.45 : 1 }}
-                >
-                  <div style={{ minWidth:0, flex:1 }}>
-                    <div style={{ fontSize:"0.9rem", color:"#d4b060", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{unit.name}</div>
-                    <div style={{ fontSize:"0.78rem", color:"#666", marginTop:1 }}>
-                      {unit.pts}pts · {unit.type}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => { if (!atMax) onAddUnit({ unit: {...unit, _isRoR: true}, mount:null, magicItem:null }); }}
-                    disabled={atMax}
-                    style={{ marginLeft:8, padding:"3px 10px", background: atMax ? "#1a1a1a" : "#2a1f0a", border:"1px solid #b8860b", borderRadius:3, color: atMax ? "#444" : "#d4b060", cursor: atMax ? "default" : "pointer", fontSize:"0.8rem", flexShrink:0 }}
-                  >
-                    {count > 0 ? `×${count}` : "Hire"}
-                  </button>
+            {showRoR ? (
+              <div>
+                <div style={{ padding:"4px 12px", fontSize:"0.78rem", fontFamily:"'Cinzel',serif", color:"#666", letterSpacing:1, background:"#0e0c04", borderBottom:"1px solid #1a1800" }}>
+                  Max 1 Regiment per 1000pts · Counts as allied unit
                 </div>
-              );
-            })}
-          </div>
-          </div>}
+                {hireableUnits.map(unit => {
+                  const count = roster.filter(r => r.unit.id === unit.id).length;
+                  const atMax = alreadyHired >= 1 && count === 0;
+                  return (
+                    <div key={unit.id}
+                      style={{ padding:"8px 12px", background:"transparent", borderLeft:"3px solid transparent", borderBottom:"1px solid #111", display:"flex", justifyContent:"space-between", alignItems:"center", opacity: atMax ? 0.45 : 1 }}
+                    >
+                      <div style={{ minWidth:0, flex:1 }}>
+                        <div style={{ fontSize:"0.9rem", color:"#d4b060", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{unit.name}</div>
+                        <div style={{ fontSize:"0.78rem", color:"#666", marginTop:1 }}>
+                          {unit.pts}pts · {unit.type}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => { if (!atMax) onAddUnit({ unit: {...unit, _isRoR: true}, mount:null, magicItem:null }); }}
+                        disabled={atMax}
+                        style={{ marginLeft:8, padding:"3px 10px", background: atMax ? "#1a1a1a" : "#2a1f0a", border:"1px solid #b8860b", borderRadius:3, color: atMax ? "#444" : "#d4b060", cursor: atMax ? "default" : "pointer", fontSize:"0.8rem", flexShrink:0 }}
+                      >
+                        {count > 0 ? `×${count}` : "Hire"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
         );
       })()}
