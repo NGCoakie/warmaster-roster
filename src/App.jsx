@@ -238,7 +238,7 @@ const IMAGES = {
     araby_sand_storm: "",
     araby_sunstrike: "",
     beastmen_chaos_bolt: "",
-    beastmen_hunting_for_gore!: "",
+    beastmen_hunting_for_gore: "",
     beastmen_power_of_herd: "",
     beastmen_traitor_kin: "",
     bretonnia_aerial_shield: "",
@@ -271,9 +271,9 @@ const IMAGES = {
     empire_voice_of_command: "",
     empire_weird_enchantment: "",
     goblin_army_brain_busta: "",
-    goblin_army_gerroff!!!: "",
-    goblin_army_mork_save_uz!: "",
-    goblin_army_waaagh!: "",
+    goblin_army_gerroff: "",
+    goblin_army_mork_save_uz: "",
+    goblin_army_waaagh: "",
     high_elves_hail_of_destruction: "",
     high_elves_heavens_fire: "",
     high_elves_light_of_battle: "",
@@ -281,7 +281,7 @@ const IMAGES = {
     kislev_chill: "",
     kislev_freeze: "",
     kislev_icy_blast: "",
-    kislev_monster_bear!: "",
+    kislev_monster_bear: "",
     lizardmen_gaze_of_sotek: "",
     lizardmen_mazdamundis_revenge: "",
     lizardmen_shield_of_the_old_ones: "",
@@ -298,8 +298,8 @@ const IMAGES = {
     ogre_kingdoms_tooth_cracker: "",
     ogre_kingdoms_troll_guts: "",
     orcs_foot_of_gork: "",
-    orcs_gerroff!!!: "",
-    orcs_gotcha!: "",
+    orcs_gerroff: "",
+    orcs_gotcha: "",
     skaven_death_frenzy: "",
     skaven_warp_lightning: "",
     skaven_wither: "",
@@ -2801,9 +2801,14 @@ function PrintView({ army, roster, onClose }) {
             print-color-adjust: exact !important;
             color-adjust: exact !important;
           }
-          body { margin: 0; padding: 0; background: ${mode==="white" ? "#fff" : "#111"} !important; }
+          html, body, .pv-root {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+            height: auto !important;
+            overflow: visible !important;
+          }
           @page { size: auto; margin: 6mm; }
-          html, body { height: auto !important; overflow: visible !important; }
         }
         /* Always show cards on screen */
         .print-area { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; justify-content: flex-start; }
@@ -3166,9 +3171,14 @@ function MagicItemsPrintView({ onClose }) {
   const mode = "faction"; // dark mode for magic items
 
   return (
-    <div style={{ background:"#111", minHeight:"100vh" }}>
+    <div className="pv-root" style={{ background:"#111", minHeight:"100vh" }}>
       <style>{`
-        @media print { .no-print { display:none !important; } * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; } @page { margin:6mm; } }
+        @media print {
+          .no-print { display:none !important; }
+          * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
+          html, body, .pv-root { margin:0 !important; padding:0 !important; background:#ffffff !important; height:auto !important; overflow:visible !important; }
+          @page { margin:6mm; }
+        }
         .mi-print-area { display:flex; flex-wrap:wrap; gap:8px; padding:12px; justify-content:flex-start; }
       `}</style>
 
