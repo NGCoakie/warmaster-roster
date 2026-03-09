@@ -2234,7 +2234,7 @@ function PrintView({ army, roster, onClose }) {
   // Print options are now standardised — no user controls
   const printOpts = {
     layout: "portrait",
-    colorMode: "faction",
+    colorMode: "print",
     showImage: true,
     includeArmyRules: true,
     fontScale: 1.0,
@@ -2269,9 +2269,10 @@ function PrintView({ army, roster, onClose }) {
   };
 
   // ── Colour scheme ─────────────────────────────────────────────────────────
+  // "print"     = light parchment card, dark text — optimised for physical printing
   // "faction"   = full dark theme using army.bg + army.accent (screen-optimised)
   // "cardcolor" = mid-tone: faction-tinted dark card, white stat values (high contrast)
-  // "white"     = pure white card, black text (best for printing)
+  // "white"     = pure white card, black text
   const mode = printOpts.colorMode;
 
   // Helper: blend two hex colours at given ratio (0=col1, 1=col2)
@@ -2288,18 +2289,23 @@ function PrintView({ army, roster, onClose }) {
 
   // Mid-tone bg: blend army.bg toward a slightly lighter shade for readability
   const midBg     = blendHex(army.bg || "#0a0806", "#1a1410", 0.7);
-  const cardBg    = mode==="faction" ? (army.bg||"#0a0806") : mode==="cardcolor" ? midBg      : "#ffffff";
-  const cardBorder= mode==="white"   ? "#444444"             : army.color;
-  const cardText  = mode==="white"   ? "#111111"             : army.accent;
-  // Muted text: faction=dim gold, cardcolor=bright white for contrast, white=dark grey
-  const cardMuted = mode==="faction" ? "#999999" : mode==="cardcolor" ? "#dddddd" : "#555555";
-  const statBg    = mode==="faction" ? "#00000040" : mode==="cardcolor" ? "#00000050" : "#f2f2f2";
-  const statBorder= mode==="white"   ? "#cccccc" : army.color+"80";
-  const divider   = mode==="white"   ? "#cccccc" : army.color+"60";
-  const imgBg     = mode==="white"
-    ? "linear-gradient(160deg,#e8e8e8,#d0d0d0)"
+  // "print" mode: light parchment with faction-tinted header strip, all text near-black
+  const cardBg    = mode==="print"   ? "#f5f0e4"              : mode==="faction" ? (army.bg||"#0a0806") : mode==="cardcolor" ? midBg : "#ffffff";
+  const cardBorder= (mode==="white"||mode==="print") ? army.color : army.color;
+  const cardText  = (mode==="white"||mode==="print") ? "#1a1208"  : army.accent;
+  // Description text — always near-black for print, dim for dark modes
+  const descText  = (mode==="white"||mode==="print") ? "#2a2010"  : mode==="cardcolor" ? "#dddddd" : "#aaaaaa";
+  // Muted text: labels, subtitles
+  const cardMuted = mode==="print"   ? "#4a3820"              : mode==="faction" ? "#999999" : mode==="cardcolor" ? "#dddddd" : "#555555";
+  const statBg    = mode==="print"   ? army.color+"22"        : mode==="faction" ? "#00000040" : mode==="cardcolor" ? "#00000050" : "#f2f2f2";
+  const statBorder= (mode==="white"||mode==="print") ? army.color+"99" : army.color+"80";
+  const divider   = (mode==="white"||mode==="print") ? army.color+"55" : army.color+"60";
+  const imgBg     = (mode==="white"||mode==="print")
+    ? "linear-gradient(160deg,#e8e4d8,#d4ceba)"
     : `linear-gradient(160deg, ${army.color}70, ${army.bg||"#0a0806"})`;
-  const imgTextColor = mode==="white" ? "#aaaaaa" : army.accent;
+  const imgTextColor = (mode==="white"||mode==="print") ? "#888888" : army.accent;
+  // Header strip bg behind unit name — faction-tinted for print mode
+  const headerBg  = mode==="print"   ? army.color+"28"        : `${cardBorder}18`;
 
   // ── ARMY RULES CARD ──────────────────────────────────────────────────────
   // ── SHARED CARD SHELL ──────────────────────────────────────────────────────
@@ -2328,6 +2334,7 @@ function PrintView({ army, roster, onClose }) {
           position:"relative",
           fontFamily:"'Cinzel',Georgia,serif",
           boxSizing:"border-box",
+          border: mode==="print" ? `1px solid ${army.color}60` : "none",
         }}>
           {/* Faction border overlay */}
           {borderUrl && (
@@ -2402,8 +2409,7 @@ function PrintView({ army, roster, onClose }) {
         ...style,
       }}>
         <div style={{ fontSize:labelSz, color: sm ? "rgba(255,255,255,0.7)" : cardMuted, letterSpacing:"0.3px", lineHeight:1 }}>{label}</div>
-        <div style={{ fontSize:valueSz, fontWeight:700, color: sm ? "#fff" : cardText, lineHeight:1.15 }}>{String(value ?? "-")}</div>
-      </div>
+        <div style={{ fontSize:valueSz, fontWeight:700, color: sm ? "#fff" : cardText, lineHeight:1.15 }}>{String(value ?? "-")}</div>      </div>
     );
   }
 
@@ -2460,7 +2466,7 @@ function PrintView({ army, roster, onClose }) {
           padding:"1.5mm 2.5mm 1mm",
           borderBottom:`1px solid ${divider}`,
           display:"flex", justifyContent:"space-between", alignItems:"baseline",
-          flexShrink:0, background:`${cardBorder}18`,
+          flexShrink:0, background: headerBg,
         }}>
           <div>
             <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:cardText, lineHeight:1.2 }}>{u.name}</div>
@@ -2472,12 +2478,12 @@ function PrintView({ army, roster, onClose }) {
         {/* Special text + inline unit rules */}
         <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
           {u.special && (
-            <div style={{ fontSize:cardFs(0.78), color:cardMuted, lineHeight:1.5, fontFamily:"Georgia,serif" }}>
+            <div style={{ fontSize:cardFs(0.78), color:descText, lineHeight:1.5, fontFamily:"Georgia,serif" }}>
               {u.special}
             </div>
           )}
           {unitRules.map((r,i) => (
-            <div key={i} style={{ fontSize:cardFs(0.72), color:army.color, lineHeight:1.4, marginTop:"0.8mm", fontFamily:"Georgia,serif" }}>
+            <div key={i} style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.4, marginTop:"0.8mm", fontFamily:"Georgia,serif" }}>
               <strong style={{ color:cardText }}>{r.name}:</strong> {r.desc}
             </div>
           ))}
@@ -2487,7 +2493,7 @@ function PrintView({ army, roster, onClose }) {
         <div style={{
           borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
           display:"flex", justifyContent:"space-between", alignItems:"center",
-          background:`${cardBorder}12`, flexShrink:0,
+          background: headerBg, flexShrink:0,
         }}>
           <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
           <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
@@ -2507,7 +2513,7 @@ function PrintView({ army, roster, onClose }) {
           padding:"1.5mm 2.5mm 1mm",
           borderBottom:`1px solid ${divider}`,
           display:"flex", justifyContent:"space-between", alignItems:"baseline",
-          flexShrink:0, background:`${cardBorder}18`,
+          flexShrink:0, background: headerBg,
         }}>
           <div>
             <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:cardText, lineHeight:1.2 }}>{m.name}</div>
@@ -2532,10 +2538,10 @@ function PrintView({ army, roster, onClose }) {
         {/* Mount special rules */}
         <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
           {m.special && (
-            <div style={{ fontSize:cardFs(0.78), color:cardMuted, lineHeight:1.5, fontFamily:"Georgia,serif" }}>{m.special}</div>
+            <div style={{ fontSize:cardFs(0.78), color:descText, lineHeight:1.5, fontFamily:"Georgia,serif" }}>{m.special}</div>
           )}
           {!m.special && (
-            <div style={{ fontSize:cardFs(0.78), color:cardMuted, opacity:0.5, fontFamily:"Georgia,serif" }}>No special rules.</div>
+            <div style={{ fontSize:cardFs(0.78), color:descText, opacity:0.5, fontFamily:"Georgia,serif" }}>No special rules.</div>
           )}
         </div>
 
@@ -2543,7 +2549,7 @@ function PrintView({ army, roster, onClose }) {
         <div style={{
           borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
           display:"flex", justifyContent:"space-between", alignItems:"center",
-          background:`${cardBorder}12`, flexShrink:0,
+          background: headerBg, flexShrink:0,
         }}>
           <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Mount</div>
           <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
@@ -2555,12 +2561,13 @@ function PrintView({ army, roster, onClose }) {
   // ── MAGIC ITEM CARD ───────────────────────────────────────────────────────
   // ── MAGIC ITEM CARD (neutral colors — works across all factions) ────────
   function MagicItemCard({ mi }) {
-    // neutral gold/parchment palette — not faction-coloured
-    const miAccent  = "#c8a040";
-    const miBg      = mode === "white" ? "#fdf6e3" : "#1a1508";
+    // Print-friendly parchment palette for magic items
+    const miAccent  = "#8a5a10";
+    const miBg      = (mode==="print"||mode==="white") ? "#f8f2e0" : "#1a1508";
     const miBorder  = "#8a6820";
-    const miText    = mode === "white" ? "#2a1a04" : "#f0d890";
-    const miMuted   = mode === "white" ? "#6a4a10" : "#b89840";
+    const miText    = (mode==="print"||mode==="white") ? "#1a1208" : "#f0d890";
+    const miMuted   = (mode==="print"||mode==="white") ? "#4a3010" : "#b89840";
+    const miHeaderBg= (mode==="print"||mode==="white") ? "#c8940a28" : "#c8940a18";
     const catIcon   = { Weapon:"⚔", Device:"✦", Banner:"🏳" }[mi.category] || "✦";
     const imgUrl    = IMAGES.magicItems?.[mi.id] || "";
 
@@ -2617,7 +2624,7 @@ function PrintView({ army, roster, onClose }) {
             padding:"1mm 2.5mm",
             borderBottom:`1px solid ${miBorder}44`,
             flexShrink:0, display:"flex", alignItems:"center", justifyContent:"space-between",
-            background:`${miAccent}11`,
+            background: miHeaderBg,
           }}>
             <div style={{ display:"flex", alignItems:"center", gap:"1.5mm" }}>
               <div style={{ background:`${miAccent}22`, border:`1px solid ${miAccent}55`, borderRadius:"2px", padding:"0.5mm 2mm", fontSize:cardFs(0.65), color:miAccent, letterSpacing:"1px", textTransform:"uppercase" }}>
@@ -2642,7 +2649,7 @@ function PrintView({ army, roster, onClose }) {
           </div>
 
           {/* Footer */}
-          <div style={{ borderTop:`1px solid ${miBorder}44`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", alignItems:"center", background:`${miAccent}0a`, flexShrink:0 }}>
+          <div style={{ borderTop:`1px solid ${miBorder}44`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", alignItems:"center", background: miHeaderBg, flexShrink:0 }}>
             <div style={{ fontSize:cardFs(0.6), color:miMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Magic Item</div>
             <div style={{ fontSize:cardFs(0.6), color:miAccent, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
           </div>
@@ -2680,7 +2687,7 @@ function PrintView({ army, roster, onClose }) {
         <div style={{
           padding:"1mm 2.5mm",
           borderBottom:`1px solid ${divider}`,
-          flexShrink:0, background:`${cardBorder}18`,
+          flexShrink:0, background: headerBg,
           display:"flex", alignItems:"center",
         }}>
           <div style={{ fontSize:cardFs(0.68), color:army.color, textTransform:"uppercase", letterSpacing:"1px" }}>Special Rule</div>
@@ -2688,7 +2695,7 @@ function PrintView({ army, roster, onClose }) {
 
         {/* Description */}
         <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
-          <div style={{ fontSize:cardFs(0.82), color:cardMuted, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
+          <div style={{ fontSize:cardFs(0.82), color:descText, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
             {rule.desc}
           </div>
         </div>
@@ -2697,7 +2704,7 @@ function PrintView({ army, roster, onClose }) {
         <div style={{
           borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
           display:"flex", justifyContent:"space-between", alignItems:"center",
-          background:`${cardBorder}12`, flexShrink:0,
+          background: headerBg, flexShrink:0,
         }}>
           <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Special Rule</div>
           <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
@@ -2735,7 +2742,7 @@ function PrintView({ army, roster, onClose }) {
         <div style={{
           padding:"1mm 2.5mm",
           borderBottom:`1px solid ${divider}`,
-          flexShrink:0, background:`${cardBorder}18`,
+          flexShrink:0, background: headerBg,
           display:"flex", alignItems:"center",
         }}>
           <div style={{ fontSize:cardFs(0.68), color:army.color, textTransform:"uppercase", letterSpacing:"1px" }}>{label}</div>
@@ -2752,7 +2759,7 @@ function PrintView({ army, roster, onClose }) {
 
         {/* Description */}
         <div style={{ flex:1, padding:"1.5mm 2.5mm", overflow:"hidden" }}>
-          <div style={{ fontSize:cardFs(0.82), color:cardMuted, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
+          <div style={{ fontSize:cardFs(0.82), color:descText, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
             {spell.desc || spell.effect}
           </div>
         </div>
@@ -2761,7 +2768,7 @@ function PrintView({ army, roster, onClose }) {
         <div style={{
           borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
           display:"flex", justifyContent:"space-between", alignItems:"center",
-          background:`${cardBorder}12`, flexShrink:0,
+          background: headerBg, flexShrink:0,
         }}>
           <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
           <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
@@ -2775,7 +2782,9 @@ function PrintView({ army, roster, onClose }) {
   // ── CARD BACK ─────────────────────────────────────────────────────────────
   function CardBack() {
     const clr = army.color;
-    const acc = army.accent;
+    const acc = mode==="print" ? "#1a1208" : army.accent;
+    const backBg = mode==="print" ? "#f5f0e4" : `linear-gradient(160deg, #0d0b08 0%, #1a1208 50%, #0d0b08 100%)`;
+    const backBorder = mode==="print" ? `2px solid ${clr}` : `1.5px solid ${clr}`;
     return (
       <div style={{
         width:"63mm", height:"88mm",
@@ -2790,8 +2799,8 @@ function PrintView({ army, roster, onClose }) {
         <div style={{
           width:"100%", height:"100%",
           borderRadius:"2mm",
-          background:`linear-gradient(160deg, #0d0b08 0%, #1a1208 50%, #0d0b08 100%)`,
-          border:`1.5px solid ${clr}`,
+          background: backBg,
+          border: backBorder,
           boxSizing:"border-box",
           display:"flex",
           flexDirection:"column",
@@ -2807,15 +2816,23 @@ function PrintView({ army, roster, onClose }) {
               left:r!=="auto"?"3mm":undefined, right:r==="auto"?"3mm":undefined,
               width:"7mm", height:"7mm",
               transform:tf,
-              borderTop:`1.5px solid ${clr}99`,
-              borderLeft:`1.5px solid ${clr}99`,
+              borderTop:`1.5px solid ${clr}`,
+              borderLeft:`1.5px solid ${clr}`,
               borderRadius:"0.8mm 0 0 0",
-              opacity:0.8,
+              opacity: mode==="print" ? 1 : 0.8,
             }}/>
           ))}
 
+          {/* Decorative pattern lines — print visible */}
+          <div style={{
+            position:"absolute", inset:"8mm",
+            border:`1px solid ${clr}33`,
+            borderRadius:"1mm",
+            pointerEvents:"none",
+          }} />
+
           {/* Crossed swords motif */}
-          <div style={{ fontSize:"22px", marginBottom:"3mm", opacity:0.7, filter:`drop-shadow(0 0 4px ${clr})` }}>
+          <div style={{ fontSize:"22px", marginBottom:"3mm", opacity: mode==="print" ? 0.85 : 0.7, filter: mode==="print" ? "none" : `drop-shadow(0 0 4px ${clr})`, color: mode==="print" ? clr : undefined }}>
             ⚔
           </div>
 
@@ -2827,7 +2844,7 @@ function PrintView({ army, roster, onClose }) {
             letterSpacing:"4px",
             color: acc,
             textTransform:"uppercase",
-            textShadow:`0 0 8px ${clr}`,
+            textShadow: mode==="print" ? "none" : `0 0 8px ${clr}`,
             marginBottom:"1.5mm",
           }}>
             WARMASTER
@@ -2835,8 +2852,8 @@ function PrintView({ army, roster, onClose }) {
 
           {/* Divider line */}
           <div style={{
-            width:"70%", height:"1px",
-            background:`linear-gradient(90deg, transparent, ${clr}, transparent)`,
+            width:"70%", height:"1.5px",
+            background: mode==="print" ? clr : `linear-gradient(90deg, transparent, ${clr}, transparent)`,
             marginBottom:"1.5mm",
           }}/>
 
@@ -2848,7 +2865,7 @@ function PrintView({ army, roster, onClose }) {
             letterSpacing:"5px",
             color: clr,
             textTransform:"uppercase",
-            opacity:0.9,
+            opacity: mode==="print" ? 1 : 0.9,
             marginBottom:"4mm",
           }}>
             REVOLUTION
@@ -2859,8 +2876,8 @@ function PrintView({ army, roster, onClose }) {
             fontFamily:"'Cinzel',serif",
             fontSize:"6pt",
             letterSpacing:"2px",
-            color: acc,
-            opacity:0.5,
+            color: mode==="print" ? "#4a3820" : acc,
+            opacity: mode==="print" ? 0.8 : 0.5,
             textTransform:"uppercase",
           }}>
             {army.name}
@@ -2869,8 +2886,9 @@ function PrintView({ army, roster, onClose }) {
           {/* Bottom accent bar */}
           <div style={{
             position:"absolute", bottom:"4mm", left:"8mm", right:"8mm",
-            height:"1px",
-            background:`linear-gradient(90deg, transparent, ${clr}80, transparent)`,
+            height:"1.5px",
+            background: mode==="print" ? clr : `linear-gradient(90deg, transparent, ${clr}80, transparent)`,
+            opacity: mode==="print" ? 0.6 : 1,
           }}/>
         </div>
       </div>
@@ -2878,7 +2896,7 @@ function PrintView({ army, roster, onClose }) {
   }
 
   return (
-    <div style={{ background: mode==="white" ? "#e8e8e8" : "#111111", minHeight:"100vh" }} id="print-root">
+    <div style={{ background: (mode==="white"||mode==="print") ? "#d8d4c8" : "#111111", minHeight:"100vh" }} id="print-root">
       <GS />
       {/* Screen toolbar — hidden when printing */}
       <div className="no-print" style={{
