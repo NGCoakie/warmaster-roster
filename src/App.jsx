@@ -343,7 +343,7 @@ const IMAGES = {
     tomb_kings_touch_of_death: "https://cdn.midjourney.com/3ef7e529-c53d-4265-9b97-123e473d0510/0_0.png",
     vampire_counts_death_bolt: "https://cdn.midjourney.com/bb112a3c-7484-4d97-9bd2-0ffbd34c1543/0_2.png",
     vampire_counts_raise_dead: "https://cdn.midjourney.com/f9720ad7-e11d-4ac0-8a70-c2b85ff5d630/0_0.png",
-    vampire_counts_vanhel's_danse_macabre: "https://cdn.midjourney.com/60a2f5db-33b6-46b0-8070-194176a2dccf/0_2.png",
+    vampire_counts_vanhels_danse_macabre: "https://cdn.midjourney.com/60a2f5db-33b6-46b0-8070-194176a2dccf/0_2.png",
     vampire_counts_vile_curse: "https://cdn.midjourney.com/04b37fba-89f7-4b76-ac3a-9eb196c5e3be/0_3.png",
     witch_hunters_divine_curse: "",
     witch_hunters_doctrine_of_sigmar: "",
