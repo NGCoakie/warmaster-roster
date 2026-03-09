@@ -2240,6 +2240,9 @@ function PrintView({ army, roster, onClose }) {
     fontScale: 1.0,
   };
 
+  // Back-side print mode: "fronts" | "separate" | "sidebyside"
+  const [backMode, setBackMode] = useState("fronts");
+
   const entryTotal = (entry) => {
     let t = typeof entry.unit.pts === "number" ? entry.unit.pts : 0;
     if (entry.mount) t += typeof entry.mount.pts === "number" ? entry.mount.pts : 0;
@@ -2768,6 +2771,112 @@ function PrintView({ army, roster, onClose }) {
   }
 
 
+
+  // ── CARD BACK ─────────────────────────────────────────────────────────────
+  function CardBack() {
+    const clr = army.color;
+    const acc = army.accent;
+    return (
+      <div style={{
+        width:"63mm", height:"88mm",
+        background:"#000",
+        borderRadius:"4mm",
+        padding:"3mm",
+        boxSizing:"border-box",
+        pageBreakInside:"avoid", breakInside:"avoid",
+        WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
+        flexShrink:0,
+      }}>
+        <div style={{
+          width:"100%", height:"100%",
+          borderRadius:"2mm",
+          background:`linear-gradient(160deg, #0d0b08 0%, #1a1208 50%, #0d0b08 100%)`,
+          border:`1.5px solid ${clr}`,
+          boxSizing:"border-box",
+          display:"flex",
+          flexDirection:"column",
+          alignItems:"center",
+          justifyContent:"center",
+          position:"relative",
+          overflow:"hidden",
+        }}>
+          {/* Corner ornaments */}
+          {[["0","0",""],["0","auto","scaleX(-1)"],["auto","0","scaleY(-1)"],["auto","auto","scale(-1,-1)"]].map(([t,r,tf],i)=>(
+            <div key={i} style={{
+              position:"absolute", top:t!=="auto"?"3mm":undefined, bottom:t==="auto"?"3mm":undefined,
+              left:r!=="auto"?"3mm":undefined, right:r==="auto"?"3mm":undefined,
+              width:"7mm", height:"7mm",
+              transform:tf,
+              borderTop:`1.5px solid ${clr}99`,
+              borderLeft:`1.5px solid ${clr}99`,
+              borderRadius:"0.8mm 0 0 0",
+              opacity:0.8,
+            }}/>
+          ))}
+
+          {/* Crossed swords motif */}
+          <div style={{ fontSize:"22px", marginBottom:"3mm", opacity:0.7, filter:`drop-shadow(0 0 4px ${clr})` }}>
+            ⚔
+          </div>
+
+          {/* WARMASTER title */}
+          <div style={{
+            fontFamily:"'Cinzel',serif",
+            fontSize:"10.5pt",
+            fontWeight:900,
+            letterSpacing:"4px",
+            color: acc,
+            textTransform:"uppercase",
+            textShadow:`0 0 8px ${clr}`,
+            marginBottom:"1.5mm",
+          }}>
+            WARMASTER
+          </div>
+
+          {/* Divider line */}
+          <div style={{
+            width:"70%", height:"1px",
+            background:`linear-gradient(90deg, transparent, ${clr}, transparent)`,
+            marginBottom:"1.5mm",
+          }}/>
+
+          {/* REVOLUTION subtitle */}
+          <div style={{
+            fontFamily:"'Cinzel',serif",
+            fontSize:"7pt",
+            fontWeight:700,
+            letterSpacing:"5px",
+            color: clr,
+            textTransform:"uppercase",
+            opacity:0.9,
+            marginBottom:"4mm",
+          }}>
+            REVOLUTION
+          </div>
+
+          {/* Army name */}
+          <div style={{
+            fontFamily:"'Cinzel',serif",
+            fontSize:"6pt",
+            letterSpacing:"2px",
+            color: acc,
+            opacity:0.5,
+            textTransform:"uppercase",
+          }}>
+            {army.name}
+          </div>
+
+          {/* Bottom accent bar */}
+          <div style={{
+            position:"absolute", bottom:"4mm", left:"8mm", right:"8mm",
+            height:"1px",
+            background:`linear-gradient(90deg, transparent, ${clr}80, transparent)`,
+          }}/>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ background: mode==="white" ? "#e8e8e8" : "#111111", minHeight:"100vh" }} id="print-root">
       <GS />
@@ -2785,6 +2894,27 @@ function PrintView({ army, roster, onClose }) {
           {army.name.toUpperCase()} — {total}pts — {roster.length} cards
         </div>
 
+        {/* Back-mode selector */}
+        <div style={{ display:"flex", gap:4, alignItems:"center" }}>
+          {[
+            { id:"fronts",     label:"Fronts Only" },
+            { id:"separate",   label:"+ Backs (2 sheets)" },
+            { id:"sidebyside", label:"+ Backs (side by side)" },
+          ].map(opt => (
+            <button key={opt.id} onClick={() => setBackMode(opt.id)}
+              style={{
+                background: backMode===opt.id ? `linear-gradient(135deg,${army.color},${army.color}99)` : "none",
+                border:`1px solid ${army.color}60`,
+                color: backMode===opt.id ? "#fff" : army.color,
+                borderRadius:4, padding:"5px 10px", fontSize:"0.78rem",
+                cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700,
+                whiteSpace:"nowrap",
+              }}>
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
         <button onClick={() => window.print()}
           style={{ background:`linear-gradient(135deg,${army.color},${army.color}99)`, border:"none", color:"#fff", borderRadius:5, padding:"7px 16px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700 }}>
           🖨 PRINT
@@ -2798,31 +2928,54 @@ function PrintView({ army, roster, onClose }) {
         if (army.bloodRites && Array.isArray(army.bloodRites)) army.bloodRites.forEach(s => spellItems.push({...s, bloodRite:true}));
         if (army.instabilityTable && Array.isArray(army.instabilityTable))
           army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
-        return (
-          <div className="print-area" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
-            {/* Special rule cards removed — all rules displayed on unit cards */}
 
-            {/* Spell cards */}
-            {spellItems.map((spell, i) => (
-              <SpellCard key={`spell-${i}`} spell={spell} />
-            ))}
+        // Build flat list of all front cards
+        const frontCards = [
+          ...spellItems.map((spell, i) => <SpellCard key={`spell-${i}`} spell={spell} />),
+          ...roster.map((entry, idx) => <PrintCard key={`unit-${idx}`} entry={entry} />),
+          ...roster.filter(e => e.mount).map((entry, idx) => <MountCard key={`mount-${idx}`} entry={entry} />),
+          ...roster.filter(e => e.magicItem).map((entry, idx) => <MagicItemCard key={`mi-${idx}`} mi={entry.magicItem} />),
+        ];
+        const cardCount = frontCards.length;
 
-            {/* Unit cards */}
-            {roster.map((entry, idx) => (
-              <PrintCard key={`unit-${idx}`} entry={entry} />
-            ))}
+        if (backMode === "fronts") {
+          return (
+            <div className="print-area" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+              {frontCards}
+            </div>
+          );
+        }
 
-            {/* Mount cards — one per entry that has a mount */}
-            {roster.filter(e => e.mount).map((entry, idx) => (
-              <MountCard key={`mount-${idx}`} entry={entry} />
-            ))}
+        if (backMode === "sidebyside") {
+          // Pair each front with its back, side by side
+          return (
+            <div className="print-area" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+              {frontCards.map((card, i) => (
+                <div key={i} style={{ display:"flex", gap:"4mm", pageBreakInside:"avoid", breakInside:"avoid" }}>
+                  {card}
+                  <CardBack />
+                </div>
+              ))}
+            </div>
+          );
+        }
 
-            {/* Magic item cards — one per entry that has a magic item */}
-            {roster.filter(e => e.magicItem).map((entry, idx) => (
-              <MagicItemCard key={`mi-${idx}`} mi={entry.magicItem} />
-            ))}
-          </div>
-        );
+        if (backMode === "separate") {
+          // Page 1: all fronts. Page break. Page 2: backs in same order (mirror columns for duplex)
+          return (
+            <>
+              <div className="print-area" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+                {frontCards}
+              </div>
+              <div className="page-break-before" style={{ pageBreakBefore:"always", breakBefore:"page" }} />
+              <div className="print-area backs-page" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
+                {frontCards.map((_, i) => <CardBack key={`back-${i}`} />)}
+              </div>
+            </>
+          );
+        }
+
+        return null;
       })()}
 
       {/* Print CSS — injected into page */}
