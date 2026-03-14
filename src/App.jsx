@@ -2625,12 +2625,12 @@ function PrintView({ army, roster, onClose }) {
     // Extract keyword badges from special text
     const { badges, remainingText } = extractBadges(u.special);
 
-    // Find special rules that apply to this unit
+    // Find special rules that apply to this unit — match only if names are
+    // substantially the same (one contains the other), not just sharing a word
     const unitRules = (army.armyRules || []).filter(rule => {
       const rn = rule.name.toLowerCase().replace(/\(army rule\)/,'').trim();
       const un = u.name.toLowerCase();
-      return un.includes(rn) || rn.includes(un) ||
-        rn.split(/[\s,\/&]+/).some(w => w.length > 3 && un.includes(w));
+      return un.includes(rn) || rn.includes(un);
     });
 
     // Stat overlays — rendered inside the image area
@@ -2778,101 +2778,57 @@ function PrintView({ army, roster, onClose }) {
   // ── MAGIC ITEM CARD ───────────────────────────────────────────────────────
   // ── MAGIC ITEM CARD (neutral colors — works across all factions) ────────
   function MagicItemCard({ mi }) {
-    // Print-friendly parchment palette for magic items
-    const miAccent  = "#8a5a10";
-    const miBg      = (mode==="print"||mode==="white") ? "#f8f2e0" : "#1a1508";
-    const miBorder  = "#8a6820";
-    const miText    = (mode==="print"||mode==="white") ? "#1a1208" : "#f0d890";
-    const miMuted   = (mode==="print"||mode==="white") ? "#4a3010" : "#b89840";
-    const miHeaderBg= (mode==="print"||mode==="white") ? "#c8940a28" : "#c8940a18";
     const catIcon   = { Weapon:"⚔", Device:"✦", Banner:"🏳" }[mi.category] || "✦";
     const imgUrl    = IMAGES.magicItems?.[mi.id] || "";
 
-    // Name overlay on image — same pattern as other cards
-    const nameOverlay = (
-      <div style={{
-        position:"absolute", bottom:0, left:0, right:0,
-        background:"linear-gradient(transparent, rgba(0,0,0,0.82))",
-        padding:"6mm 2.5mm 2mm",
-        zIndex:5,
-      }}>
-        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>
-          {mi.name}
-        </div>
-      </div>
-    );
-
     return (
-      <div style={{
-        width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
-        background:"#000",
-        borderRadius:"4mm",
-        padding:"3mm",
-        boxSizing:"border-box",
-        overflow:"hidden",
-        pageBreakInside:"avoid", breakInside:"avoid",
-        WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
-        flexShrink:0, flexGrow:0,
-      }}>
+      <CardShell imgUrl={imgUrl} imgFallbackIcon={catIcon} accentColor={army.color} imgOverlay={
         <div style={{
-          width:"100%", height:"100%",
-          background: miBg,
-          borderRadius:"2mm",
-          display:"flex", flexDirection:"column",
-          overflow:"hidden", position:"relative",
-          fontFamily:"'Cinzel',Georgia,serif",
-          boxSizing:"border-box",
-          border:`1px solid ${miBorder}44`,
+          position:"absolute", bottom:0, left:0, right:0,
+          background:"linear-gradient(transparent, rgba(0,0,0,0.82))",
+          padding:"6mm 2.5mm 2mm",
+          zIndex:5,
         }}>
-          {/* Image + name overlay — fixed height for uniform layout */}
-          <div style={{ width:"100%", height:"40mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`1.5px solid ${miBorder}` }}>
-            {imgUrl ? (
-              <img src={imgUrl} alt="" referrerPolicy="no-referrer" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block" }} />
-            ) : (
-              <div style={{ width:"100%", height:"100%", background:`linear-gradient(160deg,${miAccent}33,${miBg})`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <div style={{ fontSize:"28px", opacity:0.35 }}>{catIcon}</div>
-              </div>
-            )}
-            {nameOverlay}
-            <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"2px", background:`linear-gradient(90deg,transparent,${miAccent},transparent)` }} />
-          </div>
-
-          {/* Type badge row */}
-          <div style={{
-            padding:"1mm 2.5mm",
-            borderBottom:`1px solid ${miBorder}44`,
-            flexShrink:0, display:"flex", alignItems:"center", justifyContent:"space-between",
-            background: miHeaderBg,
-          }}>
-            <div style={{ display:"flex", alignItems:"center", gap:"1.5mm" }}>
-              <div style={{ background:`${miAccent}22`, border:`1px solid ${miAccent}55`, borderRadius:"2px", padding:"0.5mm 2mm", fontSize:cardFs(0.65), color:miAccent, letterSpacing:"1px", textTransform:"uppercase" }}>
-                {catIcon} {mi.category || "Magic Item"}
-              </div>
-            </div>
-            <div style={{ fontSize:cardFs(0.88), fontWeight:700, color:miAccent }}>{mi.cost}pts</div>
-          </div>
-
-          {/* Equip restriction */}
-          <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${miBorder}33`, flexShrink:0 }}>
-            <div style={{ fontSize:cardFs(0.65), color:miMuted, fontStyle:"italic", lineHeight:1.4 }}>
-              📋 {mi.restriction}
-            </div>
-          </div>
-
-          {/* Description */}
-          <div style={{ padding:"1.5mm 2.5mm", flexShrink:0 }}>
-            <div style={{ fontSize:cardFs(0.78), color:miText, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
-              {mi.desc}
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div style={{ borderTop:`1px solid ${miBorder}44`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", alignItems:"center", background: miHeaderBg, flexShrink:0, marginTop:"auto" }}>
-            <div style={{ fontSize:cardFs(0.6), color:miMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Magic Item</div>
-            <div style={{ fontSize:cardFs(0.6), color:miAccent, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
+          <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>
+            {mi.name}
           </div>
         </div>
-      </div>
+      }>
+        {/* Type badge + pts row */}
+        <div style={{
+          padding:"1mm 2.5mm",
+          borderBottom:`1px solid ${divider}`,
+          flexShrink:0, display:"flex", alignItems:"center", justifyContent:"space-between",
+          background: headerBg,
+        }}>
+          <div style={{ display:"flex", alignItems:"center", gap:"1.5mm" }}>
+            <div style={{ background:`${army.color}22`, border:`1px solid ${army.color}55`, borderRadius:"2px", padding:"0.5mm 2mm", fontSize:cardFs(0.65), color:army.color, letterSpacing:"1px", textTransform:"uppercase" }}>
+              {catIcon} {mi.category || "Magic Item"}
+            </div>
+          </div>
+          <div style={{ fontSize:cardFs(0.88), fontWeight:700, color:cardText }}>{mi.cost}pts</div>
+        </div>
+
+        {/* Equip restriction */}
+        <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${divider}`, flexShrink:0 }}>
+          <div style={{ fontSize:cardFs(0.65), color:cardMuted, fontStyle:"italic", lineHeight:1.4 }}>
+            📋 {mi.restriction}
+          </div>
+        </div>
+
+        {/* Description */}
+        <div style={{ padding:"1.5mm 2.5mm", flexShrink:0 }}>
+          <div style={{ fontSize:cardFs(0.78), color:descText, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
+            {mi.desc}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", alignItems:"center", background: headerBg, flexShrink:0, marginTop:"auto" }}>
+          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Magic Item</div>
+          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
+        </div>
+      </CardShell>
     );
   }
 
