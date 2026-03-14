@@ -3187,18 +3187,43 @@ function PrintView({ army, roster, onClose }) {
         }
 
         if (backMode === "separate") {
-          // Page 1: all fronts. Page break. Page 2: backs in same order (mirror columns for duplex)
-          return (
-            <>
-              <div className="print-area" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start", alignItems:"flex-start" }}>
-                {frontCards}
+          // Chunk cards into pages of 9 (3×3 grid), alternating fronts/backs for duplex printing.
+          // Backs are column-reversed per row so they align when the sheet flips (long-edge duplex).
+          const COLS = 3;
+          const ROWS = 3;
+          const PER_PAGE = COLS * ROWS;
+          const pages = [];
+          for (let i = 0; i < cardCount; i += PER_PAGE) {
+            const chunk = frontCards.slice(i, i + PER_PAGE);
+            // Build mirrored backs: reverse column order within each row
+            const mirroredBacks = [];
+            for (let r = 0; r < ROWS; r++) {
+              const rowStart = r * COLS;
+              for (let c = COLS - 1; c >= 0; c--) {
+                const idx = rowStart + c;
+                if (idx < chunk.length) mirroredBacks.push(<CardBack key={`back-${i + idx}`} />);
+              }
+            }
+            pages.push(
+              <div key={`fronts-${i}`} className="print-area card-page" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"0mm", justifyContent:"flex-start", alignItems:"flex-start" }}>
+                {chunk}
               </div>
-              <div className="page-break-before" style={{ pageBreakBefore:"always", breakBefore:"page" }} />
-              <div className="print-area backs-page" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"flex-start" }}>
-                {frontCards.map((_, i) => <CardBack key={`back-${i}`} />)}
+            );
+            pages.push(
+              <div key={`break-${i}`} style={{ pageBreakBefore:"always", breakBefore:"page" }} />
+            );
+            pages.push(
+              <div key={`backs-${i}`} className="print-area card-page" style={{ padding:"12px", display:"flex", flexWrap:"wrap", gap:"0mm", justifyContent:"flex-start", alignItems:"flex-start" }}>
+                {mirroredBacks}
               </div>
-            </>
-          );
+            );
+            if (i + PER_PAGE < cardCount) {
+              pages.push(
+                <div key={`break2-${i}`} style={{ pageBreakBefore:"always", breakBefore:"page" }} />
+              );
+            }
+          }
+          return <>{pages}</>;
         }
 
         return null;
@@ -3703,15 +3728,35 @@ function MagicItemsPrintView({ onClose }) {
           ))}
         </div>
       ) : backMode === "separate" ? (
-        <>
-          <div className="mi-print-area">
-            {frontCards}
-          </div>
-          <div className="page-break-before" style={{ pageBreakBefore:"always", breakBefore:"page" }} />
-          <div className="mi-print-area">
-            {allItems.map((_, i) => <MagicItemCardBack key={`back-${i}`} />)}
-          </div>
-        </>
+        (() => {
+          const COLS = 3, ROWS = 3, PER_PAGE = COLS * ROWS;
+          const pages = [];
+          for (let i = 0; i < frontCards.length; i += PER_PAGE) {
+            const chunk = frontCards.slice(i, i + PER_PAGE);
+            const mirroredBacks = [];
+            for (let r = 0; r < ROWS; r++) {
+              for (let c = COLS - 1; c >= 0; c--) {
+                const idx = r * COLS + c;
+                if (idx < chunk.length) mirroredBacks.push(<MagicItemCardBack key={`back-${i + idx}`} />);
+              }
+            }
+            pages.push(
+              <div key={`fronts-${i}`} className="mi-print-area" style={{ display:"flex", flexWrap:"wrap", gap:"0mm", justifyContent:"flex-start", alignItems:"flex-start" }}>
+                {chunk}
+              </div>
+            );
+            pages.push(<div key={`break-${i}`} style={{ pageBreakBefore:"always", breakBefore:"page" }} />);
+            pages.push(
+              <div key={`backs-${i}`} className="mi-print-area" style={{ display:"flex", flexWrap:"wrap", gap:"0mm", justifyContent:"flex-start", alignItems:"flex-start" }}>
+                {mirroredBacks}
+              </div>
+            );
+            if (i + PER_PAGE < frontCards.length) {
+              pages.push(<div key={`break2-${i}`} style={{ pageBreakBefore:"always", breakBefore:"page" }} />);
+            }
+          }
+          return <>{pages}</>;
+        })()
       ) : null}
     </div>
   );
