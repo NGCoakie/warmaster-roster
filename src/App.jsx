@@ -3898,6 +3898,8 @@ function App() {
   const [shareModal, setShareModal] = useState(false);
   const [session, setSession] = useState(() => loadSession());
   const [sharedView, setSharedView] = useState(false);
+  const isMobile = useIsMobile();
+  const [mobileTab, setMobileTab] = useState("units"); // "units" | "roster" | "cards"
 
   // Decode shared roster from URL on first load
   useEffect(() => {
@@ -4034,56 +4036,96 @@ function App() {
       <GS />
       {shareModal && <ShareModal army={army} roster={roster} totalPts={totalPts} armyKey={selectedArmy} onClose={() => setShareModal(false)} />}
       {saveModal && <SaveModal army={army} roster={roster} totalPts={totalPts} onSave={handleSaved} onClose={() => setSaveModal(false)} session={session} />}
-      <div style={{ minHeight:"100vh", background: army.bg || "#050505", paddingBottom:40 }}>
-        <div style={{ position:"sticky", top:0, zIndex:100, background: army.bg || "#050505", borderBottom:`1px solid ${army.color}40`, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
+      <div style={{ minHeight:"100vh", background: army.bg || "#050505", paddingBottom: isMobile ? 56 : 40 }}>
+        <div style={{ position:"sticky", top:0, zIndex:100, background: army.bg || "#050505", borderBottom:`1px solid ${army.color}40`, padding: isMobile ? "6px 8px" : "10px 16px", display:"flex", alignItems:"center", gap: isMobile ? 4 : 10, flexWrap:"wrap" }}>
           <button onClick={() => { setScreen("factions"); setSelectedArmy(null); setRoster([]); setSharedView(false); }}
-            style={{ background:"none", border:`1px solid ${army.color}40`, color: army.color, borderRadius:4, padding:"4px 10px", fontSize:"1rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
-            ← ARMIES
+            style={{ background:"none", border:`1px solid ${army.color}40`, color: army.color, borderRadius:4, padding: isMobile ? "3px 6px" : "4px 10px", fontSize: isMobile ? "0.8rem" : "1rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+            ←
           </button>
           {sharedView && (
             <div style={{ background: army.color+"25", border:`1px solid ${army.color}50`, borderRadius:4, padding:"3px 8px", fontSize:"0.72rem", color: army.accent, fontFamily:"'Cinzel',serif", letterSpacing:1 }}>
-              👁 SHARED LIST
+              👁 SHARED
             </div>
           )}
-          <div style={{ flex:1, fontFamily:"'Cinzel',serif", fontSize:"1rem", color: army.accent, letterSpacing:2, textAlign:"center" }}>
+          <div style={{ flex:1, fontFamily:"'Cinzel',serif", fontSize: isMobile ? "0.8rem" : "1rem", color: army.accent, letterSpacing: isMobile ? 1 : 2, textAlign:"center", minWidth:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
             {army.name.toUpperCase()}
           </div>
-          <div style={{ display:"flex", gap:6, alignItems:"center" }}>
+          <div style={{ display:"flex", gap: isMobile ? 3 : 6, alignItems:"center", flexShrink:0 }}>
             {roster.length > 0 && !session?.guest && (
               <button onClick={() => setSaveModal(true)}
-                style={{ background:"none", border:`1px solid ${army.color}50`, color: saveSuccess ? "#50c050" : army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
-                {saveSuccess ? "✓ SAVED" : "💾 SAVE"}
+                style={{ background:"none", border:`1px solid ${army.color}50`, color: saveSuccess ? "#50c050" : army.color, borderRadius:4, padding: isMobile ? "3px 6px" : "4px 8px", fontSize: isMobile ? "0.75rem" : "0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+                {saveSuccess ? "✓" : "💾"}
               </button>
             )}
             {roster.length > 0 && (
               <button onClick={() => setShareModal(true)}
-                style={{ background:"none", border:`1px solid ${army.color}50`, color: army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
-                🔗 SHARE
+                style={{ background:"none", border:`1px solid ${army.color}50`, color: army.color, borderRadius:4, padding: isMobile ? "3px 6px" : "4px 8px", fontSize: isMobile ? "0.75rem" : "0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+                🔗
               </button>
             )}
             {roster.length > 0 && (
               <button onClick={() => setScreen("print")}
-                style={{ background:"none", border:`1px solid ${army.color}50`, color: army.color, borderRadius:4, padding:"4px 8px", fontSize:"0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
-                🖨 PRINT
+                style={{ background:"none", border:`1px solid ${army.color}50`, color: army.color, borderRadius:4, padding: isMobile ? "3px 6px" : "4px 8px", fontSize: isMobile ? "0.75rem" : "0.9rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1 }}>
+                🖨
               </button>
             )}
           </div>
         </div>
-        <div style={{ display:"flex", gap:0, minHeight:"calc(100vh - 50px)" }}>
-          <div style={{ width:"40%", maxWidth:200, borderRight:`1px solid ${army.color}20`, overflowY:"auto" }}>
-            <UnitList army={army} armyKey={selectedArmy} roster={roster} onAddUnit={handleAddUnit} />
+        {isMobile ? (
+          <>
+            <div style={{ flex:1, overflowY:"auto", minHeight:"calc(100vh - 100px)" }}>
+              {mobileTab === "units" ? (
+                <UnitList army={army} armyKey={selectedArmy} roster={roster} onAddUnit={handleAddUnit} />
+              ) : mobileTab === "roster" ? (
+                <RosterPanel army={army} roster={roster} onUpdate={handleUpdateEntry} onRemove={handleRemoveEntry} totalPts={totalPts}
+                  onPrint={() => setScreen("print")}
+                  onClear={() => setRoster([])}
+                  onReorder={handleReorderEntry}
+                />
+              ) : (
+                <PrintView army={army} roster={roster} embedded />
+              )}
+            </div>
+            <div style={{
+              position:"fixed", bottom:0, left:0, right:0, zIndex:200,
+              display:"flex", background: army.bg || "#050505",
+              borderTop:`1px solid ${army.color}40`,
+            }}>
+              {[
+                { id:"units", label:"UNITS" },
+                { id:"roster", label:`ROSTER (${roster.length})` },
+                { id:"cards", label:"CARDS" },
+              ].map(tab => (
+                <button key={tab.id} onClick={() => setMobileTab(tab.id)}
+                  style={{
+                    flex:1, padding:"10px 0", border:"none", cursor:"pointer",
+                    fontFamily:"'Cinzel',serif", fontSize:"0.78rem", letterSpacing:1,
+                    background: mobileTab===tab.id ? army.color+"30" : "transparent",
+                    color: mobileTab===tab.id ? army.accent : "#666",
+                    borderTop: mobileTab===tab.id ? `2px solid ${army.color}` : "2px solid transparent",
+                  }}>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div style={{ display:"flex", gap:0, minHeight:"calc(100vh - 50px)" }}>
+            <div style={{ width:"40%", maxWidth:200, borderRight:`1px solid ${army.color}20`, overflowY:"auto" }}>
+              <UnitList army={army} armyKey={selectedArmy} roster={roster} onAddUnit={handleAddUnit} />
+            </div>
+            <div style={{ flex:"0 0 280px", maxWidth:320, overflowY:"auto", borderRight:`1px solid ${army.color}20` }}>
+              <RosterPanel army={army} roster={roster} onUpdate={handleUpdateEntry} onRemove={handleRemoveEntry} totalPts={totalPts}
+                onPrint={() => setScreen("print")}
+                onClear={() => setRoster([])}
+                onReorder={handleReorderEntry}
+              />
+            </div>
+            <div style={{ flex:1, overflowY:"auto" }}>
+              <PrintView army={army} roster={roster} embedded />
+            </div>
           </div>
-          <div style={{ flex:"0 0 280px", maxWidth:320, overflowY:"auto", borderRight:`1px solid ${army.color}20` }}>
-            <RosterPanel army={army} roster={roster} onUpdate={handleUpdateEntry} onRemove={handleRemoveEntry} totalPts={totalPts}
-              onPrint={() => setScreen("print")}
-              onClear={() => setRoster([])}
-              onReorder={handleReorderEntry}
-            />
-          </div>
-          <div style={{ flex:1, overflowY:"auto" }}>
-            <PrintView army={army} roster={roster} embedded />
-          </div>
-        </div>
+        )}
       </div>
     </>
   );
