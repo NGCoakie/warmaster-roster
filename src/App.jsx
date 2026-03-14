@@ -2399,6 +2399,7 @@ function PrintView({ army, roster, onClose, embedded }) {
 
   // Back-side print mode: "fronts" | "separate" | "sidebyside"
   const [backMode, setBackMode] = useState("fronts");
+  const [showSpells, setShowSpells] = useState(true);
 
   const entryTotal = (entry) => {
     let t = typeof entry.unit.pts === "number" ? entry.unit.pts : 0;
@@ -3110,21 +3111,33 @@ function PrintView({ army, roster, onClose, embedded }) {
     if (army.bloodRites && Array.isArray(army.bloodRites)) army.bloodRites.forEach(s => spellItems.push({...s, bloodRite:true}));
     if (army.instabilityTable && Array.isArray(army.instabilityTable))
       army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
+    const spellCards = showSpells ? spellItems.map((spell, i) => <SpellCard key={`spell-${i}`} spell={spell} />) : [];
     const previewCards = [
-      ...spellItems.map((spell, i) => <SpellCard key={`spell-${i}`} spell={spell} />),
+      ...spellCards,
       ...roster.map((entry, idx) => <PrintCard key={`unit-${idx}`} entry={entry} />),
       ...roster.filter(e => e.mount).map((entry, idx) => <MountCard key={`mount-${idx}`} entry={entry} />),
       ...roster.filter(e => e.magicItem).map((entry, idx) => <MagicItemCard key={`mi-${idx}`} mi={entry.magicItem} />),
     ];
     return (
       <div style={{ height:"100%", display:"flex", flexDirection:"column", background:"#0a0806" }}>
-        <div style={{ padding:"8px 10px", borderBottom:`1px solid ${army.color}30`, flexShrink:0 }}>
+        <div style={{ padding:"8px 10px", borderBottom:`1px solid ${army.color}30`, flexShrink:0, display:"flex", alignItems:"center", gap:8 }}>
           <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.85rem", color:"#666", letterSpacing:1 }}>
             CARD PREVIEW
           </span>
-          <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.78rem", color:"#555", marginLeft:8 }}>
+          <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.78rem", color:"#555" }}>
             {previewCards.length} cards
           </span>
+          <div style={{ flex:1 }} />
+          <button onClick={() => setShowSpells(!showSpells)}
+            style={{
+              background: showSpells ? army.color+"30" : "transparent",
+              border:`1px solid ${army.color}${showSpells ? "60" : "30"}`,
+              color: showSpells ? army.accent : "#555",
+              borderRadius:3, padding:"2px 8px", fontSize:"0.72rem",
+              fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:1,
+            }}>
+            {showSpells ? "✦ SPELLS" : "✧ SPELLS"}
+          </button>
         </div>
         <div style={{ flex:1, overflowY:"auto", padding:"10px" }}>
           {previewCards.length === 0 ? (
