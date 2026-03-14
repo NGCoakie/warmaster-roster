@@ -2475,7 +2475,7 @@ function PrintView({ army, roster, onClose, embedded }) {
     return (
       <div style={{
         width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
-        background:"#000",
+        background:"#2a2318",
         borderRadius:"4mm",
         padding:"2mm",
         boxSizing:"border-box",
@@ -2996,7 +2996,7 @@ function PrintView({ army, roster, onClose, embedded }) {
     return (
       <div style={{
         width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
-        background:"#000",
+        background:"#2a2318",
         borderRadius:"4mm",
         padding:"2mm",
         boxSizing:"border-box",
@@ -3668,7 +3668,7 @@ function MagicItemCardBack() {
   return (
     <div style={{
       width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
-      background:"#000", borderRadius:"4mm", padding:"2mm",
+      background:"#2a2318", borderRadius:"4mm", padding:"2mm",
       boxSizing:"border-box", overflow:"hidden",
       pageBreakInside:"avoid", breakInside:"avoid",
       WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
@@ -3829,7 +3829,7 @@ function MagicItemStandaloneCard({ mi }) {
   return (
     <div style={{
       width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
-      background:"#000", borderRadius:"4mm", padding:"2mm",
+      background:"#2a2318", borderRadius:"4mm", padding:"2mm",
       boxSizing:"border-box", overflow:"hidden", pageBreakInside:"avoid", breakInside:"avoid",
       WebkitPrintColorAdjust:"exact", printColorAdjust:"exact", flexShrink:0, flexGrow:0,
     }}>
