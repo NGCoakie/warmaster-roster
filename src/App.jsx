@@ -2387,7 +2387,7 @@ function RosterPanel({ army, roster, onRemove, onUpdate, onPrint, onClear, onReo
 }
 
 // ── PRINT VIEW ─────────────────────────────────────────────────────────────────
-function PrintView({ army, roster, onClose }) {
+function PrintView({ army, roster, onClose, embedded }) {
   // Print options are now standardised — no user controls
   const printOpts = {
     layout: "portrait",
@@ -3098,6 +3098,44 @@ function PrintView({ army, roster, onClose }) {
             background: mode==="print" ? clr : `linear-gradient(90deg, transparent, ${clr}80, transparent)`,
             opacity: mode==="print" ? 0.6 : 1,
           }}/>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Embedded mode: render scaled card previews inline (no toolbar/print chrome) ──
+  if (embedded) {
+    const spellItems = [];
+    if (army.spells && Array.isArray(army.spells)) army.spells.forEach(s => spellItems.push(s));
+    if (army.bloodRites && Array.isArray(army.bloodRites)) army.bloodRites.forEach(s => spellItems.push({...s, bloodRite:true}));
+    if (army.instabilityTable && Array.isArray(army.instabilityTable))
+      army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
+    const previewCards = [
+      ...spellItems.map((spell, i) => <SpellCard key={`spell-${i}`} spell={spell} />),
+      ...roster.map((entry, idx) => <PrintCard key={`unit-${idx}`} entry={entry} />),
+      ...roster.filter(e => e.mount).map((entry, idx) => <MountCard key={`mount-${idx}`} entry={entry} />),
+      ...roster.filter(e => e.magicItem).map((entry, idx) => <MagicItemCard key={`mi-${idx}`} mi={entry.magicItem} />),
+    ];
+    return (
+      <div style={{ height:"100%", display:"flex", flexDirection:"column", background:"#0a0806" }}>
+        <div style={{ padding:"8px 10px", borderBottom:`1px solid ${army.color}30`, flexShrink:0 }}>
+          <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.85rem", color:"#666", letterSpacing:1 }}>
+            CARD PREVIEW
+          </span>
+          <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.78rem", color:"#555", marginLeft:8 }}>
+            {previewCards.length} cards
+          </span>
+        </div>
+        <div style={{ flex:1, overflowY:"auto", padding:"10px" }}>
+          {previewCards.length === 0 ? (
+            <div style={{ color:"#444", fontSize:"0.9rem", fontStyle:"italic", textAlign:"center", padding:30 }}>
+              Add units to see card previews.
+            </div>
+          ) : (
+            <div style={{ display:"flex", flexWrap:"wrap", gap:"8px", justifyContent:"center", transformOrigin:"top center" }}>
+              {previewCards}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -4022,12 +4060,15 @@ function App() {
           <div style={{ width:"40%", maxWidth:200, borderRight:`1px solid ${army.color}20`, overflowY:"auto" }}>
             <UnitList army={army} armyKey={selectedArmy} roster={roster} onAddUnit={handleAddUnit} />
           </div>
-          <div style={{ flex:1, overflowY:"auto" }}>
+          <div style={{ flex:"0 0 280px", maxWidth:320, overflowY:"auto", borderRight:`1px solid ${army.color}20` }}>
             <RosterPanel army={army} roster={roster} onUpdate={handleUpdateEntry} onRemove={handleRemoveEntry} totalPts={totalPts}
               onPrint={() => setScreen("print")}
               onClear={() => setRoster([])}
               onReorder={handleReorderEntry}
             />
+          </div>
+          <div style={{ flex:1, overflowY:"auto" }}>
+            <PrintView army={army} roster={roster} embedded />
           </div>
         </div>
       </div>
