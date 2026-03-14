@@ -2509,7 +2509,7 @@ function PrintView({ army, roster, onClose, embedded }) {
           {/* ── Image area — fixed height for uniform card layout ── */}
           <div style={{
             width:"100%",
-            height:"40mm",
+            height:"35mm",
             flexShrink:0,
             position:"relative",
             overflow:"hidden",
@@ -3842,7 +3842,7 @@ function MagicItemStandaloneCard({ mi }) {
         border:`2px solid ${miBorder}`,
       }}>
         {/* Image + name overlay */}
-        <div style={{ width:"100%", height:"40mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`3px solid ${miBorder}` }}>
+        <div style={{ width:"100%", height:"35mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`3px solid ${miBorder}` }}>
           {imgUrl ? (
             <img src={imgUrl} alt="" referrerPolicy="no-referrer" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
           ) : (
