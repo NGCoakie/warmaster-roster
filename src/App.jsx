@@ -2543,7 +2543,7 @@ function PrintView({ army, roster, onClose }) {
   // Each entry: { label, color (pill bg), patterns (regex alternatives to match in special text) }
   const BADGES = [
     { label:"TERROR",       color:"#8b0000", patterns:[/causes? terror/i] },
-    { label:"NO TERROR",    color:"#556b2f", patterns:[/immune to terror/i, /not subject to terror/i] },
+    { label:"UNDEAD",       color:"#663399", patterns:[/\bundead\b/i] },
     { label:"FLY",          color:"#4169e1", patterns:[/can fly\b/i, /unit can fly/i, /may fly\b/i, /\bflies\b/i] },
     { label:"CHARGE +1",    color:"#8b0000", patterns:[/\+1 attack(?:s)? (?:bonus )?(?:when|if|in|on)(?: they| it)? charg(?:e|es|ing)/i] },
     { label:"PURSUE",       color:"#4169e1", patterns:[/will always pursue/i, /must always pursue/i, /always pursues/i, /must pursue\b/i] },
