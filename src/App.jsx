@@ -3631,11 +3631,13 @@ function MagicItemsPrintView({ onClose }) {
 
 // Standalone version of MagicItemCard that doesn't need PrintView context
 function MagicItemStandaloneCard({ mi }) {
-  const miAccent = "#c8a040";
-  const miBg     = "#1a1508";
-  const miBorder = "#8a6820";
-  const miText   = "#f0d890";
-  const miMuted  = "#b89840";
+  const miAccent = "#c8940a";
+  const miBg     = "#f8f2e0";
+  const miBorder = "#c8940a99";
+  const miText   = "#2a2010";
+  const miMuted  = "#4a3820";
+  const headerBg = "#c8940a28";
+  const divider  = "#c8940a55";
   const catIcon  = { Weapon:"⚔", Device:"✦", Banner:"🏳" }[mi.category] || "✦";
   const imgUrl   = (typeof IMAGES !== "undefined" && IMAGES.magicItems?.[mi.id]) || "";
   const fs = (m=1) => `${Math.round(11.2 * m * 10)/10}px`;
@@ -3653,7 +3655,7 @@ function MagicItemStandaloneCard({ mi }) {
         display:"flex", flexDirection:"column",
         overflow:"hidden", position:"relative",
         fontFamily:"'Cinzel',Georgia,serif", boxSizing:"border-box",
-        border:`1px solid ${miBorder}44`,
+        border:`1px solid ${miBorder}`,
       }}>
         {/* Image + name overlay */}
         <div style={{ width:"100%", height:"40mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`1.5px solid ${miBorder}` }}>
@@ -3672,15 +3674,15 @@ function MagicItemStandaloneCard({ mi }) {
         </div>
 
         {/* Category + cost */}
-        <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${miBorder}44`, flexShrink:0, display:"flex", justifyContent:"space-between", alignItems:"center", background:`${miAccent}11` }}>
+        <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${divider}`, flexShrink:0, display:"flex", justifyContent:"space-between", alignItems:"center", background:headerBg }}>
           <div style={{ background:`${miAccent}22`, border:`1px solid ${miAccent}55`, borderRadius:"2px", padding:"0.5mm 2mm", fontSize:fs(0.65), color:miAccent, letterSpacing:"1px", textTransform:"uppercase" }}>
             {catIcon} {mi.category || "Magic Item"}
           </div>
-          <div style={{ fontSize:fs(0.88), fontWeight:700, color:miAccent }}>{mi.cost}pts</div>
+          <div style={{ fontSize:fs(0.88), fontWeight:700, color:miText }}>{mi.cost}pts</div>
         </div>
 
         {/* Restriction */}
-        <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${miBorder}33`, flexShrink:0 }}>
+        <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${divider}`, flexShrink:0 }}>
           <div style={{ fontSize:fs(0.65), color:miMuted, fontStyle:"italic", lineHeight:1.4 }}>📋 {mi.restriction}</div>
         </div>
 
@@ -3690,7 +3692,7 @@ function MagicItemStandaloneCard({ mi }) {
         </div>
 
         {/* Footer */}
-        <div style={{ borderTop:`1px solid ${miBorder}44`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", background:`${miAccent}0a`, flexShrink:0, marginTop:"auto" }}>
+        <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", background:headerBg, flexShrink:0, marginTop:"auto" }}>
           <div style={{ fontSize:fs(0.6), color:miMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Magic Item</div>
           <div style={{ fontSize:fs(0.6), color:miAccent, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
         </div>
