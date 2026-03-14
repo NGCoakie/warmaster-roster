@@ -2447,23 +2447,24 @@ function PrintView({ army, roster, onClose, embedded }) {
 
   // Mid-tone bg: blend army.bg toward a slightly lighter shade for readability
   const midBg     = blendHex(army.bg || "#0a0806", "#1a1410", 0.7);
-  // "print" mode: light parchment with faction-tinted header strip, all text near-black
-  const cardBg    = mode==="print"   ? "#f8f2e0"              : mode==="faction" ? (army.bg||"#0a0806") : mode==="cardcolor" ? midBg : "#ffffff";
-  const cardBorder= (mode==="white"||mode==="print") ? army.color : army.color;
-  const cardText  = (mode==="white"||mode==="print") ? "#1a1208"  : army.accent;
-  // Description text — always near-black for print, dim for dark modes
-  const descText  = (mode==="white"||mode==="print") ? "#2a2010"  : mode==="cardcolor" ? "#dddddd" : "#aaaaaa";
+  // "print" mode: dark faction-tinted background (army.color blended 85% toward near-black)
+  const darkFactionBg = blendHex(army.color, "#0e0c0a", 0.85);
+  const cardBg    = mode==="print"   ? darkFactionBg           : mode==="faction" ? (army.bg||"#0a0806") : mode==="cardcolor" ? midBg : "#ffffff";
+  const cardBorder= army.color;
+  const cardText  = mode==="white" ? "#1a1208" : mode==="print" ? "#e8e0d0" : army.accent;
+  // Description text — light cream for dark print bg, dim for other dark modes
+  const descText  = mode==="white" ? "#2a2010" : mode==="print" ? "#d0c8b8" : mode==="cardcolor" ? "#dddddd" : "#aaaaaa";
   // Muted text: labels, subtitles
-  const cardMuted = mode==="print"   ? "#4a3820"              : mode==="faction" ? "#999999" : mode==="cardcolor" ? "#dddddd" : "#555555";
-  const statBg    = mode==="print"   ? army.color+"22"        : mode==="faction" ? "#00000040" : mode==="cardcolor" ? "#00000050" : "#f2f2f2";
-  const statBorder= (mode==="white"||mode==="print") ? army.color+"99" : army.color+"80";
-  const divider   = (mode==="white"||mode==="print") ? army.color+"55" : army.color+"60";
-  const imgBg     = (mode==="white"||mode==="print")
+  const cardMuted = mode==="print"   ? "#a09880"              : mode==="faction" ? "#999999" : mode==="cardcolor" ? "#dddddd" : "#555555";
+  const statBg    = mode==="print"   ? "#00000040"             : mode==="faction" ? "#00000040" : mode==="cardcolor" ? "#00000050" : "#f2f2f2";
+  const statBorder= mode==="print" ? army.color+"99" : army.color+"80";
+  const divider   = army.color+"60";
+  const imgBg     = mode==="white"
     ? "linear-gradient(160deg,#e8e4d8,#d4ceba)"
     : `linear-gradient(160deg, ${army.color}70, ${army.bg||"#0a0806"})`;
-  const imgTextColor = (mode==="white"||mode==="print") ? "#888888" : army.accent;
-  // Header strip bg behind unit name — faction-tinted for print mode
-  const headerBg  = mode==="print"   ? army.color+"28"        : `${cardBorder}18`;
+  const imgTextColor = mode==="white" ? "#888888" : "#e8e0d0";
+  // Header strip bg behind unit name — faction-tinted
+  const headerBg  = mode==="print"   ? army.color+"30"        : `${cardBorder}18`;
 
   // ── ARMY RULES CARD ──────────────────────────────────────────────────────
   // ── SHARED CARD SHELL ──────────────────────────────────────────────────────
@@ -2493,7 +2494,7 @@ function PrintView({ army, roster, onClose, embedded }) {
           position:"relative",
           fontFamily:"'Cinzel',Georgia,serif",
           boxSizing:"border-box",
-          border: mode==="print" ? `2px solid ${army.color}60` : "none",
+          border: mode==="print" ? `2px solid ${army.color}80` : "none",
         }}>
           {/* Faction border overlay */}
           {borderUrl && (
@@ -3155,7 +3156,7 @@ function PrintView({ army, roster, onClose, embedded }) {
   }
 
   return (
-    <div style={{ background: (mode==="white"||mode==="print") ? "#d8d4c8" : "#111111", minHeight:"100vh" }} id="print-root">
+    <div style={{ background: (mode==="white") ? "#d8d4c8" : "#1a1610", minHeight:"100vh" }} id="print-root">
       <GS />
       {/* Screen toolbar — hidden when printing */}
       <div className="no-print" style={{
