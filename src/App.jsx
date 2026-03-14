@@ -2472,11 +2472,11 @@ function PrintView({ army, roster, onClose }) {
             }} />
           )}
 
-          {/* ── Image area — flex-shrinks to fit fixed card height ── */}
+          {/* ── Image area — fixed height for uniform card layout ── */}
           <div style={{
             width:"100%",
-            flex:1,
-            minHeight:0,
+            height:"40mm",
+            flexShrink:0,
             position:"relative",
             overflow:"hidden",
             borderBottom:`1.5px solid ${cardBorder}`,
@@ -2824,8 +2824,8 @@ function PrintView({ army, roster, onClose }) {
           boxSizing:"border-box",
           border:`1px solid ${miBorder}44`,
         }}>
-          {/* Image + name overlay — flex-shrinks to fit */}
-          <div style={{ width:"100%", flex:1, minHeight:0, position:"relative", overflow:"hidden", borderBottom:`1.5px solid ${miBorder}` }}>
+          {/* Image + name overlay — fixed height for uniform layout */}
+          <div style={{ width:"100%", height:"40mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`1.5px solid ${miBorder}` }}>
             {imgUrl ? (
               <img src={imgUrl} alt="" referrerPolicy="no-referrer" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block" }} />
             ) : (
@@ -3667,7 +3667,7 @@ function MagicItemStandaloneCard({ mi }) {
         border:`1px solid ${miBorder}44`,
       }}>
         {/* Image + name overlay */}
-        <div style={{ width:"100%", flex:1, minHeight:0, position:"relative", overflow:"hidden", borderBottom:`1.5px solid ${miBorder}` }}>
+        <div style={{ width:"100%", height:"40mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`1.5px solid ${miBorder}` }}>
           {imgUrl ? (
             <img src={imgUrl} alt="" referrerPolicy="no-referrer" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
           ) : (
