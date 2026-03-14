@@ -2476,7 +2476,7 @@ function PrintView({ army, roster, onClose }) {
         width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
         background:"#000",
         borderRadius:"4mm",
-        padding:"3mm",
+        padding:"2mm",
         boxSizing:"border-box",
         overflow:"hidden",
         pageBreakInside:"avoid", breakInside:"avoid",
@@ -2492,7 +2492,7 @@ function PrintView({ army, roster, onClose }) {
           position:"relative",
           fontFamily:"'Cinzel',Georgia,serif",
           boxSizing:"border-box",
-          border: mode==="print" ? `1px solid ${army.color}60` : "none",
+          border: mode==="print" ? `2px solid ${army.color}60` : "none",
         }}>
           {/* Faction border overlay */}
           {borderUrl && (
@@ -2991,13 +2991,13 @@ function PrintView({ army, roster, onClose }) {
     const clr = army.color;
     const acc = mode==="print" ? "#1a1208" : army.accent;
     const backBg = mode==="print" ? "#f5f0e4" : `linear-gradient(160deg, #0d0b08 0%, #1a1208 50%, #0d0b08 100%)`;
-    const backBorder = mode==="print" ? `2px solid ${clr}` : `1.5px solid ${clr}`;
+    const backBorder = mode==="print" ? `2px solid ${clr}` : `2px solid ${clr}`;
     return (
       <div style={{
         width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
         background:"#000",
         borderRadius:"4mm",
-        padding:"3mm",
+        padding:"2mm",
         boxSizing:"border-box",
         overflow:"hidden",
         pageBreakInside:"avoid", breakInside:"avoid",
@@ -3592,7 +3592,7 @@ function MagicItemCardBack() {
   return (
     <div style={{
       width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
-      background:"#000", borderRadius:"4mm", padding:"3mm",
+      background:"#000", borderRadius:"4mm", padding:"2mm",
       boxSizing:"border-box", overflow:"hidden",
       pageBreakInside:"avoid", breakInside:"avoid",
       WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
@@ -3733,7 +3733,7 @@ function MagicItemStandaloneCard({ mi }) {
   return (
     <div style={{
       width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
-      background:"#000", borderRadius:"4mm", padding:"3mm",
+      background:"#000", borderRadius:"4mm", padding:"2mm",
       boxSizing:"border-box", overflow:"hidden", pageBreakInside:"avoid", breakInside:"avoid",
       WebkitPrintColorAdjust:"exact", printColorAdjust:"exact", flexShrink:0, flexGrow:0,
     }}>
@@ -3743,7 +3743,7 @@ function MagicItemStandaloneCard({ mi }) {
         display:"flex", flexDirection:"column",
         overflow:"hidden", position:"relative",
         fontFamily:"'Cinzel',Georgia,serif", boxSizing:"border-box",
-        border:`1px solid ${miBorder}`,
+        border:`2px solid ${miBorder}`,
       }}>
         {/* Image + name overlay */}
         <div style={{ width:"100%", height:"40mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`3px solid ${miBorder}` }}>
