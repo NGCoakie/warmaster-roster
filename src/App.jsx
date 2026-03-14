@@ -3584,9 +3584,55 @@ function SavedLists({ onBack, onLoad, session }) {
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 // ── MAGIC ITEMS PRINT VIEW ────────────────────────────────────────────────────
+function MagicItemCardBack() {
+  const clr = "#c8940a";
+  const acc = "#1a1208";
+  const backBg = "#f5f0e4";
+  const backBorder = `2px solid ${clr}`;
+  return (
+    <div style={{
+      width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
+      background:"#000", borderRadius:"4mm", padding:"3mm",
+      boxSizing:"border-box", overflow:"hidden",
+      pageBreakInside:"avoid", breakInside:"avoid",
+      WebkitPrintColorAdjust:"exact", printColorAdjust:"exact",
+      flexShrink:0, flexGrow:0,
+    }}>
+      <div style={{
+        width:"100%", height:"100%", borderRadius:"2mm",
+        background: backBg, border: backBorder, boxSizing:"border-box",
+        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+        position:"relative", overflow:"hidden",
+      }}>
+        {[["0","0",""],["0","auto","scaleX(-1)"],["auto","0","scaleY(-1)"],["auto","auto","scale(-1,-1)"]].map(([t,r,tf],i)=>(
+          <div key={i} style={{
+            position:"absolute", top:t!=="auto"?"3mm":undefined, bottom:t==="auto"?"3mm":undefined,
+            left:r!=="auto"?"3mm":undefined, right:r==="auto"?"3mm":undefined,
+            width:"7mm", height:"7mm", transform:tf,
+            borderTop:`1.5px solid ${clr}`, borderLeft:`1.5px solid ${clr}`,
+            borderRadius:"0.8mm 0 0 0",
+          }}/>
+        ))}
+        <div style={{ position:"absolute", inset:"8mm", border:`1px solid ${clr}33`, borderRadius:"1mm", pointerEvents:"none" }} />
+        <div style={{ fontSize:"22px", marginBottom:"3mm", opacity:0.85, color:clr }}>⚔</div>
+        <div style={{ fontFamily:"'Cinzel',serif", fontSize:"10.5pt", fontWeight:900, letterSpacing:"4px", color:acc, textTransform:"uppercase", marginBottom:"1.5mm" }}>WARMASTER</div>
+        <div style={{ width:"70%", height:"1.5px", background:clr, marginBottom:"1.5mm" }}/>
+        <div style={{ fontFamily:"'Cinzel',serif", fontSize:"7pt", fontWeight:700, letterSpacing:"5px", color:clr, textTransform:"uppercase", marginBottom:"4mm" }}>REVOLUTION</div>
+        <div style={{ fontFamily:"'Cinzel',serif", fontSize:"6pt", letterSpacing:"2px", color:"#4a3820", opacity:0.8, textTransform:"uppercase" }}>Magic Items</div>
+        <div style={{ position:"absolute", bottom:"4mm", left:"8mm", right:"8mm", height:"1.5px", background:clr, opacity:0.6 }}/>
+      </div>
+    </div>
+  );
+}
+
 function MagicItemsPrintView({ onClose }) {
   const allItems = [...MAGIC_STANDARDS, ...MAGIC_WEAPONS, ...DEVICES_OF_POWER];
-  const mode = "faction"; // dark mode for magic items
+  const [backMode, setBackMode] = useState("fronts");
+  const clr = "#c8940a";
+
+  const frontCards = allItems.map((mi, i) => (
+    <MagicItemStandaloneCard key={i} mi={mi} />
+  ));
 
   return (
     <div className="pv-root" style={{ background:"#111", minHeight:"100vh" }}>
@@ -3595,36 +3641,78 @@ function MagicItemsPrintView({ onClose }) {
           .no-print { display:none !important; }
           * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
           html, body, .pv-root { margin:0 !important; padding:0 !important; background:#ffffff !important; height:auto !important; overflow:visible !important; }
+          .mi-print-area { padding:0 !important; gap:0mm !important; background:#ffffff !important; }
           @page { margin:6mm; }
         }
-        .mi-print-area { display:flex; flex-wrap:wrap; gap:8px; padding:12px; justify-content:flex-start; }
+        .mi-print-area { display:flex; flex-wrap:wrap; gap:8px; padding:12px; justify-content:flex-start; align-items:flex-start; }
       `}</style>
 
       {/* Toolbar */}
       <div className="no-print" style={{
         position:"sticky", top:0, zIndex:200,
-        background:"#0d0b08", borderBottom:"2px solid #c8a04060",
+        background:"#0d0b08", borderBottom:`2px solid ${clr}60`,
         padding:"10px 14px", display:"flex", alignItems:"center", gap:10,
       }}>
         <button onClick={onClose}
-          style={{ background:"none", border:"1px solid #c8a04060", color:"#c8a040", borderRadius:5, padding:"7px 14px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
+          style={{ background:"none", border:`1px solid ${clr}60`, color:clr, borderRadius:5, padding:"7px 14px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif" }}>
           ← BACK
         </button>
-        <div style={{ flex:1, fontFamily:"'Cinzel',serif", color:"#c8a040", textAlign:"center", letterSpacing:2, fontSize:"0.9rem" }}>
+
+        {/* Back-mode selector */}
+        <div style={{ display:"flex", gap:4, alignItems:"center" }}>
+          {[
+            { id:"fronts",     label:"Fronts Only" },
+            { id:"separate",   label:"+ Backs (2 sheets)" },
+            { id:"sidebyside", label:"+ Backs (side by side)" },
+          ].map(opt => (
+            <button key={opt.id} onClick={() => setBackMode(opt.id)}
+              style={{
+                background: backMode===opt.id ? `linear-gradient(135deg,${clr},${clr}99)` : "none",
+                border:`1px solid ${clr}60`,
+                color: backMode===opt.id ? "#fff" : clr,
+                borderRadius:4, padding:"5px 10px", fontSize:"0.78rem",
+                cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700,
+                whiteSpace:"nowrap",
+              }}>
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ flex:1, fontFamily:"'Cinzel',serif", color:clr, textAlign:"center", letterSpacing:2, fontSize:"0.9rem" }}>
           ✦ MAGIC ITEMS — {allItems.length} cards
         </div>
         <button onClick={() => window.print()}
-          style={{ background:"linear-gradient(135deg,#c8a040,#c8a04099)", border:"none", color:"#111", borderRadius:5, padding:"7px 16px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700 }}>
+          style={{ background:`linear-gradient(135deg,${clr},${clr}99)`, border:"none", color:"#111", borderRadius:5, padding:"7px 16px", fontSize:"0.95rem", cursor:"pointer", fontFamily:"'Cinzel',serif", fontWeight:700 }}>
           🖨 PRINT
         </button>
       </div>
 
       {/* Cards */}
-      <div className="mi-print-area">
-        {allItems.map((mi, i) => (
-          <MagicItemStandaloneCard key={i} mi={mi} />
-        ))}
-      </div>
+      {backMode === "fronts" ? (
+        <div className="mi-print-area">
+          {frontCards}
+        </div>
+      ) : backMode === "sidebyside" ? (
+        <div className="mi-print-area">
+          {frontCards.map((card, i) => (
+            <div key={i} style={{ display:"flex", gap:"4mm", pageBreakInside:"avoid", breakInside:"avoid" }}>
+              {card}
+              <MagicItemCardBack />
+            </div>
+          ))}
+        </div>
+      ) : backMode === "separate" ? (
+        <>
+          <div className="mi-print-area">
+            {frontCards}
+          </div>
+          <div className="page-break-before" style={{ pageBreakBefore:"always", breakBefore:"page" }} />
+          <div className="mi-print-area">
+            {allItems.map((_, i) => <MagicItemCardBack key={`back-${i}`} />)}
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }
