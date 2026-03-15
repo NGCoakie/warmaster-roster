@@ -20,3 +20,6 @@ vite.config.js.timestamp-*
 *.ps1
 prompts_dump.txt
 new_prompts.json
+
+# Session summaries (local only)
+session_summaries/
