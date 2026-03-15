@@ -2464,19 +2464,8 @@ function FactionBorder({ color, accent }) {
       <path d="M225,36 Q225,15 204,15" fill="none" stroke={c} strokeWidth="0.8" opacity="0.3" />
       <circle cx="222" cy="18" r="2" fill={a} opacity="0.4" />
 
-      {/* Bottom-left */}
-      <path d="M12,304 Q12,324 32,324" fill="none" stroke={a} strokeWidth="2" opacity="0.5" />
-      <path d="M15,300 Q15,321 36,321" fill="none" stroke={c} strokeWidth="0.8" opacity="0.3" />
-      <circle cx="18" cy="318" r="2" fill={a} opacity="0.4" />
-
-      {/* Bottom-right */}
-      <path d="M228,304 Q228,324 208,324" fill="none" stroke={a} strokeWidth="2" opacity="0.5" />
-      <path d="M225,300 Q225,321 204,321" fill="none" stroke={c} strokeWidth="0.8" opacity="0.3" />
-      <circle cx="222" cy="318" r="2" fill={a} opacity="0.4" />
-
-      {/* Top/bottom center ornaments */}
+      {/* Top center ornament */}
       <path d="M113,8 L120,3 L127,8" fill="none" stroke={a} strokeWidth="1.2" opacity="0.35" />
-      <path d="M113,328 L120,333 L127,328" fill="none" stroke={a} strokeWidth="1.2" opacity="0.35" />
 
       {/* Side center ornaments */}
       <path d="M8,162 L3,168 L8,174" fill="none" stroke={a} strokeWidth="1" opacity="0.25" />
@@ -2582,14 +2571,13 @@ function PrintView({ army, roster, onClose, embedded }) {
           {/* Faction border overlay */}
           <FactionBorder color={army.color} accent={army.accent} />
 
-          {/* ── Image area — 35mm matches --ar 17:10 Midjourney spec ── */}
+          {/* ── Image area — fills all space above content ── */}
           <div style={{
             width:"100%",
-            height:"35mm",
-            flexShrink:0,
+            flex:"1 1 0",
+            minHeight:0,
             position:"relative",
             overflow:"hidden",
-            borderBottom:`3px solid ${cardBorder}`,
           }}>
             {imgUrl ? (
               <img src={imgUrl} alt="" referrerPolicy="no-referrer"
@@ -2608,7 +2596,7 @@ function PrintView({ army, roster, onClose, embedded }) {
             {/* Faction accent bar at bottom of image */}
             <div style={{
               position:"absolute", bottom:0, left:0, right:0,
-              height:"4px",
+              height:"3px",
               background:`linear-gradient(90deg,transparent,${clr},transparent)`,
             }} />
           </div>
@@ -2770,62 +2758,64 @@ function PrintView({ army, roster, onClose, embedded }) {
       return un.includes(rn) || rn.includes(un);
     });
 
-    // Metadata overlay — top-right of image (roster-building stats)
+    // All stats + name overlay on the image
     const statOverlay = (
-      <div style={{
-        position:"absolute", top:"1.5mm", right:"1.5mm",
-        display:"flex", gap:"1mm", zIndex:5,
-      }}>
-        {[{k:"CMD",v:u.cmd},{k:"SZ",v:u.size},{k:"MIN",v:u.min},{k:"MAX",v:u.max}].map(({k,v}) =>
-          <StatBox key={k} label={k} value={v} sm={true}
-            style={{ minWidth:"6.5mm" }} />
-        )}
-      </div>
+      <>
+        {/* Top-right: roster metadata */}
+        <div style={{
+          position:"absolute", top:"1.5mm", right:"1.5mm",
+          display:"flex", gap:"1mm", zIndex:5,
+        }}>
+          {[{k:"CMD",v:u.cmd},{k:"SZ",v:u.size},{k:"MIN",v:u.min},{k:"MAX",v:u.max}].map(({k,v}) =>
+            <StatBox key={k} label={k} value={v} sm={true}
+              style={{ minWidth:"6.5mm" }} />
+          )}
+        </div>
+        {/* Bottom-left: combat stats */}
+        <div style={{
+          position:"absolute", bottom:"1.5mm", left:"1.5mm",
+          display:"flex", gap:"1mm", zIndex:5,
+        }}>
+          {[{k:"ATK",v:u.atk},{k:"HITS",v:u.hits},{k:"ARM",v:u.armour}].map(({k,v}) =>
+            <StatBox key={k} label={k} value={v} sm={true}
+              style={{ minWidth:"9mm" }} />
+          )}
+        </div>
+        {/* Bottom: name + pts gradient overlay */}
+        <div style={{
+          position:"absolute", bottom:0, left:0, right:0,
+          background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
+          padding:"8mm 2.5mm 1.5mm",
+          zIndex:4, display:"flex", justifyContent:"space-between", alignItems:"baseline",
+        }}>
+          <div>
+            <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px rgba(0,0,0,0.8)" }}>{u.name}</div>
+            <div style={{ fontSize:cardFs(0.62), color:"rgba(255,255,255,0.7)", letterSpacing:"0.8px", textTransform:"uppercase" }}>{u.type}</div>
+          </div>
+          <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:"#fff", flexShrink:0, marginLeft:"2mm", textShadow:"0 1px 3px rgba(0,0,0,0.8)" }}>{pts}pts</div>
+        </div>
+      </>
     );
 
     return (
       <CardShell imgUrl={imgUrl} imgFallbackIcon="⚔" imgOverlay={statOverlay}>
-        {/* Combat stat bar — below image */}
-        <div style={{
-          display:"flex", gap:"1.5px", padding:"1mm 1mm",
-          borderBottom:`1px solid ${divider}`,
-          flexShrink:0, height:"10mm",
-        }}>
-          {[{k:"ATK",v:u.atk},{k:"HITS",v:u.hits},{k:"ARM",v:u.armour}].map(({k,v}) =>
-            <StatBox key={k} label={k} value={v} style={{ flex:1, height:"100%" }} />
-          )}
-        </div>
-        {/* Name + pts */}
-        <div style={{
-          padding:"1.5mm 2.5mm 1mm",
-          borderBottom:`1px solid ${divider}`,
-          display:"flex", justifyContent:"space-between", alignItems:"baseline",
-          flexShrink:0, background: headerBg,
-        }}>
-          <div>
-            <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:cardText, lineHeight:1.2 }}>{u.name}</div>
-            <div style={{ fontSize:cardFs(0.68), color:cardMuted, letterSpacing:"0.8px", textTransform:"uppercase" }}>{u.type}</div>
-          </div>
-          <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:cardText, flexShrink:0, marginLeft:"2mm" }}>{pts}pts</div>
-        </div>
-
         {/* Badge strip */}
         <BadgeStrip badges={badges} />
 
         {/* Remaining special text + inline unit rules */}
         <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden", position:"relative" }}>
           {remainingText ? (
-            <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>
+            <div style={{ fontSize:cardFs(0.9), color:descText, lineHeight:1.4, fontFamily:"Georgia,serif" }}>
               {remainingText}
             </div>
           ) : null}
           {unitRules.map((r,i) => (
-            <div key={i} style={{ fontSize:cardFs(0.68), color:descText, lineHeight:1.35, marginTop:"0.8mm", fontFamily:"Georgia,serif" }}>
+            <div key={i} style={{ fontSize:cardFs(0.85), color:descText, lineHeight:1.4, marginTop:"0.8mm", fontFamily:"Georgia,serif" }}>
               <strong style={{ color:cardText }}>{r.name}:</strong> {r.desc}
             </div>
           ))}
           {FLAVOR[u.id] ? (
-            <div style={{ fontSize:cardFs(0.62), color:cardMuted, lineHeight:1.3, marginTop:"1.5mm", fontStyle:"italic", fontFamily:"Georgia,serif" }}>
+            <div style={{ fontSize:cardFs(0.78), color:cardMuted, lineHeight:1.35, marginTop:"1.5mm", fontStyle:"italic", fontFamily:"Georgia,serif" }}>
               {FLAVOR[u.id]}
             </div>
           ) : null}
@@ -2833,15 +2823,11 @@ function PrintView({ army, roster, onClose, embedded }) {
           <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"3mm", background:`linear-gradient(transparent, ${cardBg})`, pointerEvents:"none" }} />
         </div>
 
-        {/* Footer */}
+        {/* Footer accent bar */}
         <div style={{
-          borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm",
-          display:"flex", justifyContent:"space-between", alignItems:"center",
-          background:"transparent", flexShrink:0, marginTop:"auto",
-        }}>
-          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Warmaster Revolution</div>
-          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>{army.name}</div>
-        </div>
+          height:"1.5mm", flexShrink:0, marginTop:"auto",
+          background:`linear-gradient(90deg, transparent, ${army.color}50, transparent)`,
+        }} />
       </CardShell>
     );
   }
@@ -2851,56 +2837,55 @@ function PrintView({ army, roster, onClose, embedded }) {
     const m = entry.mount;
     const imgUrl = IMAGES.units[m.id] || IMAGES.units[entry.unit.id] || "";
     const { badges: mountBadges, remainingText: mountRemaining } = extractBadges(m.special);
-    return (
-      <CardShell imgUrl={imgUrl} imgFallbackIcon="🐴" accentColor={army.color}>
-        {/* Name bar */}
-        <div style={{
-          padding:"1.5mm 2.5mm 1mm",
-          borderBottom:`1px solid ${divider}`,
-          display:"flex", justifyContent:"space-between", alignItems:"baseline",
-          flexShrink:0, background: headerBg,
-        }}>
-          <div>
-            <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:cardText, lineHeight:1.2 }}>{m.name}</div>
-            <div style={{ fontSize:cardFs(0.68), color:cardMuted, letterSpacing:"0.8px", textTransform:"uppercase" }}>Mount · {entry.unit.name}</div>
-          </div>
-          {m.pts > 0 ? <div style={{ fontSize:cardFs(1.0), fontWeight:700, color:cardText, flexShrink:0, marginLeft:"2mm" }}>{m.pts}pts</div> : null}
-        </div>
-
-        {/* Mount stats if available */}
+    // Mount image overlay — name + stats
+    const mountOverlay = (
+      <>
+        {/* Combat stats — top-right */}
         {(m.atk || m.hits || m.armour) ? (
           <div style={{
-            display:"flex", gap:"1.5px", padding:"1.5mm 1mm",
-            borderBottom:`1px solid ${divider}`,
-            flexShrink:0, height:"10mm",
+            position:"absolute", top:"1.5mm", right:"1.5mm",
+            display:"flex", gap:"1mm", zIndex:5,
           }}>
             {[{k:"ATK",v:m.atk},{k:"HITS",v:m.hits},{k:"ARM",v:m.armour}].filter(x=>x.v!=null).map(({k,v}) =>
-              <StatBox key={k} label={k} value={v} style={{ flex:1, height:"100%" }} />
+              <StatBox key={k} label={k} value={v} sm={true} style={{ minWidth:"9mm" }} />
             )}
           </div>
         ) : null}
+        {/* Name gradient overlay */}
+        <div style={{
+          position:"absolute", bottom:0, left:0, right:0,
+          background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
+          padding:"8mm 2.5mm 1.5mm",
+          zIndex:5, display:"flex", justifyContent:"space-between", alignItems:"baseline",
+        }}>
+          <div>
+            <div style={{ fontSize:cardFs(1.05), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px rgba(0,0,0,0.8)" }}>{m.name}</div>
+            <div style={{ fontSize:cardFs(0.6), color:"rgba(255,255,255,0.7)", letterSpacing:"0.8px", textTransform:"uppercase" }}>Mount · {entry.unit.name}</div>
+          </div>
+          {m.pts > 0 ? <div style={{ fontSize:cardFs(1.0), fontWeight:700, color:"#fff", flexShrink:0, marginLeft:"2mm", textShadow:"0 1px 3px rgba(0,0,0,0.8)" }}>{m.pts}pts</div> : null}
+        </div>
+      </>
+    );
 
+    return (
+      <CardShell imgUrl={imgUrl} imgFallbackIcon="🐴" accentColor={army.color} imgOverlay={mountOverlay}>
         {/* Badge strip */}
         <BadgeStrip badges={mountBadges} />
 
         {/* Mount special rules */}
         <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
           {mountRemaining ? (
-            <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>{mountRemaining}</div>
+            <div style={{ fontSize:cardFs(0.9), color:descText, lineHeight:1.4, fontFamily:"Georgia,serif" }}>{mountRemaining}</div>
           ) : (
             <div style={{ fontSize:cardFs(0.72), color:descText, opacity:0.5, fontFamily:"Georgia,serif" }}>No special rules.</div>
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer accent bar */}
         <div style={{
-          borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm",
-          display:"flex", justifyContent:"space-between", alignItems:"center",
-          background:"transparent", flexShrink:0, marginTop:"auto",
-        }}>
-          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Mount</div>
-          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>{army.name}</div>
-        </div>
+          height:"1.5mm", flexShrink:0, marginTop:"auto",
+          background:`linear-gradient(90deg, transparent, ${army.color}50, transparent)`,
+        }} />
       </CardShell>
     );
   }
@@ -2911,53 +2896,48 @@ function PrintView({ army, roster, onClose, embedded }) {
     const catIcon   = { Weapon:"⚔", Device:"✦", Banner:"🏳" }[mi.category] || "✦";
     const imgUrl    = IMAGES.magicItems?.[mi.id] || "";
 
-    return (
-      <CardShell imgUrl={imgUrl} imgFallbackIcon={catIcon} accentColor={army.color} imgOverlay={
+    const miOverlay = (
+      <>
+        {/* Cost — top-right */}
+        <div style={{ position:"absolute", top:"1.5mm", right:"1.5mm", zIndex:5 }}>
+          <StatBox label={mi.category || "Item"} value={`${mi.cost}pts`} sm={true} style={{ minWidth:"12mm" }} />
+        </div>
+        {/* Name gradient overlay */}
         <div style={{
           position:"absolute", bottom:0, left:0, right:0,
           background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
-          padding:"6mm 2.5mm 2mm",
+          padding:"8mm 2.5mm 1.5mm",
           zIndex:5,
         }}>
           <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>
             {mi.name}
           </div>
+          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"1px", marginTop:"0.5mm" }}>{catIcon} {mi.category || "Magic Item"}</div>
         </div>
-      }>
-        {/* Type badge + pts row */}
-        <div style={{
-          padding:"1mm 2.5mm",
-          borderBottom:`1px solid ${divider}`,
-          flexShrink:0, display:"flex", alignItems:"center", justifyContent:"space-between",
-          background: headerBg,
-        }}>
-          <div style={{ display:"flex", alignItems:"center", gap:"1.5mm" }}>
-            <div style={{ background:`${army.color}22`, border:`1px solid ${army.color}55`, borderRadius:"2px", padding:"0.5mm 2mm", fontSize:cardFs(0.65), color:army.color, letterSpacing:"1px", textTransform:"uppercase" }}>
-              {catIcon} {mi.category || "Magic Item"}
-            </div>
-          </div>
-          <div style={{ fontSize:cardFs(0.88), fontWeight:700, color:cardText }}>{mi.cost}pts</div>
-        </div>
+      </>
+    );
 
+    return (
+      <CardShell imgUrl={imgUrl} imgFallbackIcon={catIcon} accentColor={army.color} imgOverlay={miOverlay}>
         {/* Equip restriction */}
         <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${divider}`, flexShrink:0 }}>
-          <div style={{ fontSize:cardFs(0.65), color:cardMuted, fontStyle:"italic", lineHeight:1.4 }}>
-            📋 {mi.restriction}
+          <div style={{ fontSize:cardFs(0.72), color:cardMuted, fontStyle:"italic", lineHeight:1.4 }}>
+            {mi.restriction}
           </div>
         </div>
 
         {/* Description */}
         <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
-          <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>
+          <div style={{ fontSize:cardFs(0.9), color:descText, lineHeight:1.4, fontFamily:"Georgia,serif" }}>
             {mi.desc}
           </div>
         </div>
 
-        {/* Footer */}
-        <div style={{ borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", alignItems:"center", background:"transparent", flexShrink:0, marginTop:"auto" }}>
-          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Magic Item</div>
-          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>Warmaster Revolution</div>
-        </div>
+        {/* Footer accent bar */}
+        <div style={{
+          height:"1.5mm", flexShrink:0, marginTop:"auto",
+          background:`linear-gradient(90deg, transparent, ${army.color}50, transparent)`,
+        }} />
       </CardShell>
     );
   }
@@ -2976,43 +2956,30 @@ function PrintView({ army, roster, onClose, embedded }) {
       <div style={{
         position:"absolute", bottom:0, left:0, right:0,
         background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
-        padding:"6mm 2.5mm 2mm",
+        padding:"8mm 2.5mm 1.5mm",
         zIndex:5,
       }}>
         <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>
           {rule.name}
         </div>
+        <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"1px", marginTop:"0.5mm" }}>Special Rule</div>
       </div>
     );
 
     return (
       <CardShell imgUrl={imgUrl} imgFallbackIcon="📜" imgOverlay={nameOverlay}>
-        {/* Type label row */}
-        <div style={{
-          padding:"1mm 2.5mm",
-          borderBottom:`1px solid ${divider}`,
-          flexShrink:0, background: headerBg,
-          display:"flex", alignItems:"center",
-        }}>
-          <div style={{ fontSize:cardFs(0.68), color:army.color, textTransform:"uppercase", letterSpacing:"1px" }}>Special Rule</div>
-        </div>
-
         {/* Description */}
         <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
-          <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>
+          <div style={{ fontSize:cardFs(0.9), color:descText, lineHeight:1.4, fontFamily:"Georgia,serif" }}>
             {rule.desc}
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer accent bar */}
         <div style={{
-          borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm",
-          display:"flex", justifyContent:"space-between", alignItems:"center",
-          background:"transparent", flexShrink:0, marginTop:"auto",
-        }}>
-          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Special Rule</div>
-          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>{army.name}</div>
-        </div>
+          height:"1.5mm", flexShrink:0, marginTop:"auto",
+          background:`linear-gradient(90deg, transparent, ${army.color}50, transparent)`,
+        }} />
       </CardShell>
     );
   }
@@ -3026,57 +2993,50 @@ function PrintView({ army, roster, onClose, embedded }) {
     const imgUrl = IMAGES.spells?.[sKey] || "";
     const label  = isBloodRite ? "⚔ Blood Rite" : isInstability ? "☠ Instability" : "✦ Spell";
 
-    // Name overlay on image
-    const nameOverlay = (
-      <div style={{
-        position:"absolute", bottom:0, left:0, right:0,
-        background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
-        padding:"6mm 2.5mm 2mm",
-        zIndex:5,
-      }}>
-        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>
-          {spell.name || spell.result}
+    // Name + stats overlay on image
+    const imgOverlay = (
+      <>
+        {/* Cast/Range/Roll — top-right */}
+        {(spell.cast || spell.range || spell.roll) ? (
+          <div style={{
+            position:"absolute", top:"1.5mm", right:"1.5mm",
+            display:"flex", gap:"1mm", zIndex:5,
+          }}>
+            {spell.cast  ? <StatBox label="CAST"  value={spell.cast}  sm={true} style={{ minWidth:"9mm" }} /> : null}
+            {spell.range ? <StatBox label="RANGE" value={spell.range} sm={true} style={{ minWidth:"9mm" }} /> : null}
+            {spell.roll  ? <StatBox label="ROLL"  value={spell.roll}  sm={true} style={{ minWidth:"9mm" }} /> : null}
+          </div>
+        ) : null}
+        {/* Name + type gradient overlay */}
+        <div style={{
+          position:"absolute", bottom:0, left:0, right:0,
+          background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
+          padding:"8mm 2.5mm 1.5mm",
+          zIndex:5,
+        }}>
+          <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>
+            {spell.name || spell.result}
+          </div>
+          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"1px", marginTop:"0.5mm" }}>{label}</div>
         </div>
-      </div>
+      </>
     );
 
     return (
-      <CardShell imgUrl={imgUrl} imgFallbackIcon="✨" accentColor={army.color} imgOverlay={nameOverlay}>
-        {/* Type label row */}
-        <div style={{
-          padding:"1mm 2.5mm",
-          borderBottom:`1px solid ${divider}`,
-          flexShrink:0, background: headerBg,
-          display:"flex", alignItems:"center",
-        }}>
-          <div style={{ fontSize:cardFs(0.68), color:army.color, textTransform:"uppercase", letterSpacing:"1px" }}>{label}</div>
-        </div>
-
-        {/* Cast / Range / Roll badges */}
-        {(spell.cast || spell.range || spell.roll) && (
-          <div style={{ display:"flex", gap:"1.5mm", padding:"1mm 2.5mm", borderBottom:`1px solid ${divider}`, flexShrink:0 }}>
-            {spell.cast  && <StatBox label="CAST"  value={spell.cast}  style={{ flex:1, padding:"1mm" }} />}
-            {spell.range && <StatBox label="RANGE" value={spell.range} style={{ flex:1, padding:"1mm" }} />}
-            {spell.roll  && <StatBox label="ROLL"  value={spell.roll}  style={{ flex:1, padding:"1mm" }} />}
-          </div>
-        )}
+      <CardShell imgUrl={imgUrl} imgFallbackIcon="✨" accentColor={army.color} imgOverlay={imgOverlay}>
 
         {/* Description */}
         <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
-          <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>
+          <div style={{ fontSize:cardFs(0.9), color:descText, lineHeight:1.4, fontFamily:"Georgia,serif" }}>
             {spell.desc || spell.effect}
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer accent bar */}
         <div style={{
-          borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm",
-          display:"flex", justifyContent:"space-between", alignItems:"center",
-          background:"transparent", flexShrink:0, marginTop:"auto",
-        }}>
-          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Warmaster Revolution</div>
-          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>{army.name}</div>
-        </div>
+          height:"1.5mm", flexShrink:0, marginTop:"auto",
+          background:`linear-gradient(90deg, transparent, ${army.color}50, transparent)`,
+        }} />
       </CardShell>
     );
   }
@@ -3977,8 +3937,8 @@ function MagicItemStandaloneCard({ mi }) {
       }}>
         {/* Faction border overlay */}
         <FactionBorder color={miAccent} accent={miAccent} />
-        {/* Image + name overlay */}
-        <div style={{ width:"100%", height:"35mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`3px solid ${miBorder}` }}>
+        {/* Image — fills to content */}
+        <div style={{ width:"100%", flex:"1 1 0", minHeight:0, position:"relative", overflow:"hidden" }}>
           {imgUrl ? (
             <img src={imgUrl} alt="" referrerPolicy="no-referrer" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
           ) : (
@@ -3986,36 +3946,34 @@ function MagicItemStandaloneCard({ mi }) {
               <div style={{ fontSize:"28px", opacity:0.35 }}>{catIcon}</div>
             </div>
           )}
+          {/* Cost — top-right */}
+          <div style={{ position:"absolute", top:"1.5mm", right:"1.5mm", zIndex:5, background:"rgba(0,0,0,0.78)", border:"1px solid rgba(255,255,255,0.3)", borderRadius:"2.5px", padding:"0.8mm 2mm", backdropFilter:"blur(4px)" }}>
+            <div style={{ fontSize:fs(0.5), color:"rgba(255,255,255,0.8)", textTransform:"uppercase", letterSpacing:"0.5px", lineHeight:1 }}>{mi.category || "Item"}</div>
+            <div style={{ fontSize:fs(0.85), fontWeight:700, color:"#fff", lineHeight:1.15 }}>{mi.cost}pts</div>
+          </div>
           {/* Name gradient overlay */}
-          <div style={{ position:"absolute", bottom:0, left:0, right:0, background:"linear-gradient(transparent,rgba(0,0,0,0.82))", padding:"6mm 2.5mm 2mm", zIndex:5 }}>
+          <div style={{ position:"absolute", bottom:0, left:0, right:0, background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)", padding:"8mm 2.5mm 1.5mm", zIndex:5 }}>
             <div style={{ fontSize:fs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>{mi.name}</div>
+            <div style={{ fontSize:fs(0.6), color:miAccent, textTransform:"uppercase", letterSpacing:"1px", marginTop:"0.5mm" }}>{catIcon} {mi.category || "Magic Item"}</div>
           </div>
-          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"4px", background:`linear-gradient(90deg,transparent,${miAccent},transparent)` }} />
-        </div>
-
-        {/* Category + cost */}
-        <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${divider}`, flexShrink:0, display:"flex", justifyContent:"space-between", alignItems:"center", background:headerBg }}>
-          <div style={{ background:`${miAccent}22`, border:`1px solid ${miAccent}55`, borderRadius:"2px", padding:"0.5mm 2mm", fontSize:fs(0.65), color:miAccent, letterSpacing:"1px", textTransform:"uppercase" }}>
-            {catIcon} {mi.category || "Magic Item"}
-          </div>
-          <div style={{ fontSize:fs(0.88), fontWeight:700, color:miText }}>{mi.cost}pts</div>
+          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"3px", background:`linear-gradient(90deg,transparent,${miAccent},transparent)` }} />
         </div>
 
         {/* Restriction */}
         <div style={{ padding:"1mm 2.5mm", borderBottom:`1px solid ${divider}`, flexShrink:0 }}>
-          <div style={{ fontSize:fs(0.65), color:miMuted, fontStyle:"italic", lineHeight:1.4 }}>📋 {mi.restriction}</div>
+          <div style={{ fontSize:fs(0.72), color:miMuted, fontStyle:"italic", lineHeight:1.4 }}>{mi.restriction}</div>
         </div>
 
         {/* Description */}
-        <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
-          <div style={{ fontSize:fs(0.72), color:miText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>{mi.desc}</div>
+        <div style={{ padding:"1.5mm 2.5mm", flex:"0 0 auto", overflow:"hidden" }}>
+          <div style={{ fontSize:fs(0.9), color:miText, lineHeight:1.4, fontFamily:"Georgia,serif" }}>{mi.desc}</div>
         </div>
 
-        {/* Footer */}
-        <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", background:headerBg, flexShrink:0, marginTop:"auto" }}>
-          <div style={{ fontSize:fs(0.6), color:miMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Magic Item</div>
-          <div style={{ fontSize:fs(0.6), color:miAccent, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
-        </div>
+        {/* Footer accent bar */}
+        <div style={{
+          height:"1.5mm", flexShrink:0, marginTop:"auto",
+          background:`linear-gradient(90deg, transparent, ${miAccent}50, transparent)`,
+        }} />
       </div>
     </div>
   );
