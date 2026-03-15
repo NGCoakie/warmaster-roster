@@ -309,7 +309,7 @@ const IMAGES = {
     albion_mists_of_albion: "",
     albion_storm_of_hail: "",
     albion_summon_fenbeast: "",
-    araby_djinn_summons: "https://cdn.midjourney.com/711526b0-93d3-4119-ad68-7b371332c92d/0_3.png",
+    araby_curse_of_the_djinn: "https://cdn.midjourney.com/711526b0-93d3-4119-ad68-7b371332c92d/0_3.png",
     araby_mirage: "https://cdn.midjourney.com/99056651-0ad6-4af3-8966-f59c18096740/0_3.png",
     araby_sand_storm: "https://cdn.midjourney.com/69ea1074-8e07-483e-8ccd-8a22ccd9376f/0_2.png",
     araby_sunstrike: "https://cdn.midjourney.com/6f9caba1-386e-407c-ab8b-e38199a6606d/0_0.png",
@@ -365,10 +365,8 @@ const IMAGES = {
     lizardmen_mazdamundis_revenge: "https://cdn.midjourney.com/64597222-a7f0-4d7b-9fec-78952a1f1288/0_0.png",
     lizardmen_shield_of_the_old_ones: "https://cdn.midjourney.com/9ca2fef8-9a83-4410-ae33-5ec5e9ced196/0_3.png",
     lizardmen_wings_of_the_jungle: "https://cdn.midjourney.com/52334b7b-9abb-4e95-99cb-bdf351bcfee2/0_1.png",
-    nippon_divine_wind: "",
-    nippon_honour_of_ancestors: "",
-    nippon_kami_strike: "",
-    nippon_spirit_ward: "",
+    orcs_waaagh: "",
+    norse_spite_of_lowkey: "",
     norse_aspect_of_wulfen: "",
     norse_eye_of_the_raven: "",
     norse_thunder_of_fowor: "",
@@ -383,14 +381,14 @@ const IMAGES = {
     skaven_plague: "https://cdn.midjourney.com/fe3394c4-4d27-47a2-8abe-af634949de10/0_0.png",
     skaven_warp_lightning: "https://cdn.midjourney.com/66c70ff1-8d4f-4fb8-9694-f2565acc65d8/0_2.png",
     skaven_wither: "https://cdn.midjourney.com/884b0423-e0ae-4d62-acd6-d07a899b061f/0_1.png",
-    tomb_kings_desert_wind: "https://cdn.midjourney.com/f6096eab-bfa6-443b-b410-e3dc02f15ad0/0_2.png",
-    tomb_kings_incantation_of_summoning: "https://cdn.midjourney.com/c0c49bfd-8b5a-4320-9b44-33dfe2611488/0_2.png",
+    tomb_kings_doom_and_despair: "https://cdn.midjourney.com/f6096eab-bfa6-443b-b410-e3dc02f15ad0/0_2.png",
+    tomb_kings_death_bolt: "https://cdn.midjourney.com/c0c49bfd-8b5a-4320-9b44-33dfe2611488/0_2.png",
     tomb_kings_raise_dead: "https://cdn.midjourney.com/4b1989d0-f6d2-4329-94d2-4c8fcdd0ff0c/0_0.png",
     tomb_kings_touch_of_death: "https://cdn.midjourney.com/3ef7e529-c53d-4265-9b97-123e473d0510/0_0.png",
     vampire_counts_death_bolt: "https://cdn.midjourney.com/bb112a3c-7484-4d97-9bd2-0ffbd34c1543/0_2.png",
     vampire_counts_raise_dead: "https://cdn.midjourney.com/f9720ad7-e11d-4ac0-8a70-c2b85ff5d630/0_0.png",
     vampire_counts_vanhels_danse_macabre: "https://cdn.midjourney.com/60a2f5db-33b6-46b0-8070-194176a2dccf/0_2.png",
-    vampire_counts_vile_curse: "https://cdn.midjourney.com/04b37fba-89f7-4b76-ac3a-9eb196c5e3be/0_3.png",
+    vampire_counts_curse_of_years: "https://cdn.midjourney.com/04b37fba-89f7-4b76-ac3a-9eb196c5e3be/0_3.png",
     witch_hunters_divine_curse: "",
     witch_hunters_doctrine_of_sigmar: "",
     witch_hunters_holy_fervour: "",
@@ -737,6 +735,9 @@ const ARMIES = {
   skaven: {
     name:"Skaven", color:"#6b8e23", bg:"#030402", accent:"#9acd32",
     lore:"Devious ratmen swarming from underground warrens, wielding deadly warp-powered war machines and overwhelming numbers.",
+    playstyle:"Skaven excel at swarming the enemy with cheap expendable hordes backed by devastating but unreliable war machines. The Grey Seer's dual General/Wizard role is unique but the 20cm command range forces tight formations. Use Gutter Runners to infiltrate behind enemy lines while your Rat Ogres and Doomwheel smash through the centre.",
+    fluff:"Beneath the cities of men sprawl the endless tunnels of the Under-Empire, home to billions of chittering rat-men who dream of nothing less than the conquest of the surface world. United under the dread Council of Thirteen, the Skaven wage war with expendable masses of Clanrats, warpstone-fuelled war engines, and the terrifying sorcery of the Grey Seers.",
+    traits:["Unlimited brigade size", "Short 20cm command range", "Grey Seer is General + Wizard", "Warp Lightning ignores armour"],
     armyRules:[{name:"Strength in Numbers (Army Rule)", desc:"Brigades may be of any size and are not restricted to the normal four unit maximum."}, {name:"Vermintide (Army Rule)", desc:"Skaven units that win a round of combat can choose to pursue retreating enemy regardless of troop type. Any Skaven unit (including artillery) can pursue any enemy (including flyers, cavalry and chariots). Normal terrain and fortified status restrictions still apply."}, {name:"Under the Lash (Army Rule)", desc:"All Skaven characters — General, Heroes and Wizards alike — have a Command range of only 20cm. Even the General's range is reduced to 20cm."}, {name:"Jezzails", desc:"Count enemy armour values as one worse than normal (3+ becomes 4+, 5+ becomes 6+, 6+ gives no save)."}, {name:"Plague Monks", desc:"Always charge on initiative; cannot be given orders instead. Never evade. Cannot be driven back by shooting. Must pursue or advance if victorious. Immune to terror — no -1 Attack modifier."}, {name:"Rat Swarms", desc:"Cannot be driven back by shooting and do not roll for drive backs. Can only be supported by other Rat Swarm stands (not other infantry), though they can support other infantry as normal. Cannot be given magic items."}, {name:"Gutter Runners", desc:"Shoot with throwing stars/darts at 15cm range with 360 degree vision. May infiltrate: issue an infiltration order to a point in dense terrain or on any table edge except the enemy's. On success the unit appears there. Infiltrators can attempt infiltration again on subsequent turns if they fail."}, {name:"Screaming Bell", desc:"The Screaming Bell is a Machine mounted on a 40x60mm base. Can only move as part of a brigade. All friendly units touching the Bell are immune to terror. Heroes/Warlocks within 30cm get +1 Command. Enemy characters within 30cm get -1 Command."}],
         spells:[
       { name:"Wither", cast:"4+", range:"30cm", desc:"Cast on an enemy unit engaged in combat within range (no LoS needed). Lasts for the following Combat phase. Every stand in the unit, including characters that have joined the unit, deducts -1 from its Attacks value." },
@@ -756,7 +757,7 @@ const ARMIES = {
       { id:"sk_stormvermin", name:"Stormvermin", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:55, min:"-", max:2, special:"Elite Skaven infantry.", upgrades:[], magic:["standards","weapons"] },
       { id:"sk_jezzails", name:"Jezzails", type:"Infantry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:70, min:"-", max:2, special:"Armour piercing: enemy armour one worse.", upgrades:[], magic:["standards","weapons"] },
       { id:"sk_plaguemonks", name:"Plague Monks", type:"Infantry", atk:"5", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:"-", max:2, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Must pursue. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
-      { id:"sk_ratSwarms", name:"Rat Swarms", type:"Infantry", atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:25, min:2, max:"-", special:"Cannot be driven back. Cannot be supported by other infantry types (only other Rat Swarms). Can support other infantry as normal. Cannot have magic items.", upgrades:[], magic:[] },
+      { id:"sk_ratSwarms", name:"Rat Swarms", type:"Infantry", atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:25, min:2, max:"-", special:"Cannot be driven back. Cannot be supported by other infantry types (only other Rat Swarms). Can support other infantry as normal. Cannot have magic items.", noMagic:true, upgrades:[], magic:[] },
       { id:"sk_gutterRunners", name:"Gutter Runners", type:"Infantry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:"-", max:2, special:"Shoot 15cm, 360° vision. Can infiltrate. No -1 Command penalty in dense terrain. Characters ignore Under the Lash when ordering Gutter Runners.", upgrades:[], magic:["standards","weapons"] },
       { id:"sk_ratOgres", name:"Rat Ogres", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:2, special:"Powerful monsters.", upgrades:[], magic:["standards","weapons"] },
       { id:"sk_warpLightning", name:"Warp Lightning Cannon", type:"Artillery", atk:"1/3", hits:"2", armour:"0", cmd:"-", size:2, pts:60, min:"-", max:1, special:"Range 40cm, 3 attacks. Move 20cm (10cm half-pace). If double 1s rolled to hit, the cannon becomes confused (including stand and shoot).", upgrades:[], magic:[] },
@@ -934,38 +935,38 @@ const ARMIES = {
         upgrades:["daemonicWings","favourOfGods"], magic:["arcane"] },
       // ── INFANTRY ────────────────────────────────────────────────────────
       { id:"d_horde", name:"Daemon Horde", type:"Infantry",
-        atk:4, hits:3, armour:"5+", cmd:"-", size:3, pts:75, min:3, max:"-",
+        atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:75, min:3, max:"-",
         special:"Daemonic Instability: test at start of own Command phase if unit has suffered casualties.",
         upgrades:[], magic:["standards","weapons"] },
       { id:"d_swarm", name:"Daemon Swarm", type:"Infantry",
-        atk:2, hits:4, armour:0, cmd:"-", size:3, pts:45, min:"-", max:4,
+        atk:"2", hits:"4", armour:"0", cmd:"-", size:3, pts:45, min:"-", max:4,
         special:"Cannot be driven back by shooting and do not roll for drive backs. Cannot be given a magic item. Daemonic Instability.",
-        upgrades:[], magic:[] },
+        noMagic:true, upgrades:[], magic:[] },
       // ── CAVALRY ─────────────────────────────────────────────────────────
       { id:"d_cavalry", name:"Daemon Cavalry", type:"Cavalry",
-        atk:4, hits:3, armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3,
+        atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3,
         special:"Daemonic Instability.",
         upgrades:[], magic:["standards","weapons"] },
       { id:"d_hounds", name:"Daemon Hounds", type:"Cavalry",
-        atk:3, hits:3, armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:2,
+        atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:90, min:"-", max:2,
         special:"Daemonic Instability.",
         upgrades:[], magic:["standards","weapons"] },
       // ── CHARIOTS ────────────────────────────────────────────────────────
       { id:"d_chariots", name:"Daemon Chariots", type:"Chariot",
-        atk:3, hits:3, armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:3,
+        atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:95, min:"-", max:3,
         special:"Daemonic Instability.",
         upgrades:[], magic:["standards","weapons"] },
       // ── MONSTERS ────────────────────────────────────────────────────────
       { id:"d_beasts", name:"Daemon Beasts", type:"Monster",
-        atk:5, hits:4, armour:"5+", cmd:"-", size:3, pts:200, min:"-", max:1,
+        atk:"5", hits:"4", armour:"5+", cmd:"-", size:3, pts:200, min:"-", max:1,
         special:"Daemonic Instability.",
         upgrades:[], magic:[] },
       { id:"d_flyers", name:"Daemon Flyers", type:"Monster",
-        atk:2, hits:3, armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:1,
+        atk:"2", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:1,
         special:"Flies. Stands face long edge (like infantry) rather than short edge. Daemonic Instability.",
         upgrades:[], magic:[] },
       { id:"d_greater", name:"Greater Daemon", type:"Monster",
-        atk:8, hits:6, armour:"4+", cmd:"-", size:1, pts:280, min:"-", max:1,
+        atk:"8", hits:"6", armour:"4+", cmd:"-", size:1, pts:280, min:"-", max:1,
         special:"Flies. Causes terror. At 4-5 hits (end of Shooting/Combat phase, not engaged): Badly Hurt — discard accumulated hits, halve Hits to 3 and Attacks to 4 for rest of battle. Daemonic Instability.",
         upgrades:[], magic:[] },
     ],
@@ -987,7 +988,7 @@ const ARMIES = {
     weaknesses:"Many units have low attack values",
     generalCmd:9,
     units:[
-      { id:"vc_general", name:"Vampire Lord", type:"General", atk:"+2", hits:"-", armour:"-", cmd:9, size:1, pts:150, min:1, max:1, special:"Command range covers entire battlefield. Also a Wizard: casts spells. Can take General OR Wizard magic items.", upgrades:[], magic:["weapons","devices"] },
+      { id:"vc_general", name:"Vampire Lord", type:"General", atk:"+2", hits:"-", armour:"-", cmd:9, size:1, pts:150, min:1, max:1, special:"Command range covers entire battlefield. Also a Wizard: casts spells. Can take General OR Wizard magic items.", wizardGeneral:true, upgrades:[], magic:["weapons","devices"] },
       { id:"vc_vampire", name:"Vampire", type:"Hero", atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:2, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
       { id:"vc_necromancer", name:"Necromancer", type:"Wizard", atk:"+0", hits:"-", armour:"-", cmd:7, size:1, pts:45, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
       { id:"vc_wingedNightmare", name:"Winged Nightmare", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"Any character may ride. Flies (move 100cm). Unit causes terror.", upgrades:[], magic:[] },
@@ -996,9 +997,9 @@ const ARMIES = {
       { id:"vc_zombies", name:"Zombies", type:"Infantry", atk:"2", hits:"4", armour:"0", cmd:"-", size:3, pts:35, min:2, max:"-", special:"Undead.", upgrades:[], magic:["standards","weapons"] },
       { id:"vc_ghouls", name:"Ghouls", type:"Infantry", atk:"4", hits:"3", armour:"0", cmd:"-", size:3, pts:55, min:"-", max:"-", special:"Mortal troops — not Undead. Normal rules apply.", upgrades:[], magic:["standards","weapons"] },
       { id:"vc_graveGuard", name:"Grave Guard", type:"Infantry", atk:"3", hits:"3", armour:"5+", cmd:"-", size:3, pts:60, min:"-", max:4, special:"Undead. Elite skeletons.", upgrades:[], magic:["standards","weapons"] },
-      { id:"vc_etherealHost", name:"Ethereal Host", type:"Infantry", atk:"3", hits:"4", armour:"0", cmd:"-", size:3, pts:90, min:"-", max:2, special:"Undead. Attacks always hit on 4+ regardless of status. Cannot be driven back. Causes terror. Cannot have magic items.", upgrades:[], magic:[] },
+      { id:"vc_etherealHost", name:"Ethereal Host", type:"Infantry", atk:"3", hits:"4", armour:"0", cmd:"-", size:3, pts:90, min:"-", max:2, special:"Undead. Attacks always hit on 4+ regardless of status. Cannot be driven back. Causes terror. Cannot have magic items.", noMagic:true, upgrades:[], magic:[] },
       { id:"vc_blackKnights", name:"Black Knights", type:"Cavalry", atk:"3", hits:"3", armour:"4+", cmd:"-", size:3, pts:110, min:"-", max:4, special:"Undead. Heavy cavalry.", upgrades:[], magic:["standards","weapons"] },
-      { id:"vc_direWolves", name:"Dire Wolves", type:"Cavalry", atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:4, special:"Undead. +1 Attack when charging in open (like monster). Cannot have magic items.", upgrades:[], magic:[] },
+      { id:"vc_direWolves", name:"Dire Wolves", type:"Cavalry", atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:4, special:"Undead. +1 Attack when charging in open (like monster). Cannot have magic items.", noMagic:true, upgrades:[], magic:[] },
       { id:"vc_fellBats", name:"Fell Bats", type:"Monster", atk:"2", hits:"3", armour:"6+", cmd:"-", size:3, pts:65, min:"-", max:1, special:"Undead. Flies. Based on long edge. Can home back to character.", upgrades:[], magic:[] },
     ],
     upgradeRules:{}
@@ -1090,7 +1091,7 @@ const ARMIES = {
       { id:"ok_leadbelchers", name:"Leadbelchers", type:"Infantry", atk:"3/2", hits:"4", armour:"6+", cmd:"-", size:3, pts:90, min:"-", max:2, special:"Cannon range 15cm, 2 attacks. -1 armour saves against their shots.", upgrades:[], magic:["standards","weapons"] },
       { id:"ok_ironguts", name:"Ironguts", type:"Infantry", atk:"4", hits:"4", armour:"4+", cmd:"-", size:3, pts:140, min:"-", max:2, special:"Elite Ogre warriors.", upgrades:[], magic:["standards","weapons"] },
       { id:"ok_yhetees", name:"Yhetees", type:"Infantry", atk:"5", hits:"4", armour:"0", cmd:"-", size:3, pts:90, min:"-", max:2, special:"+1 Attack when charging in open (like monster). Can only support/be supported by other Yhetees. Must pursue.", upgrades:[], magic:[] },
-      { id:"ok_gnoblars", name:"Gnoblars", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:30, min:"-", max:4, special:"Shoot 15cm (bows). Cannot be supported by other types. Cannot have magic items. Characters cannot join.", upgrades:[], magic:[] },
+      { id:"ok_gnoblars", name:"Gnoblars", type:"Infantry", atk:"2/1", hits:"3", armour:"0", cmd:"-", size:3, pts:30, min:"-", max:4, special:"Shoot 15cm (bows). Cannot be supported by other types. Cannot have magic items. Characters cannot join.", noMagic:true, upgrades:[], magic:[] },
       { id:"ok_gorgers", name:"Gorgers", type:"Infantry", atk:"5", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"-1 Command penalty. Ignore distance modifiers. Can infiltrate. Can pursue any type.", upgrades:[], magic:[] },
       { id:"ok_rhinoxRiders", name:"Rhinox Riders", type:"Cavalry", atk:"5", hits:"4", armour:"5+", cmd:"-", size:3, pts:200, min:"-", max:1, special:"Immune to terror. +1 Attack when charging enemy in the open.", upgrades:[], magic:["standards","weapons"] },
       { id:"ok_sabretusks", name:"Sabretusks", type:"Cavalry", atk:"3", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:1, special:"Fast hunting cats.", upgrades:[], magic:[] },
@@ -1233,8 +1234,8 @@ const ARMIES = {
     units:[
       { id:"we_general", name:"General", type:"General", atk:"+2", hits:"-", armour:"-", cmd:10, size:1, pts:155, min:1, max:1, special:"Command range covers entire battlefield. Woodland Folk: no -1 Command penalty in woodland.", upgrades:[], magic:["devices"] },
       { id:"we_noble", name:"Noble", type:"Hero", atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
-      { id:"we_treemanAncient", name:"Treeman Ancient", type:"Hero", atk:"+3", hits:"-", armour:"-", cmd:8, size:1, pts:130, min:"-", max:1, special:"Command range 60cm. -1 Command when ordering non-Forest Spirit units. Can only join Forest Spirit units. Can cast Tree Singing spell. Units joined cause terror. Cannot take magic items.", upgrades:[], magic:[] },
-      { id:"we_branchwraith", name:"Branchwraith", type:"Hero", atk:"+2", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. -1 Command when ordering non-Forest Spirit units. Can only join Forest Spirit units. Can cast Tree Singing spell. Cannot take magic items.", upgrades:[], magic:[] },
+      { id:"we_treemanAncient", name:"Treeman Ancient", type:"Hero", atk:"+3", hits:"-", armour:"-", cmd:8, size:1, pts:130, min:"-", max:1, special:"Command range 60cm. -1 Command when ordering non-Forest Spirit units. Can only join Forest Spirit units. Can cast Tree Singing spell. Units joined cause terror. Cannot take magic items.", noMagic:true, upgrades:[], magic:[] },
+      { id:"we_branchwraith", name:"Branchwraith", type:"Hero", atk:"+2", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. -1 Command when ordering non-Forest Spirit units. Can only join Forest Spirit units. Can cast Tree Singing spell. Cannot take magic items.", noMagic:true, upgrades:[], magic:[] },
       { id:"we_spellWeaver", name:"Spell Weaver", type:"Wizard", atk:"+0", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm. Casts spells.", upgrades:[], magic:["weapons","devices"] },
       { id:"we_giantStag", name:"Giant Stag", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:10, min:"-", max:1, special:"General/Noble/Spell Weaver may ride. +1 Attack.", upgrades:[], magic:[] },
       { id:"we_unicorn", name:"Unicorn", type:"Special Mount", atk:"+1", hits:"-", armour:"-", cmd:"-", size:1, pts:15, min:"-", max:1, special:"Spell Weaver only may ride. +1 Attack. Once per battle: +1 to spell roll.", upgrades:[], magic:[] },
@@ -1363,7 +1364,7 @@ const ARMIES = {
     units:[
       { id:"ni_shogun", name:"Shogun", type:"General", atk:"+2", hits:"-", armour:"-", cmd:9, size:1, pts:125, min:1, max:1, special:"Command range covers entire battlefield. Honour and Duty: army needs 1 extra unit lost before withdrawal.", upgrades:[], magic:["devices"] },
       { id:"ni_daimyo", name:"Daimyo", type:"Hero", atk:"+1", hits:"-", armour:"-", cmd:8, size:1, pts:80, min:"-", max:1, special:"Command range 60cm.", upgrades:[], magic:["weapons","devices"] },
-      { id:"ni_shugenja", name:"Shugenja", type:"Hero", atk:"+0", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Anti-magic: can attempt to dispel enemy spells within 50cm on 4+ (D6). Only one attempt per spell even with multiple Shugenjas.", upgrades:[], magic:["weapons","devices"] },
+      { id:"ni_shugenja", name:"Shugenja", type:"Hero", atk:"+0", hits:"-", armour:"-", cmd:8, size:1, pts:90, min:"-", max:1, special:"Command range 60cm. Anti-magic: can attempt to dispel enemy spells within 50cm on 4+ (D6). Only one attempt per spell even with multiple Shugenjas.", antiMage:true, upgrades:[], magic:["weapons","devices"] },
       { id:"ni_tatsu", name:"Tatsu (Dragon)", type:"Monstrous Mount", atk:"+2", hits:"-", armour:"-", cmd:"-", size:1, pts:80, min:"-", max:1, special:"Shogun/Daimyo/Shugenja may ride. Flies (move 100cm). Causes terror.", upgrades:[], magic:[] },
       { id:"ni_shrine", name:"Shrine", type:"Special", atk:"-", hits:"-", armour:"-", cmd:"-", size:1, pts:50, min:1, max:1, special:"Once per battle: +1 to Shugenja's dispel roll. In Shooting phase: roll D6, on 4+ all Nippon units within 20cm are immune to Terror until start of next turn.", upgrades:[], magic:[] },
       { id:"ni_ashigaru", name:"Ashigaru", type:"Infantry", atk:"3", hits:"3", armour:"6+", cmd:"-", size:3, pts:45, min:1, max:"-", special:"Core spearmen.", upgrades:[], magic:["standards","weapons"] },
@@ -1372,7 +1373,7 @@ const ARMIES = {
       { id:"ni_samurai", name:"Samurai", type:"Infantry", atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:2, max:4, special:"Bushido: cannot evade, -1 drive-back dice.", upgrades:[], magic:["standards","weapons"] },
       { id:"ni_mikata", name:"Mikata (Ronin & Monks)", type:"Infantry", atk:"5", hits:"3", armour:"0", cmd:"-", size:3, pts:70, min:"-", max:2, special:"Always charge on initiative. Cannot evade. Cannot be driven back. Must pursue. Immune to terror.", upgrades:[], magic:["standards","weapons"] },
       { id:"ni_ninja", name:"Ninja", type:"Infantry", atk:"3/1", hits:"3", armour:"6+", cmd:"-", size:3, pts:60, min:"-", max:2, special:"Shoot 15cm, 360° vision. Can infiltrate. Ignore penalties for dense terrain. Count as Gutter Runners for Scout Rules.", upgrades:[], magic:["standards","weapons"] },
-      { id:"ni_oni", name:"Oni", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"Spirit Ogres. Temple Daemon: immune to terror, Daemonic Instability, cannot be given magic items.", upgrades:[], magic:[] },
+      { id:"ni_oni", name:"Oni", type:"Infantry", atk:"4", hits:"4", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:1, special:"Spirit Ogres. Temple Daemon: immune to terror, Daemonic Instability, cannot be given magic items.", noMagic:true, upgrades:[], magic:[] },
       { id:"ni_samuraiCavalry", name:"Samurai Cavalry", type:"Cavalry", atk:"4", hits:"3", armour:"5+", cmd:"-", size:3, pts:110, min:"-", max:3, special:"Bushido: cannot evade, -1 drive-back dice.", upgrades:[], magic:["standards","weapons"] },
       { id:"ni_komainu", name:"Komainu", type:"Cavalry", atk:"2", hits:"3", armour:"0", cmd:"-", size:3, pts:40, min:"-", max:3, special:"Spirit lion-dogs. Temple Daemon: immune to terror, Daemonic Instability. +1 Attack when charging in open.", upgrades:[], magic:[] },
       { id:"ni_tengu", name:"Tengu", type:"Monster", atk:"2", hits:"3", armour:"5+", cmd:"-", size:3, pts:80, min:"-", max:1, special:"Flies. Spirit creatures. Temple Daemon: immune to terror, Daemonic Instability. Based facing long edge like infantry.", upgrades:[], magic:[] },
@@ -1472,6 +1473,9 @@ function isBannerUnit(unit) {
 }
 
 function getMagicItemsForUnit(unit) {
+  // Units explicitly flagged as unable to take magic items
+  if (unit.noMagic) return [];
+
   const items = [];
 
   // ── Magic Standards (Infantry / Cavalry / Chariot only) ───────────────────
@@ -1482,22 +1486,26 @@ function getMagicItemsForUnit(unit) {
     });
   }
 
-  // ── Magic Weapons (Characters only) ──────────────────────────────────────
-  if (isCharacter(unit)) {
+  // ── Magic Weapons (General or Hero only — NOT Wizards) ──────────────────
+  if (isGeneralType(unit) || isHeroType(unit)) {
     MAGIC_WEAPONS.forEach(item => items.push(item));
   }
 
   // ── Devices of Power (Characters, sub-filtered by type) ───────────────────
-  // Grey Seer is a General who can also take Wizard items (greySeer:true flag)
+  // greySeer flag: General who can also take Wizard items
+  // wizardGeneral flag: General who can also take Wizard items (e.g. Vampire Lord)
+  // antiMage flag: Hero who functions like a Runesmith (e.g. Nippon Shugenja)
   const isGreySeer = unit.greySeer === true;
+  const isWizardGeneral = unit.wizardGeneral === true;
+  const isAntiMage = unit.antiMage === true;
 
   if (isCharacter(unit)) {
     DEVICES_OF_POWER.forEach(item => {
       if (GENERAL_DEVICES.has(item.id) && (isGeneralType(unit) || isGreySeer)) {
         items.push(item);
-      } else if (WIZARD_DEVICES.has(item.id) && (isWizardType(unit) || isGreySeer)) {
+      } else if (WIZARD_DEVICES.has(item.id) && (isWizardType(unit) || isGreySeer || isWizardGeneral)) {
         items.push(item);
-      } else if (RUNESMITH_DEVICES.has(item.id) && isRunesmith(unit)) {
+      } else if (RUNESMITH_DEVICES.has(item.id) && (isRunesmith(unit) || isAntiMage)) {
         if (!isWizardType(unit)) items.push(item);
       }
     });
@@ -1934,15 +1942,17 @@ function validateRoster(roster, army, totalPts) {
   const counts = {};
   roster.forEach(e => { counts[e.unit.id] = (counts[e.unit.id] || 0) + 1; });
 
-  // Check minimums for all non-General units (Generals handled below)
+  // Check minimums and maximums for all non-General units
   army.units.forEach(unit => {
     if (unit.type === "General") return;
+    const taken = counts[unit.id] || 0;
     const minReq = effectiveMin(unit, totalPts);
-    if (minReq > 0) {
-      const taken = counts[unit.id] || 0;
-      if (taken < minReq) {
-        warnings.push(`${unit.name}: need ${minReq} (min ${unit.min}×${brackets}k), have ${taken}`);
-      }
+    if (minReq > 0 && taken < minReq) {
+      warnings.push(`${unit.name}: need ${minReq} (min ${unit.min}\u00d7${brackets}k), have ${taken}`);
+    }
+    const maxReq = effectiveMax(unit, totalPts);
+    if (maxReq !== Infinity && taken > maxReq) {
+      warnings.push(`${unit.name}: max ${maxReq} (max ${unit.max}\u00d7${brackets}k), have ${taken}`);
     }
   });
 
@@ -1950,6 +1960,19 @@ function validateRoster(roster, army, totalPts) {
   const generals = roster.filter(e => e.unit.type === "General").length;
   if (generals === 0) warnings.push("Army must include 1 General");
   if (generals > 1)  warnings.push("Army may only include 1 General");
+
+  // Check duplicate magic items (each is "one per army")
+  const miCounts = {};
+  roster.forEach(e => {
+    if (e.magicItem) miCounts[e.magicItem.id] = (miCounts[e.magicItem.id] || 0) + 1;
+  });
+  Object.entries(miCounts).forEach(([id, count]) => {
+    if (count > 1) {
+      const item = [...MAGIC_STANDARDS, ...MAGIC_WEAPONS, ...DEVICES_OF_POWER].find(m => m.id === id);
+      warnings.push(`${item ? item.name : id}: taken ${count} times (one per army)`);
+    }
+  });
+
   return warnings;
 }
 
@@ -2137,6 +2160,12 @@ function RosterEntryEditor({ entry, idx, army, onUpdate, roster, totalPts }) {
   const allMagic = getMagicItemsForUnit(unit);
   const selectedMagic = entry.magicItem || null;
 
+  // "One per army" enforcement: track which magic items are already taken
+  const takenMagicIds = new Set();
+  roster.forEach((e, i) => {
+    if (i !== idx && e.magicItem) takenMagicIds.add(e.magicItem.id);
+  });
+
   function handleMagicChange(e) {
     const id = e.target.value;
     const item = allMagic.find(m => m.id === id) || null;
@@ -2220,25 +2249,40 @@ function RosterEntryEditor({ entry, idx, army, onUpdate, roster, totalPts }) {
             {/* Standards */}
             {allMagic.filter(m => MAGIC_STANDARDS.some(s => s.id === m.id)).length > 0 && (
               <optgroup label="── Magic Standards ──">
-                {allMagic.filter(m => MAGIC_STANDARDS.some(s => s.id === m.id)).map(m => (
-                  <option key={m.id} value={m.id}>{m.name} (+{m.cost}pts)</option>
-                ))}
+                {allMagic.filter(m => MAGIC_STANDARDS.some(s => s.id === m.id)).map(m => {
+                  const taken = takenMagicIds.has(m.id);
+                  return (
+                    <option key={m.id} value={m.id} disabled={taken}>
+                      {m.name} (+{m.cost}pts){taken ? " [TAKEN]" : ""}
+                    </option>
+                  );
+                })}
               </optgroup>
             )}
             {/* Weapons */}
             {allMagic.filter(m => MAGIC_WEAPONS.some(s => s.id === m.id)).length > 0 && (
               <optgroup label="── Magic Weapons ──">
-                {allMagic.filter(m => MAGIC_WEAPONS.some(s => s.id === m.id)).map(m => (
-                  <option key={m.id} value={m.id}>{m.name} (+{m.cost}pts)</option>
-                ))}
+                {allMagic.filter(m => MAGIC_WEAPONS.some(s => s.id === m.id)).map(m => {
+                  const taken = takenMagicIds.has(m.id);
+                  return (
+                    <option key={m.id} value={m.id} disabled={taken}>
+                      {m.name} (+{m.cost}pts){taken ? " [TAKEN]" : ""}
+                    </option>
+                  );
+                })}
               </optgroup>
             )}
             {/* Devices */}
             {allMagic.filter(m => DEVICES_OF_POWER.some(s => s.id === m.id)).length > 0 && (
               <optgroup label="── Devices of Power ──">
-                {allMagic.filter(m => DEVICES_OF_POWER.some(s => s.id === m.id)).map(m => (
-                  <option key={m.id} value={m.id}>{m.name} (+{m.cost}pts)</option>
-                ))}
+                {allMagic.filter(m => DEVICES_OF_POWER.some(s => s.id === m.id)).map(m => {
+                  const taken = takenMagicIds.has(m.id);
+                  return (
+                    <option key={m.id} value={m.id} disabled={taken}>
+                      {m.name} (+{m.cost}pts){taken ? " [TAKEN]" : ""}
+                    </option>
+                  );
+                })}
               </optgroup>
             )}
           </select>
@@ -2369,7 +2413,7 @@ function RosterPanel({ army, roster, onRemove, onUpdate, onPrint, onClear, onReo
                 <div style={{ display:"flex", gap:4, flexShrink:0, alignItems:"center" }}>
                   <span style={{ fontSize:"0.65rem", color:"#444" }}>{isOpen ? "▲" : "▼"}</span>
                   <button
-                    onClick={e => { e.stopPropagation(); onRemove(idx); if (expandedIdx === idx) setExpandedIdx(null); }}
+                    onClick={e => { e.stopPropagation(); onRemove(idx); setExpandedIdx(prev => prev === idx ? null : prev !== null && prev > idx ? prev - 1 : prev); }}
                     style={{ background:"transparent", color:"#553030", fontSize:"1.1rem", width:22, height:22, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%", flexShrink:0, cursor:"pointer" }}>✕</button>
                 </div>
               </div>
@@ -2426,12 +2470,7 @@ function PrintView({ army, roster, onClose, embedded }) {
     imgH: baseLay.imgH,
   };
 
-  // ── Colour scheme ─────────────────────────────────────────────────────────
-  // "print"     = light parchment card, dark text — optimised for physical printing
-  // "faction"   = full dark theme using army.bg + army.accent (screen-optimised)
-  // "cardcolor" = mid-tone: faction-tinted dark card, white stat values (high contrast)
-  // "white"     = pure white card, black text
-  const mode = printOpts.colorMode;
+  // ── Colour scheme — dark faction-tinted print mode ────────────────────────
 
   // Helper: blend two hex colours at given ratio (0=col1, 1=col2)
   function blendHex(hex1, hex2, t) {
@@ -2445,26 +2484,17 @@ function PrintView({ army, roster, onClose, embedded }) {
     return `#${r}${g}${b}`;
   }
 
-  // Mid-tone bg: blend army.bg toward a slightly lighter shade for readability
-  const midBg     = blendHex(army.bg || "#0a0806", "#1a1410", 0.7);
   // "print" mode: dark faction-tinted background (army.color blended 85% toward near-black)
   const darkFactionBg = blendHex(army.color, "#0e0c0a", 0.85);
-  const cardBg    = mode==="print"   ? darkFactionBg           : mode==="faction" ? (army.bg||"#0a0806") : mode==="cardcolor" ? midBg : "#ffffff";
+  const cardBg    = darkFactionBg;
   const cardBorder= army.color;
-  const cardText  = mode==="white" ? "#1a1208" : mode==="print" ? "#e8e0d0" : army.accent;
-  // Description text — light cream for dark print bg, dim for other dark modes
-  const descText  = mode==="white" ? "#2a2010" : mode==="print" ? "#d0c8b8" : mode==="cardcolor" ? "#dddddd" : "#aaaaaa";
-  // Muted text: labels, subtitles
-  const cardMuted = mode==="print"   ? "#a09880"              : mode==="faction" ? "#999999" : mode==="cardcolor" ? "#dddddd" : "#555555";
-  const statBg    = mode==="print"   ? "#00000040"             : mode==="faction" ? "#00000040" : mode==="cardcolor" ? "#00000050" : "#f2f2f2";
-  const statBorder= mode==="print" ? army.color+"99" : army.color+"80";
+  const cardText  = "#e8e0d0";
+  const descText  = "#d0c8b8";
+  const cardMuted = "#a09880";
+  const statBg    = "#00000040";
+  const statBorder= army.color+"99";
   const divider   = army.color+"60";
-  const imgBg     = mode==="white"
-    ? "linear-gradient(160deg,#e8e4d8,#d4ceba)"
-    : `linear-gradient(160deg, ${army.color}70, ${army.bg||"#0a0806"})`;
-  const imgTextColor = mode==="white" ? "#888888" : "#e8e0d0";
-  // Header strip bg behind unit name — faction-tinted
-  const headerBg  = mode==="print"   ? army.color+"30"        : `${cardBorder}18`;
+  const headerBg  = army.color+"30";
 
   // ── ARMY RULES CARD ──────────────────────────────────────────────────────
   // ── SHARED CARD SHELL ──────────────────────────────────────────────────────
@@ -2494,7 +2524,7 @@ function PrintView({ army, roster, onClose, embedded }) {
           position:"relative",
           fontFamily:"'Cinzel',Georgia,serif",
           boxSizing:"border-box",
-          border: mode==="print" ? `2px solid ${army.color}80` : "none",
+          border: `2px solid ${army.color}80`,
         }}>
           {/* Faction border overlay */}
           {borderUrl && (
@@ -2558,18 +2588,20 @@ function PrintView({ army, roster, onClose, embedded }) {
     return (
       <div style={{
         textAlign:"center",
-        background: sm ? "rgba(0,0,0,0.72)" : statBg,
-        border: sm ? `1px solid rgba(255,255,255,0.25)` : `1.5px solid ${statBorder}`,
-        borderRadius:"2px",
+        background: sm ? "rgba(0,0,0,0.78)" : statBg,
+        border: sm ? `1px solid rgba(255,255,255,0.3)` : `1.5px solid ${statBorder}`,
+        borderRadius: sm ? "2.5px" : "2px",
         display:"flex", flexDirection:"column",
         alignItems:"center", justifyContent:"center",
         padding: sm ? "0.8mm 1.2mm" : "1.5mm 1mm",
-        backdropFilter: sm ? "blur(2px)" : "none",
-        WebkitBackdropFilter: sm ? "blur(2px)" : "none",
+        backdropFilter: sm ? "blur(4px)" : "none",
+        WebkitBackdropFilter: sm ? "blur(4px)" : "none",
+        boxShadow: sm ? "0 1px 3px rgba(0,0,0,0.4)" : "none",
         ...style,
       }}>
-        <div style={{ fontSize:labelSz, color: sm ? "rgba(255,255,255,0.7)" : cardMuted, letterSpacing:"0.3px", lineHeight:1 }}>{label}</div>
-        <div style={{ fontSize:valueSz, fontWeight:700, color: sm ? "#fff" : cardText, lineHeight:1.15 }}>{String(value ?? "-")}</div>      </div>
+        <div style={{ fontSize:labelSz, color: sm ? "rgba(255,255,255,0.8)" : cardMuted, letterSpacing:"0.5px", lineHeight:1, textTransform:"uppercase" }}>{label}</div>
+        <div style={{ fontSize:valueSz, fontWeight:700, color: sm ? "#fff" : cardText, lineHeight:1.15, textShadow: sm ? "0 1px 2px rgba(0,0,0,0.5)" : "none" }}>{String(value ?? "-")}</div>
+      </div>
     );
   }
 
@@ -2621,7 +2653,26 @@ function PrintView({ army, roster, onClose, embedded }) {
     return { badges: matched, remainingText: kept.join(" ").trim() };
   }
 
-  // Render a row of badge pills
+  // Map badge labels to Icon SVG components
+  const BADGE_ICONS = {
+    "TERROR": Icon.terror,
+    "FLY": Icon.fly,
+    "PURSUE": Icon.pursue,
+    "NO EVADE": Icon.noEvade,
+    "NO DRIVE BACK": Icon.noDriveBack,
+    "FRENZY": Icon.frenzy,
+    "360°": Icon.vision360,
+    "AP": Icon.armourPierce,
+    "BREATH": Icon.breath,
+    "REGEN": Icon.regen,
+    "INSTABILITY": Icon.instability,
+    "NO BRIGADE": Icon.noBrigade,
+    "WILD": Icon.wild,
+    "UNDEAD": Icon.instability,
+    "CHARGE +1": Icon.charge,
+  };
+
+  // Render a row of badge pills with icons
   function BadgeStrip({ badges }) {
     if (!badges.length) return null;
     return (
@@ -2630,23 +2681,29 @@ function PrintView({ army, roster, onClose, embedded }) {
         padding:"0.8mm 2.5mm",
         borderBottom:`1px solid ${divider}`,
       }}>
-        {badges.map((b, i) => (
-          <span key={i} style={{
-            display:"inline-block",
-            background: b.color,
-            color: "#fff",
-            fontSize: cardFs(0.55),
-            fontWeight: 700,
-            padding: "0.3mm 1.5mm",
-            borderRadius: "1.5mm",
-            letterSpacing: "0.3px",
-            lineHeight: 1.4,
-            whiteSpace: "nowrap",
-            fontFamily: "'Cinzel',Georgia,serif",
-          }}>
-            {b.label}
-          </span>
-        ))}
+        {badges.map((b, i) => {
+          const BadgeIcon = BADGE_ICONS[b.label];
+          return (
+            <span key={i} style={{
+              display:"inline-flex",
+              alignItems:"center",
+              gap:"1mm",
+              background: b.color,
+              color: "#fff",
+              fontSize: cardFs(0.55),
+              fontWeight: 700,
+              padding: "0.3mm 1.5mm",
+              borderRadius: "1.5mm",
+              letterSpacing: "0.3px",
+              lineHeight: 1.4,
+              whiteSpace: "nowrap",
+              fontFamily: "'Cinzel',Georgia,serif",
+            }}>
+              {BadgeIcon ? <BadgeIcon size={10} color="#fff" /> : null}
+              {b.label}
+            </span>
+          );
+        })}
       </div>
     );
   }
@@ -2740,12 +2797,12 @@ function PrintView({ army, roster, onClose, embedded }) {
 
         {/* Footer */}
         <div style={{
-          borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+          borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm",
           display:"flex", justifyContent:"space-between", alignItems:"center",
-          background: headerBg, flexShrink:0, marginTop:"auto",
+          background:"transparent", flexShrink:0, marginTop:"auto",
         }}>
-          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
-          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
+          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Warmaster Revolution</div>
+          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>{army.name}</div>
         </div>
       </CardShell>
     );
@@ -2799,12 +2856,12 @@ function PrintView({ army, roster, onClose, embedded }) {
 
         {/* Footer */}
         <div style={{
-          borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+          borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm",
           display:"flex", justifyContent:"space-between", alignItems:"center",
-          background: headerBg, flexShrink:0, marginTop:"auto",
+          background:"transparent", flexShrink:0, marginTop:"auto",
         }}>
-          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Mount</div>
-          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
+          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Mount</div>
+          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>{army.name}</div>
         </div>
       </CardShell>
     );
@@ -2820,11 +2877,11 @@ function PrintView({ army, roster, onClose, embedded }) {
       <CardShell imgUrl={imgUrl} imgFallbackIcon={catIcon} accentColor={army.color} imgOverlay={
         <div style={{
           position:"absolute", bottom:0, left:0, right:0,
-          background:"linear-gradient(transparent, rgba(0,0,0,0.82))",
+          background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
           padding:"6mm 2.5mm 2mm",
           zIndex:5,
         }}>
-          <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>
+          <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>
             {mi.name}
           </div>
         </div>
@@ -2859,9 +2916,9 @@ function PrintView({ army, roster, onClose, embedded }) {
         </div>
 
         {/* Footer */}
-        <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", alignItems:"center", background: headerBg, flexShrink:0, marginTop:"auto" }}>
-          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Magic Item</div>
-          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
+        <div style={{ borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", alignItems:"center", background:"transparent", flexShrink:0, marginTop:"auto" }}>
+          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Magic Item</div>
+          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>Warmaster Revolution</div>
         </div>
       </CardShell>
     );
@@ -2880,11 +2937,11 @@ function PrintView({ army, roster, onClose, embedded }) {
     const nameOverlay = (
       <div style={{
         position:"absolute", bottom:0, left:0, right:0,
-        background:"linear-gradient(transparent, rgba(0,0,0,0.82))",
+        background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
         padding:"6mm 2.5mm 2mm",
         zIndex:5,
       }}>
-        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>
+        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>
           {rule.name}
         </div>
       </div>
@@ -2911,12 +2968,12 @@ function PrintView({ army, roster, onClose, embedded }) {
 
         {/* Footer */}
         <div style={{
-          borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+          borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm",
           display:"flex", justifyContent:"space-between", alignItems:"center",
-          background: headerBg, flexShrink:0, marginTop:"auto",
+          background:"transparent", flexShrink:0, marginTop:"auto",
         }}>
-          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Special Rule</div>
-          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
+          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Special Rule</div>
+          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>{army.name}</div>
         </div>
       </CardShell>
     );
@@ -2935,11 +2992,11 @@ function PrintView({ army, roster, onClose, embedded }) {
     const nameOverlay = (
       <div style={{
         position:"absolute", bottom:0, left:0, right:0,
-        background:"linear-gradient(transparent, rgba(0,0,0,0.82))",
+        background:"linear-gradient(transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.92) 100%)",
         padding:"6mm 2.5mm 2mm",
         zIndex:5,
       }}>
-        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>
+        <div style={{ fontSize:cardFs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>
           {spell.name || spell.result}
         </div>
       </div>
@@ -2975,12 +3032,12 @@ function PrintView({ army, roster, onClose, embedded }) {
 
         {/* Footer */}
         <div style={{
-          borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm",
+          borderTop:`1.5px solid ${army.color}40`, padding:"1mm 2.5mm",
           display:"flex", justifyContent:"space-between", alignItems:"center",
-          background: headerBg, flexShrink:0, marginTop:"auto",
+          background:"transparent", flexShrink:0, marginTop:"auto",
         }}>
-          <div style={{ fontSize:cardFs(0.6), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.4px" }}>Warmaster Revolution</div>
-          <div style={{ fontSize:cardFs(0.6), color:army.color, textTransform:"uppercase", letterSpacing:"0.4px", opacity:0.9 }}>{army.name}</div>
+          <div style={{ fontSize:cardFs(0.55), color:cardMuted, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.7 }}>Warmaster Revolution</div>
+          <div style={{ fontSize:cardFs(0.55), color:army.color, textTransform:"uppercase", letterSpacing:"0.6px", opacity:0.6 }}>{army.name}</div>
         </div>
       </CardShell>
     );
@@ -2991,9 +3048,9 @@ function PrintView({ army, roster, onClose, embedded }) {
   // ── CARD BACK ─────────────────────────────────────────────────────────────
   function CardBack() {
     const clr = army.color;
-    const acc = mode==="print" ? "#1a1208" : army.accent;
-    const backBg = mode==="print" ? "#f5f0e4" : `linear-gradient(160deg, #0d0b08 0%, #1a1208 50%, #0d0b08 100%)`;
-    const backBorder = mode==="print" ? `2px solid ${clr}` : `2px solid ${clr}`;
+    const acc = "#1a1208";
+    const backBg = "#f5f0e4";
+    const backBorder = `2px solid ${clr}`;
     return (
       <div style={{
         width:"63.5mm", height:"88.9mm", maxHeight:"88.9mm", minHeight:"88.9mm",
@@ -3029,7 +3086,7 @@ function PrintView({ army, roster, onClose, embedded }) {
               borderTop:`1.5px solid ${clr}`,
               borderLeft:`1.5px solid ${clr}`,
               borderRadius:"0.8mm 0 0 0",
-              opacity: mode==="print" ? 1 : 0.8,
+              opacity: 1,
             }}/>
           ))}
 
@@ -3042,7 +3099,7 @@ function PrintView({ army, roster, onClose, embedded }) {
           }} />
 
           {/* Crossed swords motif */}
-          <div style={{ fontSize:"22px", marginBottom:"3mm", opacity: mode==="print" ? 0.85 : 0.7, filter: mode==="print" ? "none" : `drop-shadow(0 0 4px ${clr})`, color: mode==="print" ? clr : undefined }}>
+          <div style={{ fontSize:"22px", marginBottom:"3mm", opacity: 0.85, color: clr }}>
             ⚔
           </div>
 
@@ -3054,7 +3111,7 @@ function PrintView({ army, roster, onClose, embedded }) {
             letterSpacing:"4px",
             color: acc,
             textTransform:"uppercase",
-            textShadow: mode==="print" ? "none" : `0 0 8px ${clr}`,
+            textShadow: "none",
             marginBottom:"1.5mm",
           }}>
             WARMASTER
@@ -3063,7 +3120,7 @@ function PrintView({ army, roster, onClose, embedded }) {
           {/* Divider line */}
           <div style={{
             width:"70%", height:"1.5px",
-            background: mode==="print" ? clr : `linear-gradient(90deg, transparent, ${clr}, transparent)`,
+            background: clr,
             marginBottom:"1.5mm",
           }}/>
 
@@ -3075,7 +3132,7 @@ function PrintView({ army, roster, onClose, embedded }) {
             letterSpacing:"5px",
             color: clr,
             textTransform:"uppercase",
-            opacity: mode==="print" ? 1 : 0.9,
+            opacity: 1,
             marginBottom:"4mm",
           }}>
             REVOLUTION
@@ -3086,8 +3143,8 @@ function PrintView({ army, roster, onClose, embedded }) {
             fontFamily:"'Cinzel',serif",
             fontSize:"6pt",
             letterSpacing:"2px",
-            color: mode==="print" ? "#4a3820" : acc,
-            opacity: mode==="print" ? 0.8 : 0.5,
+            color: "#4a3820",
+            opacity: 0.8,
             textTransform:"uppercase",
           }}>
             {army.name}
@@ -3097,8 +3154,8 @@ function PrintView({ army, roster, onClose, embedded }) {
           <div style={{
             position:"absolute", bottom:"4mm", left:"8mm", right:"8mm",
             height:"1.5px",
-            background: mode==="print" ? clr : `linear-gradient(90deg, transparent, ${clr}80, transparent)`,
-            opacity: mode==="print" ? 0.6 : 1,
+            background: clr,
+            opacity: 0.6,
           }}/>
         </div>
       </div>
@@ -3113,8 +3170,10 @@ function PrintView({ army, roster, onClose, embedded }) {
     if (army.instabilityTable && Array.isArray(army.instabilityTable))
       army.instabilityTable.forEach(s => spellItems.push({...s, instability:true}));
     const spellCards = showSpells ? spellItems.map((spell, i) => <SpellCard key={`spell-${i}`} spell={spell} />) : [];
+    const ruleCards = showSpells ? (army.armyRules || []).map((rule, i) => <SpecialRuleCard key={`rule-${i}`} rule={rule} />) : [];
     const previewCards = [
       ...spellCards,
+      ...ruleCards,
       ...roster.map((entry, idx) => <PrintCard key={`unit-${idx}`} entry={entry} />),
       ...roster.filter(e => e.mount).map((entry, idx) => <MountCard key={`mount-${idx}`} entry={entry} />),
       ...roster.filter(e => e.magicItem).map((entry, idx) => <MagicItemCard key={`mi-${idx}`} mi={entry.magicItem} />),
@@ -3156,7 +3215,7 @@ function PrintView({ army, roster, onClose, embedded }) {
   }
 
   return (
-    <div style={{ background: (mode==="white") ? "#d8d4c8" : "#1a1610", minHeight:"100vh" }} id="print-root">
+    <div style={{ background: "#1a1610", minHeight:"100vh" }} id="print-root">
       <GS />
       {/* Screen toolbar — hidden when printing */}
       <div className="no-print" style={{
@@ -3210,6 +3269,7 @@ function PrintView({ army, roster, onClose, embedded }) {
         // Build flat list of all front cards
         const frontCards = [
           ...spellItems.map((spell, i) => <SpellCard key={`spell-${i}`} spell={spell} />),
+          ...(army.armyRules || []).map((rule, i) => <SpecialRuleCard key={`rule-${i}`} rule={rule} />),
           ...roster.map((entry, idx) => <PrintCard key={`unit-${idx}`} entry={entry} />),
           ...roster.filter(e => e.mount).map((entry, idx) => <MountCard key={`mount-${idx}`} entry={entry} />),
           ...roster.filter(e => e.magicItem).map((entry, idx) => <MagicItemCard key={`mi-${idx}`} mi={entry.magicItem} />),
@@ -3247,13 +3307,18 @@ function PrintView({ army, roster, onClose, embedded }) {
           const pages = [];
           for (let i = 0; i < cardCount; i += PER_PAGE) {
             const chunk = frontCards.slice(i, i + PER_PAGE);
-            // Build mirrored backs: reverse column order within each row
+            // Build mirrored backs: reverse column order within each row, with spacers for partial rows
             const mirroredBacks = [];
             for (let r = 0; r < ROWS; r++) {
               const rowStart = r * COLS;
               for (let c = COLS - 1; c >= 0; c--) {
                 const idx = rowStart + c;
-                if (idx < chunk.length) mirroredBacks.push(<CardBack key={`back-${i + idx}`} />);
+                if (idx < chunk.length) {
+                  mirroredBacks.push(<CardBack key={`back-${i + idx}`} />);
+                } else if (rowStart < chunk.length) {
+                  // Partial row — insert invisible spacer to maintain alignment
+                  mirroredBacks.push(<div key={`spacer-${i + idx}`} style={{ width:"63.5mm", height:"88.9mm", flexShrink:0, flexGrow:0 }} />);
+                }
               }
             }
             pages.push(
@@ -3787,9 +3852,14 @@ function MagicItemsPrintView({ onClose }) {
             const chunk = frontCards.slice(i, i + PER_PAGE);
             const mirroredBacks = [];
             for (let r = 0; r < ROWS; r++) {
+              const rowStart = r * COLS;
               for (let c = COLS - 1; c >= 0; c--) {
-                const idx = r * COLS + c;
-                if (idx < chunk.length) mirroredBacks.push(<MagicItemCardBack key={`back-${i + idx}`} />);
+                const idx = rowStart + c;
+                if (idx < chunk.length) {
+                  mirroredBacks.push(<MagicItemCardBack key={`back-${i + idx}`} />);
+                } else if (rowStart < chunk.length) {
+                  mirroredBacks.push(<div key={`spacer-${i + idx}`} style={{ width:"63.5mm", height:"88.9mm", flexShrink:0, flexGrow:0 }} />);
+                }
               }
             }
             pages.push(
@@ -3853,7 +3923,7 @@ function MagicItemStandaloneCard({ mi }) {
           )}
           {/* Name gradient overlay */}
           <div style={{ position:"absolute", bottom:0, left:0, right:0, background:"linear-gradient(transparent,rgba(0,0,0,0.82))", padding:"6mm 2.5mm 2mm", zIndex:5 }}>
-            <div style={{ fontSize:fs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 3px #000" }}>{mi.name}</div>
+            <div style={{ fontSize:fs(1.08), fontWeight:700, color:"#fff", lineHeight:1.2, textShadow:"0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5)" }}>{mi.name}</div>
           </div>
           <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"4px", background:`linear-gradient(90deg,transparent,${miAccent},transparent)` }} />
         </div>
@@ -3916,7 +3986,7 @@ function App() {
             const unit = army.units.find(u => u.id === entry.id);
             if (!unit) return null;
             const magicItem = entry.mi
-              ? (MAGIC_ITEMS || []).find(m => m.id === entry.mi) || null
+              ? [...MAGIC_STANDARDS, ...MAGIC_WEAPONS, ...DEVICES_OF_POWER].find(m => m.id === entry.mi) || null
               : null;
             const mount = entry.mt
               ? (army.units.find(u => u.id === entry.mt) || null)
@@ -3956,7 +4026,7 @@ function App() {
     }
     saveSession(null);
     setSession(null);
-    setScreen("factions");
+    setScreen("auth");
     setSelectedArmy(null);
     setRoster([]);
   }
@@ -3973,10 +4043,10 @@ function App() {
     if (unit.type === "General") {
       setRoster(r => {
         if (r.some(e => e.unit.type === "General")) return r; // already have one
-        return [...r, { unit, count: 1, magicItem: null, mount: null }];
+        return [...r, { unit, magicItem: null, mount: null }];
       });
     } else {
-      setRoster(r => [...r, { unit, count: unit.size !== "-" ? unit.size : 1, magicItem: null, mount: null }]);
+      setRoster(r => [...r, { unit, magicItem: null, mount: null }]);
     }
   }
   function handleUpdateEntry(idx, changes) { setRoster(r => r.map((e, i) => i === idx ? { ...e, ...changes } : e)); }
