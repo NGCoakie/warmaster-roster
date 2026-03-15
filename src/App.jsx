@@ -2268,6 +2268,24 @@ function RosterEntryEditor({ entry, idx, army, onUpdate, roster, totalPts }) {
           )}
         </div>
       )}
+      {/* Custom art URL */}
+      <div>
+        <span style={labelStyle}>Custom Card Art</span>
+        <input
+          type="text"
+          placeholder="Paste image URL..."
+          value={entry.customArt || ""}
+          onChange={e => onUpdate(idx, { customArt: e.target.value || null })}
+          style={{ ...selStyle, color:"#aaa" }}
+        />
+        {entry.customArt ? (
+          <div style={{ marginTop:4, borderRadius:4, overflow:"hidden", border:`1px solid ${army.color}30` }}>
+            <img src={entry.customArt} alt="" referrerPolicy="no-referrer"
+              style={{ width:"100%", height:60, objectFit:"cover", display:"block" }}
+              onError={e => { e.target.style.display="none"; }} />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -2327,11 +2345,29 @@ function RosterPanel({ army, roster, onRemove, onUpdate, onPrint, onClear, onReo
         <div style={{ display:"flex", gap:6 }}>
           <button onClick={onPrint}
             style={{ flex:1, background: army.color+"30", color: army.accent, border:`1px solid ${army.color}60`, borderRadius:3, padding:"6px 0", fontSize:"0.93rem", fontFamily:"'Cinzel',serif", letterSpacing:1, cursor:"pointer" }}>
-            🖨 PRINT CARDS
+            🖨 PRINT
+          </button>
+          <button onClick={() => {
+            const rows = [["Unit","Type","Pts","Atk","Hits","Armour","Cmd","Size","Min","Max","Magic Item","Mount","Custom Art"]];
+            roster.forEach(e => {
+              const u = e.unit;
+              rows.push([u.name, u.type, entryTotal(e), u.atk, u.hits, u.armour, u.cmd, u.size, u.min, u.max, e.magicItem?.name||"", e.mount?.name||"", e.customArt||""]);
+            });
+            rows.push([]);
+            rows.push(["Army", army.name, "Total Pts", total, "Units", roster.length]);
+            const csv = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g,'""')}"`).join(",")).join("\n");
+            const blob = new Blob([csv], { type:"text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = `${army.name.replace(/\s+/g,"_")}_${total}pts.csv`; a.click();
+            URL.revokeObjectURL(url);
+          }}
+            style={{ background: army.color+"15", color: army.color, border:`1px solid ${army.color}40`, borderRadius:3, padding:"6px 10px", fontSize:"0.82rem", fontFamily:"'Cinzel',serif", cursor:"pointer", letterSpacing:0.5 }}>
+            EXPORT
           </button>
           <button onClick={onClear}
             style={{ background:"#1a0a0a", color:"#883030", border:"1px solid #330a0a", borderRadius:3, padding:"6px 10px", fontSize:"0.93rem", cursor:"pointer" }}>
-            ✕ CLEAR
+            ✕
           </button>
         </div>
       </div>
@@ -2403,6 +2439,52 @@ function RosterPanel({ army, roster, onRemove, onUpdate, onPrint, onClear, onReo
   );
 }
 
+// ── FACTION BORDER (inline SVG — resolution-independent, tinted per faction) ──
+// Inset from corners to sit inside the 2mm border-radius clip area
+function FactionBorder({ color, accent }) {
+  const c = color, a = accent || color;
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 336"
+      style={{ position:"absolute", inset:0, width:"100%", height:"100%", zIndex:10, pointerEvents:"none" }}
+      preserveAspectRatio="none">
+      {/* Inner decorative frame — inset past the border-radius */}
+      <rect x="8" y="8" width="224" height="320" rx="3" ry="3"
+        fill="none" stroke={c} strokeWidth="1.2" opacity="0.4" />
+      <rect x="11" y="11" width="218" height="314" rx="2" ry="2"
+        fill="none" stroke={c} strokeWidth="0.5" opacity="0.2" />
+
+      {/* Corner flourishes — pulled inward to avoid clipping */}
+      {/* Top-left */}
+      <path d="M12,32 Q12,12 32,12" fill="none" stroke={a} strokeWidth="2" opacity="0.5" />
+      <path d="M15,36 Q15,15 36,15" fill="none" stroke={c} strokeWidth="0.8" opacity="0.3" />
+      <circle cx="18" cy="18" r="2" fill={a} opacity="0.4" />
+
+      {/* Top-right */}
+      <path d="M228,32 Q228,12 208,12" fill="none" stroke={a} strokeWidth="2" opacity="0.5" />
+      <path d="M225,36 Q225,15 204,15" fill="none" stroke={c} strokeWidth="0.8" opacity="0.3" />
+      <circle cx="222" cy="18" r="2" fill={a} opacity="0.4" />
+
+      {/* Bottom-left */}
+      <path d="M12,304 Q12,324 32,324" fill="none" stroke={a} strokeWidth="2" opacity="0.5" />
+      <path d="M15,300 Q15,321 36,321" fill="none" stroke={c} strokeWidth="0.8" opacity="0.3" />
+      <circle cx="18" cy="318" r="2" fill={a} opacity="0.4" />
+
+      {/* Bottom-right */}
+      <path d="M228,304 Q228,324 208,324" fill="none" stroke={a} strokeWidth="2" opacity="0.5" />
+      <path d="M225,300 Q225,321 204,321" fill="none" stroke={c} strokeWidth="0.8" opacity="0.3" />
+      <circle cx="222" cy="318" r="2" fill={a} opacity="0.4" />
+
+      {/* Top/bottom center ornaments */}
+      <path d="M113,8 L120,3 L127,8" fill="none" stroke={a} strokeWidth="1.2" opacity="0.35" />
+      <path d="M113,328 L120,333 L127,328" fill="none" stroke={a} strokeWidth="1.2" opacity="0.35" />
+
+      {/* Side center ornaments */}
+      <path d="M8,162 L3,168 L8,174" fill="none" stroke={a} strokeWidth="1" opacity="0.25" />
+      <path d="M232,162 L237,168 L232,174" fill="none" stroke={a} strokeWidth="1" opacity="0.25" />
+    </svg>
+  );
+}
+
 // ── PRINT VIEW ─────────────────────────────────────────────────────────────────
 function PrintView({ army, roster, onClose, embedded }) {
   // Print options are now standardised — no user controls
@@ -2417,6 +2499,7 @@ function PrintView({ army, roster, onClose, embedded }) {
   // Back-side print mode: "fronts" | "separate" | "sidebyside"
   const [backMode, setBackMode] = useState("fronts");
   const [showSpells, setShowSpells] = useState(true);
+  const [inspectCard, setInspectCard] = useState(null);
 
   const entryTotal = (entry) => {
     let t = typeof entry.unit.pts === "number" ? entry.unit.pts : 0;
@@ -2428,9 +2511,9 @@ function PrintView({ army, roster, onClose, embedded }) {
 
   // Dimensions per layout — real mm for accurate print sizing
   const baseLayouts = {
-    portrait:  { w:"63.5mm",  h:"88.9mm",  label:"Portrait 2.5×3.5\"",  imgH:"28mm", baseFontPx:8.5 },
-    landscape: { w:"88.9mm",  h:"63.5mm",  label:"Landscape 3.5×2.5\"", imgH:"0",    baseFontPx:8   },
-    square:    { w:"63.5mm",  h:"63.5mm",  label:"Square 2.5×2.5\"",    imgH:"20mm", baseFontPx:7.5 },
+    portrait:  { w:"63.5mm",  h:"88.9mm",  label:"Portrait 2.5×3.5\"",  baseFontPx:8.5 },
+    landscape: { w:"88.9mm",  h:"63.5mm",  label:"Landscape 3.5×2.5\"", baseFontPx:8   },
+    square:    { w:"63.5mm",  h:"63.5mm",  label:"Square 2.5×2.5\"",    baseFontPx:7.5 },
   };
   const baseLay = baseLayouts[printOpts.layout];
   const scaledFontPx = Math.round(baseLay.baseFontPx * printOpts.fontScale * 10) / 10;
@@ -2440,7 +2523,6 @@ function PrintView({ army, roster, onClose, embedded }) {
     ...baseLay,
     fontSize: `${scaledFontPx}px`,
     h: baseLay.h,
-    imgH: baseLay.imgH,
   };
 
   // ── Colour scheme — dark faction-tinted print mode ────────────────────────
@@ -2468,57 +2550,6 @@ function PrintView({ army, roster, onClose, embedded }) {
   const statBorder= army.color+"99";
   const divider   = army.color+"60";
   const headerBg  = army.color+"30";
-
-  // ── FACTION BORDER (inline SVG — resolution-independent, tinted per faction) ──
-  function FactionBorder({ color, accent }) {
-    const c = color, a = accent || color;
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 336"
-        style={{ position:"absolute", inset:0, width:"100%", height:"100%", zIndex:10, pointerEvents:"none" }}
-        preserveAspectRatio="none">
-        {/* Inner decorative frame */}
-        <rect x="4" y="4" width="232" height="328" rx="6" ry="6"
-          fill="none" stroke={c} strokeWidth="1.5" opacity="0.45" />
-        <rect x="7" y="7" width="226" height="322" rx="4" ry="4"
-          fill="none" stroke={c} strokeWidth="0.5" opacity="0.25" />
-
-        {/* Corner flourishes — quadratic bezier curves */}
-        {/* Top-left */}
-        <path d="M4,24 Q4,4 24,4" fill="none" stroke={a} strokeWidth="2.2" opacity="0.55" />
-        <path d="M8,28 Q8,8 28,8" fill="none" stroke={c} strokeWidth="1" opacity="0.35" />
-        <circle cx="13" cy="13" r="2.5" fill={a} opacity="0.45" />
-        <path d="M4,14 L14,4" fill="none" stroke={a} strokeWidth="0.6" opacity="0.3" />
-
-        {/* Top-right */}
-        <path d="M236,24 Q236,4 216,4" fill="none" stroke={a} strokeWidth="2.2" opacity="0.55" />
-        <path d="M232,28 Q232,8 212,8" fill="none" stroke={c} strokeWidth="1" opacity="0.35" />
-        <circle cx="227" cy="13" r="2.5" fill={a} opacity="0.45" />
-        <path d="M236,14 L226,4" fill="none" stroke={a} strokeWidth="0.6" opacity="0.3" />
-
-        {/* Bottom-left */}
-        <path d="M4,312 Q4,332 24,332" fill="none" stroke={a} strokeWidth="2.2" opacity="0.55" />
-        <path d="M8,308 Q8,328 28,328" fill="none" stroke={c} strokeWidth="1" opacity="0.35" />
-        <circle cx="13" cy="323" r="2.5" fill={a} opacity="0.45" />
-        <path d="M4,322 L14,332" fill="none" stroke={a} strokeWidth="0.6" opacity="0.3" />
-
-        {/* Bottom-right */}
-        <path d="M236,312 Q236,332 216,332" fill="none" stroke={a} strokeWidth="2.2" opacity="0.55" />
-        <path d="M232,308 Q232,328 212,328" fill="none" stroke={c} strokeWidth="1" opacity="0.35" />
-        <circle cx="227" cy="323" r="2.5" fill={a} opacity="0.45" />
-        <path d="M236,322 L226,332" fill="none" stroke={a} strokeWidth="0.6" opacity="0.3" />
-
-        {/* Top/bottom center ornaments — diamond points */}
-        <path d="M113,4 L120,0 L127,4" fill="none" stroke={a} strokeWidth="1.5" opacity="0.4" />
-        <circle cx="120" cy="4" r="1.2" fill={a} opacity="0.35" />
-        <path d="M113,332 L120,336 L127,332" fill="none" stroke={a} strokeWidth="1.5" opacity="0.4" />
-        <circle cx="120" cy="332" r="1.2" fill={a} opacity="0.35" />
-
-        {/* Side center ornaments — subtle outward points */}
-        <path d="M4,162 L0,168 L4,174" fill="none" stroke={a} strokeWidth="1.2" opacity="0.3" />
-        <path d="M236,162 L240,168 L236,174" fill="none" stroke={a} strokeWidth="1.2" opacity="0.3" />
-      </svg>
-    );
-  }
 
   // ── SHARED CARD SHELL ──────────────────────────────────────────────────────
   // Every card: black 3mm outer (≈1/8in), 4mm corner radius, inner card with faction colour
@@ -2551,7 +2582,7 @@ function PrintView({ army, roster, onClose, embedded }) {
           {/* Faction border overlay */}
           <FactionBorder color={army.color} accent={army.accent} />
 
-          {/* ── Image area — fixed height for uniform card layout ── */}
+          {/* ── Image area — 35mm matches --ar 17:10 Midjourney spec ── */}
           <div style={{
             width:"100%",
             height:"35mm",
@@ -2726,7 +2757,7 @@ function PrintView({ army, roster, onClose, embedded }) {
   function PrintCard({ entry }) {
     const u = entry.unit;
     const pts = entryTotal(entry);
-    const imgUrl = IMAGES.units[u.id] || "";
+    const imgUrl = entry.customArt || IMAGES.units[u.id] || "";
 
     // Extract keyword badges from special text
     const { badges, remainingText } = extractBadges(u.special);
@@ -2739,40 +2770,31 @@ function PrintView({ army, roster, onClose, embedded }) {
       return un.includes(rn) || rn.includes(un);
     });
 
-    // Stat overlays — rendered inside the image area
+    // Metadata overlay — top-right of image (roster-building stats)
     const statOverlay = (
-      <>
-        {/* CMD / SZ / MIN / MAX — horizontal row across the TOP of the image */}
-        <div style={{
-          position:"absolute", top:"1.5mm", left:0, right:0,
-          display:"flex", justifyContent:"flex-start",
-          gap:"1mm", padding:"0 1.5mm",
-          zIndex:5,
-        }}>
-          {[{k:"CMD",v:u.cmd},{k:"SZ",v:u.size},{k:"MIN",v:u.min},{k:"MAX",v:u.max}].map(({k,v}) =>
-            <StatBox key={k} label={k} value={v} sm={true}
-              style={{ minWidth:"9mm" }} />
-          )}
-        </div>
-
-        {/* ATK / HITS / ARM — vertical column on the LEFT of the image */}
-        <div style={{
-          position:"absolute", top:"1.5mm", left:"1.5mm",
-          display:"flex", flexDirection:"column",
-          gap:"1mm",
-          zIndex:5,
-          marginTop:"8mm", /* push below the top row */
-        }}>
-          {[{k:"ATK",v:u.atk},{k:"HITS",v:u.hits},{k:"ARM",v:u.armour}].map(({k,v}) =>
-            <StatBox key={k} label={k} value={v} sm={true}
-              style={{ width:"11mm" }} />
-          )}
-        </div>
-      </>
+      <div style={{
+        position:"absolute", top:"1.5mm", right:"1.5mm",
+        display:"flex", gap:"1mm", zIndex:5,
+      }}>
+        {[{k:"CMD",v:u.cmd},{k:"SZ",v:u.size},{k:"MIN",v:u.min},{k:"MAX",v:u.max}].map(({k,v}) =>
+          <StatBox key={k} label={k} value={v} sm={true}
+            style={{ minWidth:"6.5mm" }} />
+        )}
+      </div>
     );
 
     return (
       <CardShell imgUrl={imgUrl} imgFallbackIcon="⚔" imgOverlay={statOverlay}>
+        {/* Combat stat bar — below image */}
+        <div style={{
+          display:"flex", gap:"1.5px", padding:"1mm 1mm",
+          borderBottom:`1px solid ${divider}`,
+          flexShrink:0, height:"10mm",
+        }}>
+          {[{k:"ATK",v:u.atk},{k:"HITS",v:u.hits},{k:"ARM",v:u.armour}].map(({k,v}) =>
+            <StatBox key={k} label={k} value={v} style={{ flex:1, height:"100%" }} />
+          )}
+        </div>
         {/* Name + pts */}
         <div style={{
           padding:"1.5mm 2.5mm 1mm",
@@ -2791,31 +2813,25 @@ function PrintView({ army, roster, onClose, embedded }) {
         <BadgeStrip badges={badges} />
 
         {/* Remaining special text + inline unit rules */}
-        {(() => {
-          const fullText = (remainingText || "") + unitRules.map(r => r.desc).join(" ") + (FLAVOR[u.id] || "");
-          const tl = fullText.length;
-          const ts = tl > 400 ? 0.72 : tl > 300 ? 0.82 : tl > 200 ? 0.9 : 1.0;
-          const lh = ts < 1 ? 1.35 : 1.5;
-          return (
-            <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 auto", overflow:"hidden" }}>
-              {remainingText ? (
-                <div style={{ fontSize:cardFs(0.78 * ts), color:descText, lineHeight:lh, fontFamily:"Georgia,serif" }}>
-                  {remainingText}
-                </div>
-              ) : null}
-              {unitRules.map((r,i) => (
-                <div key={i} style={{ fontSize:cardFs(0.72 * ts), color:descText, lineHeight:lh, marginTop:"0.8mm", fontFamily:"Georgia,serif" }}>
-                  <strong style={{ color:cardText }}>{r.name}:</strong> {r.desc}
-                </div>
-              ))}
-              {FLAVOR[u.id] ? (
-                <div style={{ fontSize:cardFs(0.68 * ts), color:cardMuted, lineHeight:lh, marginTop:"1.5mm", fontStyle:"italic", fontFamily:"Georgia,serif" }}>
-                  {FLAVOR[u.id]}
-                </div>
-              ) : null}
+        <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden", position:"relative" }}>
+          {remainingText ? (
+            <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>
+              {remainingText}
             </div>
-          );
-        })()}
+          ) : null}
+          {unitRules.map((r,i) => (
+            <div key={i} style={{ fontSize:cardFs(0.68), color:descText, lineHeight:1.35, marginTop:"0.8mm", fontFamily:"Georgia,serif" }}>
+              <strong style={{ color:cardText }}>{r.name}:</strong> {r.desc}
+            </div>
+          ))}
+          {FLAVOR[u.id] ? (
+            <div style={{ fontSize:cardFs(0.62), color:cardMuted, lineHeight:1.3, marginTop:"1.5mm", fontStyle:"italic", fontFamily:"Georgia,serif" }}>
+              {FLAVOR[u.id]}
+            </div>
+          ) : null}
+          {/* Fade overlay for clipped text */}
+          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"3mm", background:`linear-gradient(transparent, ${cardBg})`, pointerEvents:"none" }} />
+        </div>
 
         {/* Footer */}
         <div style={{
@@ -2856,7 +2872,7 @@ function PrintView({ army, roster, onClose, embedded }) {
           <div style={{
             display:"flex", gap:"1.5px", padding:"1.5mm 1mm",
             borderBottom:`1px solid ${divider}`,
-            flexShrink:0, height:"16mm",
+            flexShrink:0, height:"10mm",
           }}>
             {[{k:"ATK",v:m.atk},{k:"HITS",v:m.hits},{k:"ARM",v:m.armour}].filter(x=>x.v!=null).map(({k,v}) =>
               <StatBox key={k} label={k} value={v} style={{ flex:1, height:"100%" }} />
@@ -2868,20 +2884,13 @@ function PrintView({ army, roster, onClose, embedded }) {
         <BadgeStrip badges={mountBadges} />
 
         {/* Mount special rules */}
-        {(() => {
-          const tl = (mountRemaining || "").length;
-          const ts = tl > 300 ? 0.82 : tl > 200 ? 0.9 : 1.0;
-          const lh = ts < 1 ? 1.35 : 1.5;
-          return (
-            <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 auto", overflow:"hidden" }}>
-              {mountRemaining ? (
-                <div style={{ fontSize:cardFs(0.78 * ts), color:descText, lineHeight:lh, fontFamily:"Georgia,serif" }}>{mountRemaining}</div>
-              ) : (
-                <div style={{ fontSize:cardFs(0.78), color:descText, opacity:0.5, fontFamily:"Georgia,serif" }}>No special rules.</div>
-              )}
-            </div>
-          );
-        })()}
+        <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
+          {mountRemaining ? (
+            <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>{mountRemaining}</div>
+          ) : (
+            <div style={{ fontSize:cardFs(0.72), color:descText, opacity:0.5, fontFamily:"Georgia,serif" }}>No special rules.</div>
+          )}
+        </div>
 
         {/* Footer */}
         <div style={{
@@ -2938,8 +2947,8 @@ function PrintView({ army, roster, onClose, embedded }) {
         </div>
 
         {/* Description */}
-        <div style={{ padding:"1.5mm 2.5mm", flexShrink:0 }}>
-          <div style={{ fontSize:cardFs(0.78), color:descText, lineHeight:1.55, fontFamily:"Georgia,serif" }}>
+        <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
+          <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>
             {mi.desc}
           </div>
         </div>
@@ -2989,18 +2998,11 @@ function PrintView({ army, roster, onClose, embedded }) {
         </div>
 
         {/* Description */}
-        {(() => {
-          const tl = (rule.desc || "").length;
-          const ts = tl > 500 ? 0.68 : tl > 400 ? 0.75 : tl > 300 ? 0.82 : tl > 200 ? 0.9 : 1.0;
-          const lh = ts < 1 ? 1.35 : 1.55;
-          return (
-            <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 auto", overflow:"hidden" }}>
-              <div style={{ fontSize:cardFs(0.82 * ts), color:descText, lineHeight:lh, fontFamily:"Georgia,serif" }}>
-                {rule.desc}
-              </div>
-            </div>
-          );
-        })()}
+        <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
+          <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>
+            {rule.desc}
+          </div>
+        </div>
 
         {/* Footer */}
         <div style={{
@@ -3060,19 +3062,11 @@ function PrintView({ army, roster, onClose, embedded }) {
         )}
 
         {/* Description */}
-        {(() => {
-          const txt = spell.desc || spell.effect || "";
-          const tl = txt.length;
-          const ts = tl > 500 ? 0.68 : tl > 400 ? 0.75 : tl > 300 ? 0.82 : tl > 200 ? 0.9 : 1.0;
-          const lh = ts < 1 ? 1.35 : 1.55;
-          return (
-            <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 auto", overflow:"hidden" }}>
-              <div style={{ fontSize:cardFs(0.82 * ts), color:descText, lineHeight:lh, fontFamily:"Georgia,serif" }}>
-                {txt}
-              </div>
-            </div>
-          );
-        })()}
+        <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
+          <div style={{ fontSize:cardFs(0.72), color:descText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>
+            {spell.desc || spell.effect}
+          </div>
+        </div>
 
         {/* Footer */}
         <div style={{
@@ -3206,6 +3200,34 @@ function PrintView({ army, roster, onClose, embedded }) {
     );
   }
 
+  // Double-click wrapper for card inspect
+  function Inspectable({ children }) {
+    return (
+      <div onDoubleClick={() => setInspectCard(children)} style={{ cursor:"pointer" }}>
+        {children}
+      </div>
+    );
+  }
+
+  // Card inspect modal — zoomed view on double-click
+  function CardInspectModal() {
+    if (!inspectCard) return null;
+    return (
+      <div onClick={() => setInspectCard(null)} style={{
+        position:"fixed", inset:0, zIndex:9999,
+        background:"rgba(0,0,0,0.85)", display:"flex",
+        alignItems:"center", justifyContent:"center", cursor:"zoom-out",
+      }}>
+        <div onClick={e => e.stopPropagation()} style={{
+          transform:"scale(2.2)", transformOrigin:"center center",
+          cursor:"default",
+        }}>
+          {inspectCard}
+        </div>
+      </div>
+    );
+  }
+
   // ── Embedded mode: render scaled card previews inline (no toolbar/print chrome) ──
   if (embedded) {
     const spellItems = [];
@@ -3216,14 +3238,15 @@ function PrintView({ army, roster, onClose, embedded }) {
     const spellCards = showSpells ? spellItems.map((spell, i) => <SpellCard key={`spell-${i}`} spell={spell} />) : [];
     const ruleCards = showSpells ? (army.armyRules || []).map((rule, i) => <SpecialRuleCard key={`rule-${i}`} rule={rule} />) : [];
     const previewCards = [
-      ...spellCards,
-      ...ruleCards,
-      ...roster.map(entry => <PrintCard key={`unit-${entry._id}`} entry={entry} />),
-      ...roster.filter(e => e.mount).map(entry => <MountCard key={`mount-${entry._id}`} entry={entry} />),
-      ...roster.filter(e => e.magicItem).map(entry => <MagicItemCard key={`mi-${entry._id}`} mi={entry.magicItem} />),
+      ...spellCards.map((c, i) => <Inspectable key={`si-${i}`}>{c}</Inspectable>),
+      ...ruleCards.map((c, i) => <Inspectable key={`ri-${i}`}>{c}</Inspectable>),
+      ...roster.map(entry => <Inspectable key={`ui-${entry._id}`}><PrintCard entry={entry} /></Inspectable>),
+      ...roster.filter(e => e.mount).map(entry => <Inspectable key={`mi-${entry._id}`}><MountCard entry={entry} /></Inspectable>),
+      ...roster.filter(e => e.magicItem).map(entry => <Inspectable key={`mai-${entry._id}`}><MagicItemCard mi={entry.magicItem} /></Inspectable>),
     ];
     return (
       <div style={{ height:"100%", display:"flex", flexDirection:"column", background:"#0a0806" }}>
+        <CardInspectModal />
         <div style={{ padding:"8px 10px", borderBottom:`1px solid ${army.color}30`, flexShrink:0, display:"flex", alignItems:"center", gap:8 }}>
           <span style={{ fontFamily:"'Cinzel',serif", fontSize:"0.85rem", color:"#666", letterSpacing:1 }}>
             CARD PREVIEW
@@ -3952,6 +3975,8 @@ function MagicItemStandaloneCard({ mi }) {
         fontFamily:"'Cinzel',Georgia,serif", boxSizing:"border-box",
         border:`2px solid ${miBorder}`,
       }}>
+        {/* Faction border overlay */}
+        <FactionBorder color={miAccent} accent={miAccent} />
         {/* Image + name overlay */}
         <div style={{ width:"100%", height:"35mm", flexShrink:0, position:"relative", overflow:"hidden", borderBottom:`3px solid ${miBorder}` }}>
           {imgUrl ? (
@@ -3982,16 +4007,9 @@ function MagicItemStandaloneCard({ mi }) {
         </div>
 
         {/* Description */}
-        {(() => {
-          const tl = (mi.desc || "").length;
-          const ts = tl > 400 ? 0.75 : tl > 300 ? 0.82 : tl > 200 ? 0.9 : 1.0;
-          const lh = ts < 1 ? 1.35 : 1.55;
-          return (
-            <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 auto", overflow:"hidden" }}>
-              <div style={{ fontSize:fs(0.78 * ts), color:miText, lineHeight:lh, fontFamily:"Georgia,serif" }}>{mi.desc}</div>
-            </div>
-          );
-        })()}
+        <div style={{ padding:"1.5mm 2.5mm", flex:"1 1 0", minHeight:0, overflow:"hidden" }}>
+          <div style={{ fontSize:fs(0.72), color:miText, lineHeight:1.35, fontFamily:"Georgia,serif" }}>{mi.desc}</div>
+        </div>
 
         {/* Footer */}
         <div style={{ borderTop:`1px solid ${divider}`, padding:"1mm 2.5mm", display:"flex", justifyContent:"space-between", background:headerBg, flexShrink:0, marginTop:"auto" }}>
