@@ -1,1 +1,22 @@
+# Build output
+dist/
+dist-ssr/
+
+# Dependencies
+node_modules/
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Vite
+*.local
+vite.config.js.timestamp-*
+
+# Claude Code — machine-specific permissions (not project config)
+.claude/settings.local.json
+
+# Temporary scripts generated during dev sessions — delete after use
+*.ps1
+prompts_dump.txt
+new_prompts.json
